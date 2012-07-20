@@ -1,0 +1,466 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9F8ED46615B98C6A00391EF8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46515B98C6A00391EF8 /* UIKit.framework */; };
+		9F8ED46815B98C6A00391EF8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46715B98C6A00391EF8 /* Foundation.framework */; };
+		9F8ED46A15B98C6A00391EF8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46915B98C6A00391EF8 /* CoreGraphics.framework */; };
+		9F8ED47015B98C6A00391EF8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F8ED46E15B98C6A00391EF8 /* InfoPlist.strings */; };
+		9F8ED47215B98C6A00391EF8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED47115B98C6A00391EF8 /* main.m */; };
+		9F8ED47615B98C6A00391EF8 /* TSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED47515B98C6A00391EF8 /* TSAppDelegate.m */; };
+		9F8ED47915B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F8ED47715B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard */; };
+		9F8ED47C15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F8ED47A15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard */; };
+		9F8ED47F15B98C6A00391EF8 /* TSMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED47E15B98C6A00391EF8 /* TSMasterViewController.m */; };
+		9F8ED48215B98C6A00391EF8 /* TSDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED48115B98C6A00391EF8 /* TSDetailViewController.m */; };
+		9F8ED48A15B98C6A00391EF8 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED48915B98C6A00391EF8 /* SenTestingKit.framework */; };
+		9F8ED48B15B98C6A00391EF8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46515B98C6A00391EF8 /* UIKit.framework */; };
+		9F8ED48C15B98C6A00391EF8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46715B98C6A00391EF8 /* Foundation.framework */; };
+		9F8ED49415B98C6A00391EF8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F8ED49215B98C6A00391EF8 /* InfoPlist.strings */; };
+		9F8ED49715B98C6A00391EF8 /* TanukiSecretsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED49615B98C6A00391EF8 /* TanukiSecretsTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9F8ED48D15B98C6A00391EF8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9F8ED45815B98C6900391EF8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9F8ED46015B98C6A00391EF8;
+			remoteInfo = TanukiSecrets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		9F8ED46115B98C6A00391EF8 /* TanukiSecrets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TanukiSecrets.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F8ED46515B98C6A00391EF8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		9F8ED46715B98C6A00391EF8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		9F8ED46915B98C6A00391EF8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		9F8ED46D15B98C6A00391EF8 /* TanukiSecrets-Info.plist */ = {isa = PBXFileReference; path = "TanukiSecrets-Info.plist"; sourceTree = "<group>"; };
+		9F8ED46F15B98C6A00391EF8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		9F8ED47115B98C6A00391EF8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		9F8ED47315B98C6A00391EF8 /* TanukiSecrets-Prefix.pch */ = {isa = PBXFileReference; path = "TanukiSecrets-Prefix.pch"; sourceTree = "<group>"; };
+		9F8ED47415B98C6A00391EF8 /* TSAppDelegate.h */ = {isa = PBXFileReference; path = TSAppDelegate.h; sourceTree = "<group>"; };
+		9F8ED47515B98C6A00391EF8 /* TSAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TSAppDelegate.m; sourceTree = "<group>"; };
+		9F8ED47815B98C6A00391EF8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		9F8ED47B15B98C6A00391EF8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		9F8ED47D15B98C6A00391EF8 /* TSMasterViewController.h */ = {isa = PBXFileReference; path = TSMasterViewController.h; sourceTree = "<group>"; };
+		9F8ED47E15B98C6A00391EF8 /* TSMasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TSMasterViewController.m; sourceTree = "<group>"; };
+		9F8ED48015B98C6A00391EF8 /* TSDetailViewController.h */ = {isa = PBXFileReference; path = TSDetailViewController.h; sourceTree = "<group>"; };
+		9F8ED48115B98C6A00391EF8 /* TSDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TSDetailViewController.m; sourceTree = "<group>"; };
+		9F8ED48815B98C6A00391EF8 /* TanukiSecretsTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TanukiSecretsTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F8ED48915B98C6A00391EF8 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		9F8ED49115B98C6A00391EF8 /* TanukiSecretsTests-Info.plist */ = {isa = PBXFileReference; path = "TanukiSecretsTests-Info.plist"; sourceTree = "<group>"; };
+		9F8ED49315B98C6A00391EF8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		9F8ED49515B98C6A00391EF8 /* TanukiSecretsTests.h */ = {isa = PBXFileReference; path = TanukiSecretsTests.h; sourceTree = "<group>"; };
+		9F8ED49615B98C6A00391EF8 /* TanukiSecretsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TanukiSecretsTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9F8ED45E15B98C6A00391EF8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F8ED46615B98C6A00391EF8 /* UIKit.framework in Frameworks */,
+				9F8ED46815B98C6A00391EF8 /* Foundation.framework in Frameworks */,
+				9F8ED46A15B98C6A00391EF8 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F8ED48415B98C6A00391EF8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F8ED48A15B98C6A00391EF8 /* SenTestingKit.framework in Frameworks */,
+				9F8ED48B15B98C6A00391EF8 /* UIKit.framework in Frameworks */,
+				9F8ED48C15B98C6A00391EF8 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9F8ED45615B98C6900391EF8 = {
+			isa = PBXGroup;
+			children = (
+				9F8ED46B15B98C6A00391EF8 /* TanukiSecrets */,
+				9F8ED48F15B98C6A00391EF8 /* TanukiSecretsTests */,
+				9F8ED46415B98C6A00391EF8 /* Frameworks */,
+				9F8ED46215B98C6A00391EF8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9F8ED46215B98C6A00391EF8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9F8ED46115B98C6A00391EF8 /* TanukiSecrets.app */,
+				9F8ED48815B98C6A00391EF8 /* TanukiSecretsTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9F8ED46415B98C6A00391EF8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9F8ED46515B98C6A00391EF8 /* UIKit.framework */,
+				9F8ED46715B98C6A00391EF8 /* Foundation.framework */,
+				9F8ED46915B98C6A00391EF8 /* CoreGraphics.framework */,
+				9F8ED48915B98C6A00391EF8 /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9F8ED46B15B98C6A00391EF8 /* TanukiSecrets */ = {
+			isa = PBXGroup;
+			children = (
+				9F8ED47415B98C6A00391EF8 /* TSAppDelegate.h */,
+				9F8ED47515B98C6A00391EF8 /* TSAppDelegate.m */,
+				9F8ED47715B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard */,
+				9F8ED47A15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard */,
+				9F8ED47D15B98C6A00391EF8 /* TSMasterViewController.h */,
+				9F8ED47E15B98C6A00391EF8 /* TSMasterViewController.m */,
+				9F8ED48015B98C6A00391EF8 /* TSDetailViewController.h */,
+				9F8ED48115B98C6A00391EF8 /* TSDetailViewController.m */,
+				9F8ED46C15B98C6A00391EF8 /* Supporting Files */,
+			);
+			path = TanukiSecrets;
+			sourceTree = "<group>";
+		};
+		9F8ED46C15B98C6A00391EF8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				9F8ED46D15B98C6A00391EF8 /* TanukiSecrets-Info.plist */,
+				9F8ED46E15B98C6A00391EF8 /* InfoPlist.strings */,
+				9F8ED47115B98C6A00391EF8 /* main.m */,
+				9F8ED47315B98C6A00391EF8 /* TanukiSecrets-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9F8ED48F15B98C6A00391EF8 /* TanukiSecretsTests */ = {
+			isa = PBXGroup;
+			children = (
+				9F8ED49515B98C6A00391EF8 /* TanukiSecretsTests.h */,
+				9F8ED49615B98C6A00391EF8 /* TanukiSecretsTests.m */,
+				9F8ED49015B98C6A00391EF8 /* Supporting Files */,
+			);
+			path = TanukiSecretsTests;
+			sourceTree = "<group>";
+		};
+		9F8ED49015B98C6A00391EF8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				9F8ED49115B98C6A00391EF8 /* TanukiSecretsTests-Info.plist */,
+				9F8ED49215B98C6A00391EF8 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9F8ED46015B98C6A00391EF8 /* TanukiSecrets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F8ED49A15B98C6A00391EF8 /* Build configuration list for PBXNativeTarget "TanukiSecrets" */;
+			buildPhases = (
+				9F8ED45D15B98C6A00391EF8 /* Sources */,
+				9F8ED45E15B98C6A00391EF8 /* Frameworks */,
+				9F8ED45F15B98C6A00391EF8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TanukiSecrets;
+			productName = TanukiSecrets;
+			productReference = 9F8ED46115B98C6A00391EF8 /* TanukiSecrets.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9F8ED48715B98C6A00391EF8 /* TanukiSecretsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F8ED49D15B98C6A00391EF8 /* Build configuration list for PBXNativeTarget "TanukiSecretsTests" */;
+			buildPhases = (
+				9F8ED48315B98C6A00391EF8 /* Sources */,
+				9F8ED48415B98C6A00391EF8 /* Frameworks */,
+				9F8ED48515B98C6A00391EF8 /* Resources */,
+				9F8ED48615B98C6A00391EF8 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9F8ED48E15B98C6A00391EF8 /* PBXTargetDependency */,
+			);
+			name = TanukiSecretsTests;
+			productName = TanukiSecretsTests;
+			productReference = 9F8ED48815B98C6A00391EF8 /* TanukiSecretsTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9F8ED45815B98C6900391EF8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = TS;
+				LastUpgradeCheck = 0430;
+				ORGANIZATIONNAME = BlueTanuki;
+			};
+			buildConfigurationList = 9F8ED45B15B98C6900391EF8 /* Build configuration list for PBXProject "TanukiSecrets" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 9F8ED45615B98C6900391EF8;
+			productRefGroup = 9F8ED46215B98C6A00391EF8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9F8ED46015B98C6A00391EF8 /* TanukiSecrets */,
+				9F8ED48715B98C6A00391EF8 /* TanukiSecretsTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9F8ED45F15B98C6A00391EF8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F8ED47015B98C6A00391EF8 /* InfoPlist.strings in Resources */,
+				9F8ED47915B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard in Resources */,
+				9F8ED47C15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F8ED48515B98C6A00391EF8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F8ED49415B98C6A00391EF8 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9F8ED48615B98C6A00391EF8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9F8ED45D15B98C6A00391EF8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F8ED47215B98C6A00391EF8 /* main.m in Sources */,
+				9F8ED47615B98C6A00391EF8 /* TSAppDelegate.m in Sources */,
+				9F8ED47F15B98C6A00391EF8 /* TSMasterViewController.m in Sources */,
+				9F8ED48215B98C6A00391EF8 /* TSDetailViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F8ED48315B98C6A00391EF8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F8ED49715B98C6A00391EF8 /* TanukiSecretsTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9F8ED48E15B98C6A00391EF8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9F8ED46015B98C6A00391EF8 /* TanukiSecrets */;
+			targetProxy = 9F8ED48D15B98C6A00391EF8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		9F8ED46E15B98C6A00391EF8 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F8ED46F15B98C6A00391EF8 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		9F8ED47715B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F8ED47815B98C6A00391EF8 /* en */,
+			);
+			name = MainStoryboard_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		9F8ED47A15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F8ED47B15B98C6A00391EF8 /* en */,
+			);
+			name = MainStoryboard_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		9F8ED49215B98C6A00391EF8 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F8ED49315B98C6A00391EF8 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		9F8ED49815B98C6A00391EF8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9F8ED49915B98C6A00391EF8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		9F8ED49B15B98C6A00391EF8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TanukiSecrets/TanukiSecrets-Prefix.pch";
+				INFOPLIST_FILE = "TanukiSecrets/TanukiSecrets-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		9F8ED49C15B98C6A00391EF8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TanukiSecrets/TanukiSecrets-Prefix.pch";
+				INFOPLIST_FILE = "TanukiSecrets/TanukiSecrets-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		9F8ED49E15B98C6A00391EF8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/TanukiSecrets.app/TanukiSecrets";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TanukiSecrets/TanukiSecrets-Prefix.pch";
+				INFOPLIST_FILE = "TanukiSecretsTests/TanukiSecretsTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		9F8ED49F15B98C6A00391EF8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/TanukiSecrets.app/TanukiSecrets";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TanukiSecrets/TanukiSecrets-Prefix.pch";
+				INFOPLIST_FILE = "TanukiSecretsTests/TanukiSecretsTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9F8ED45B15B98C6900391EF8 /* Build configuration list for PBXProject "TanukiSecrets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F8ED49815B98C6A00391EF8 /* Debug */,
+				9F8ED49915B98C6A00391EF8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9F8ED49A15B98C6A00391EF8 /* Build configuration list for PBXNativeTarget "TanukiSecrets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F8ED49B15B98C6A00391EF8 /* Debug */,
+				9F8ED49C15B98C6A00391EF8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		9F8ED49D15B98C6A00391EF8 /* Build configuration list for PBXNativeTarget "TanukiSecretsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F8ED49E15B98C6A00391EF8 /* Debug */,
+				9F8ED49F15B98C6A00391EF8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9F8ED45815B98C6900391EF8 /* Project object */;
+}
