@@ -7,6 +7,13 @@
 //
 
 #import "TSAppDelegate.h"
+#import <DropboxSDK/DropboxSDK.h>
+
+#import "secrets.h"
+#ifndef __TS_DROPBOX_PROPS_SET
+#define DROPBOX_APP_KEY @"DropboxAppKeyGoesHere"
+#define DROPBOX_APP_SECRET @"DropboxAppSecretGoesHere"
+#endif
 
 @implementation TSAppDelegate
 
@@ -20,6 +27,12 @@
 	    UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
 	    splitViewController.delegate = (id)navigationController.topViewController;
 	}
+	
+	DBSession* dbSession = [[DBSession alloc] initWithAppKey:DROPBOX_APP_KEY
+													appSecret:DROPBOX_APP_SECRET
+														 root:kDBRootAppFolder];
+	[DBSession setSharedSession:dbSession];
+	
     return YES;
 }
 							
@@ -49,5 +62,18 @@
 {
 	// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    if ([[DBSession sharedSession] handleOpenURL:url]) {
+        if ([[DBSession sharedSession] isLinked]) {
+            NSLog(@"App linked successfully!");
+            // At this point you can start making API calls
+        }
+        return YES;
+    }
+    // Add whatever other url handling code your app requires here
+    return NO;
+}
+
 
 @end
