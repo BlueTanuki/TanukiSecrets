@@ -31,6 +31,7 @@
 		9FEC4DDD15C2C187008B18D5 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FEC4DDC15C2C187008B18D5 /* DropboxSDK.framework */; };
 		9FEC4DDF15C2C1C5008B18D5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FEC4DDE15C2C1C5008B18D5 /* Security.framework */; };
 		9FEC4DE115C2C1E7008B18D5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FEC4DE015C2C1E7008B18D5 /* QuartzCore.framework */; };
+		9FEC4E0915C93F0D008B18D5 /* TSUnlockViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4E0815C93F0D008B18D5 /* TSUnlockViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,8 @@
 		9FEC4DDE15C2C1C5008B18D5 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		9FEC4DE015C2C1E7008B18D5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		9FEC4DE215C2C43C008B18D5 /* secrets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secrets.h; sourceTree = "<group>"; };
+		9FEC4E0715C93F0D008B18D5 /* TSUnlockViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUnlockViewController.h; sourceTree = "<group>"; };
+		9FEC4E0815C93F0D008B18D5 /* TSUnlockViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUnlockViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,6 +199,8 @@
 			children = (
 				9F8ED4B215B9A0EB00391EF8 /* TSFilesystemTableViewController.h */,
 				9F8ED4B315B9A0EB00391EF8 /* TSFilesystemTableViewController.m */,
+				9FEC4E0715C93F0D008B18D5 /* TSUnlockViewController.h */,
+				9FEC4E0815C93F0D008B18D5 /* TSUnlockViewController.m */,
 			);
 			name = sandbox;
 			sourceTree = "<group>";
@@ -340,6 +345,7 @@
 				9F8ED48215B98C6A00391EF8 /* TSDetailViewController.m in Sources */,
 				9F8ED4B415B9A0EB00391EF8 /* TSFilesystemTableViewController.m in Sources */,
 				9FEC4DCF15C29894008B18D5 /* JSNotifier.m in Sources */,
+				9FEC4E0915C93F0D008B18D5 /* TSUnlockViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -455,6 +461,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TanukiSecrets/TanukiSecrets-Prefix.pch";
 				INFOPLIST_FILE = "TanukiSecrets/TanukiSecrets-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SDKROOT)/usr/lib/system\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -471,6 +481,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TanukiSecrets/TanukiSecrets-Prefix.pch";
 				INFOPLIST_FILE = "TanukiSecrets/TanukiSecrets-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SDKROOT)/usr/lib/system\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

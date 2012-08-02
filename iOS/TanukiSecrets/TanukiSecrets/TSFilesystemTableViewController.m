@@ -9,6 +9,9 @@
 #import "TSFilesystemTableViewController.h"
 #import "JSNotifier.h"
 #import <DropboxSDK/DropboxSDK.h>
+#import <CommonCrypto/CommonDigest.h>
+#import <CommonCrypto/CommonCryptor.h>
+#import <CommonCrypto/CommonKeyDerivation.h>
 
 @interface TSFilesystemTableViewController () <DBRestClientDelegate> {
 
@@ -20,6 +23,99 @@
 @end
 
 @implementation TSFilesystemTableViewController
+
+#pragma mark - Encryption
+
+- (NSData *) sha512:(NSString *) string
+{
+	NSData *bytes = [string dataUsingEncoding:NSUTF8StringEncoding];
+	unsigned char hash[CC_SHA512_DIGEST_LENGTH];
+	CC_SHA512([bytes bytes], [bytes length], hash);
+	return [NSData dataWithBytes:hash length:CC_SHA512_DIGEST_LENGTH];
+}
+
+- (NSData *) md5:(NSString *) string
+{
+	NSData *bytes = [string dataUsingEncoding:NSUTF8StringEncoding];
+	unsigned char hash[CC_MD5_DIGEST_LENGTH];
+	CC_MD5([bytes bytes], [bytes length], hash);
+	return [NSData dataWithBytes:hash length:CC_MD5_DIGEST_LENGTH];
+}
+
+- (NSData *) tanukiHash:(NSString *) secret
+{
+	NSData *bytes = [secret dataUsingEncoding:NSUTF8StringEncoding];
+	unsigned char hash[CC_SHA512_DIGEST_LENGTH];
+	CC_SHA512([bytes bytes], [bytes length], hash);
+	bytes = [NSData dataWithBytes:hash length:CC_SHA512_DIGEST_LENGTH];
+	for (int i=0; i<13666; i++) {
+		CC_SHA512([bytes bytes], [bytes length], hash);
+		bytes = [NSData dataWithBytes:hash length:CC_SHA512_DIGEST_LENGTH];
+	}
+	unsigned char hash2[CC_MD5_DIGEST_LENGTH];
+	CC_MD5([bytes bytes], [bytes length], hash2);
+	return [NSData dataWithBytes:hash2 length:CC_MD5_DIGEST_LENGTH];
+}
+
+- (NSData *)encryptData:(NSData *) data 
+{
+	NSLog(@"encryptData start...");
+	NSData *keyHash = [self tanukiHash:@"Ihl4pwd!"];
+	NSLog(@"key hash : %@", [keyHash description]);
+	//Note : salting goes inside the keyHash computation
+	
+	NSData *initializationVector = [self tanukiHash:@"TanukiSecrets"];
+	NSLog(@"iv : %@", [initializationVector description]);
+	
+	NSMutableData *encryptedData = [NSMutableData dataWithLength:data.length + kCCBlockSizeAES128];
+	size_t outLength;
+	CCCryptorStatus cryptStatus = 
+	CCCrypt(
+			kCCEncrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
+			[keyHash bytes], [keyHash length], [initializationVector bytes],
+			[data bytes], [data length],
+			[encryptedData mutableBytes], [encryptedData length],
+			&outLength);
+	if (cryptStatus == kCCSuccess) {
+		[encryptedData setLength:outLength];
+	}else {
+		NSLog(@"Something went wrong...");
+		encryptedData = nil;
+	}
+
+	NSLog(@"encrypted :: %@", [encryptedData description]);
+	return encryptedData;
+}
+
+- (NSData *)decryptData:(NSData *) data 
+{
+	NSLog(@"decryptData start...");
+	NSData *keyHash = [self tanukiHash:@"Ihl4pwd!"];
+	NSLog(@"key hash : %@", [keyHash description]);
+	//Note : salting goes inside the keyHash computation
+	
+	NSData *initializationVector = [self tanukiHash:@"TanukiSecrets"];
+	NSLog(@"iv : %@", [initializationVector description]);
+	
+	NSMutableData *decryptedData = [NSMutableData dataWithLength:data.length + kCCBlockSizeAES128];
+	size_t outLength;
+	CCCryptorStatus cryptStatus = 
+	CCCrypt(
+			kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
+			[keyHash bytes], [keyHash length], [initializationVector bytes],
+			[data bytes], [data length],
+			[decryptedData mutableBytes], [decryptedData length],
+			&outLength);
+	if (cryptStatus == kCCSuccess) {
+		[decryptedData setLength:outLength];
+	}else {
+		NSLog(@"Something went wrong...");
+		decryptedData = nil;
+	}
+	
+	NSLog(@"decrypted :: %@", [decryptedData description]);
+	return decryptedData;
+}
 
 #pragma mark - Dropbox 
 
@@ -47,10 +143,26 @@
     }
 }
 
-- (void)restClient:(DBRestClient *)client
-loadMetadataFailedWithError:(NSError *)error {
+- (void)restClient:(DBRestClient *)client loadMetadataFailedWithError:(NSError *)error {
 	
     NSLog(@"Error loading metadata: %@", error);
+}
+
+- (void)restClient:(DBRestClient*)client uploadedFile:(NSString*)destPath
+			  from:(NSString*)srcPath metadata:(DBMetadata*)metadata {
+    NSLog(@"File uploaded successfully to path: %@", metadata.path);
+	NSError *error;
+	[[NSFileManager defaultManager] removeItemAtPath:srcPath error:&error];
+	if (error) {
+		NSLog(@"Error : %@", [error debugDescription]);
+	}else {
+		NSLog(@"Successfully deleted temporary file %@", srcPath);
+	}
+	[self refreshDropbox:nil];
+}
+
+- (void)restClient:(DBRestClient*)client uploadFileFailedWithError:(NSError*)error {
+    NSLog(@"File upload failed with error - %@", error);
 }
 
 #pragma mark - View lifecycle
@@ -155,12 +267,44 @@ loadMetadataFailedWithError:(NSError *)error {
 	self.navigationItem.rightBarButtonItem = refreshDropboxButton;
 }
 
+- (IBAction)addDropboxItem:(UIButton *)sender {
+	NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+	[dateFormat setDateFormat:@"yyyy-MM-dd_HH:mm:ss"];
+	NSString *filename = [dateFormat stringFromDate:[NSDate date]];
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
+	NSString *fileContent = [NSString stringWithFormat:@"This is the content of the file named %@.\nA newline was added before and after this phrase.\nAnd this is the end of the content. Point!", filename];
+	NSLog(@"Encrypt-decrypt test for |%@|", fileContent);
+	NSData *encryptedData = [self encryptData:[fileContent dataUsingEncoding:NSUTF8StringEncoding]];
+	NSData *decryptedData = [self decryptData:encryptedData];
+	NSLog(@"Result of encrypt-decrypt : |%@|", 
+		  [[NSString alloc] initWithBytes:[decryptedData bytes] 
+								   length:[decryptedData length] 
+								 encoding:NSUTF8StringEncoding]);
+	[fileManager createFileAtPath: filePath
+						 contents:encryptedData 
+					   attributes:nil];
+	tableContent = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSAllDomainsMask];
+	[[self dropboxRestClient] uploadFile:filename toPath:@"/" withParentRev:nil fromPath:filePath];
+}
+
 
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 2;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+	if (section == 0) {
+		return @"Dropbox";
+	}else if (section == 1) {
+		return @"Local";
+	}else {
+		return @"???";
+	}
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
