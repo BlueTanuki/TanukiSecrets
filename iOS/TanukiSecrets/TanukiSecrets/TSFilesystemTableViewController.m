@@ -283,7 +283,7 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return YES;
 }
 
 #pragma mark - Listeners
@@ -505,6 +505,7 @@
 			[jsn showFor:2.0];
 		}
 	}
+	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 @end
