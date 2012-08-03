@@ -23,6 +23,7 @@
 		9F8ED49415B98C6A00391EF8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F8ED49215B98C6A00391EF8 /* InfoPlist.strings */; };
 		9F8ED49715B98C6A00391EF8 /* TanukiSecretsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED49615B98C6A00391EF8 /* TanukiSecretsTests.m */; };
 		9F8ED4B415B9A0EB00391EF8 /* TSFilesystemTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED4B315B9A0EB00391EF8 /* TSFilesystemTableViewController.m */; };
+		9F9D868E15CBFDF60066BC04 /* SMXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */; };
 		9FEC4DCF15C29894008B18D5 /* JSNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4DCE15C29894008B18D5 /* JSNotifier.m */; };
 		9FEC4DD415C298E7008B18D5 /* NotifyCheck.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FEC4DD015C298E7008B18D5 /* NotifyCheck.png */; };
 		9FEC4DD515C298E7008B18D5 /* NotifyCheck@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FEC4DD115C298E7008B18D5 /* NotifyCheck@2x.png */; };
@@ -32,6 +33,9 @@
 		9FEC4DDF15C2C1C5008B18D5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FEC4DDE15C2C1C5008B18D5 /* Security.framework */; };
 		9FEC4DE115C2C1E7008B18D5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FEC4DE015C2C1E7008B18D5 /* QuartzCore.framework */; };
 		9FEC4E0915C93F0D008B18D5 /* TSUnlockViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4E0815C93F0D008B18D5 /* TSUnlockViewController.m */; };
+		9FEC4E3E15CAA386008B18D5 /* TSListOfItems.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4E3D15CAA386008B18D5 /* TSListOfItems.m */; };
+		9FEC4E4115CAA396008B18D5 /* TSItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4E4015CAA396008B18D5 /* TSItem.m */; };
+		9FEC4E6215CABA1E008B18D5 /* XMLWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4E6115CABA1E008B18D5 /* XMLWriter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +73,8 @@
 		9F8ED49615B98C6A00391EF8 /* TanukiSecretsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TanukiSecretsTests.m; sourceTree = "<group>"; };
 		9F8ED4B215B9A0EB00391EF8 /* TSFilesystemTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSFilesystemTableViewController.h; sourceTree = "<group>"; };
 		9F8ED4B315B9A0EB00391EF8 /* TSFilesystemTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSFilesystemTableViewController.m; sourceTree = "<group>"; };
+		9F9D868C15CBFDF60066BC04 /* SMXMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXMLDocument.h; sourceTree = "<group>"; };
+		9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXMLDocument.m; sourceTree = "<group>"; };
 		9FEC4DC515C18107008B18D5 /* TanukiSecrets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TanukiSecrets.entitlements; sourceTree = "<group>"; };
 		9FEC4DCD15C29894008B18D5 /* JSNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotifier.h; sourceTree = "<group>"; };
 		9FEC4DCE15C29894008B18D5 /* JSNotifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSNotifier.m; sourceTree = "<group>"; };
@@ -82,6 +88,13 @@
 		9FEC4DE215C2C43C008B18D5 /* secrets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secrets.h; sourceTree = "<group>"; };
 		9FEC4E0715C93F0D008B18D5 /* TSUnlockViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUnlockViewController.h; sourceTree = "<group>"; };
 		9FEC4E0815C93F0D008B18D5 /* TSUnlockViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUnlockViewController.m; sourceTree = "<group>"; };
+		9FEC4E3C15CAA386008B18D5 /* TSListOfItems.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSListOfItems.h; sourceTree = "<group>"; };
+		9FEC4E3D15CAA386008B18D5 /* TSListOfItems.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSListOfItems.m; sourceTree = "<group>"; };
+		9FEC4E3F15CAA396008B18D5 /* TSItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSItem.h; sourceTree = "<group>"; };
+		9FEC4E4015CAA396008B18D5 /* TSItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSItem.m; sourceTree = "<group>"; };
+		9FEC4E6015CABA1E008B18D5 /* XMLWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLWriter.h; sourceTree = "<group>"; };
+		9FEC4E6115CABA1E008B18D5 /* XMLWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLWriter.m; sourceTree = "<group>"; };
+		9FEC4E6315CABC77008B18D5 /* TSXMLSerializable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSXMLSerializable.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +160,7 @@
 		9F8ED46B15B98C6A00391EF8 /* TanukiSecrets */ = {
 			isa = PBXGroup;
 			children = (
+				9FEC4E3B15CAA349008B18D5 /* model */,
 				9FEC4DCB15C29847008B18D5 /* lib */,
 				9FEC4DC515C18107008B18D5 /* TanukiSecrets.entitlements */,
 				9F8ED4B015B9A0AC00391EF8 /* sandbox */,
@@ -201,13 +215,29 @@
 				9F8ED4B315B9A0EB00391EF8 /* TSFilesystemTableViewController.m */,
 				9FEC4E0715C93F0D008B18D5 /* TSUnlockViewController.h */,
 				9FEC4E0815C93F0D008B18D5 /* TSUnlockViewController.m */,
+				9FEC4E3C15CAA386008B18D5 /* TSListOfItems.h */,
+				9FEC4E3D15CAA386008B18D5 /* TSListOfItems.m */,
+				9FEC4E3F15CAA396008B18D5 /* TSItem.h */,
+				9FEC4E4015CAA396008B18D5 /* TSItem.m */,
+				9FEC4E6315CABC77008B18D5 /* TSXMLSerializable.h */,
 			);
 			name = sandbox;
+			sourceTree = "<group>";
+		};
+		9F9D868B15CBFDF60066BC04 /* SMXMLDocument */ = {
+			isa = PBXGroup;
+			children = (
+				9F9D868C15CBFDF60066BC04 /* SMXMLDocument.h */,
+				9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */,
+			);
+			path = SMXMLDocument;
 			sourceTree = "<group>";
 		};
 		9FEC4DCB15C29847008B18D5 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				9F9D868B15CBFDF60066BC04 /* SMXMLDocument */,
+				9FEC4E5F15CABA1E008B18D5 /* XMLWriter */,
 				9FEC4DCC15C29870008B18D5 /* JSNotifier */,
 			);
 			name = lib;
@@ -224,6 +254,22 @@
 				9FEC4DCE15C29894008B18D5 /* JSNotifier.m */,
 			);
 			name = JSNotifier;
+			sourceTree = "<group>";
+		};
+		9FEC4E3B15CAA349008B18D5 /* model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = model;
+			sourceTree = "<group>";
+		};
+		9FEC4E5F15CABA1E008B18D5 /* XMLWriter */ = {
+			isa = PBXGroup;
+			children = (
+				9FEC4E6015CABA1E008B18D5 /* XMLWriter.h */,
+				9FEC4E6115CABA1E008B18D5 /* XMLWriter.m */,
+			);
+			path = XMLWriter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -346,6 +392,10 @@
 				9F8ED4B415B9A0EB00391EF8 /* TSFilesystemTableViewController.m in Sources */,
 				9FEC4DCF15C29894008B18D5 /* JSNotifier.m in Sources */,
 				9FEC4E0915C93F0D008B18D5 /* TSUnlockViewController.m in Sources */,
+				9FEC4E3E15CAA386008B18D5 /* TSListOfItems.m in Sources */,
+				9FEC4E4115CAA396008B18D5 /* TSItem.m in Sources */,
+				9FEC4E6215CABA1E008B18D5 /* XMLWriter.m in Sources */,
+				9F9D868E15CBFDF60066BC04 /* SMXMLDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

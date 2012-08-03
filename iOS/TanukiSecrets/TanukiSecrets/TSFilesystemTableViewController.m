@@ -7,7 +7,13 @@
 //
 
 #import "TSFilesystemTableViewController.h"
+#import "TSItem.h"
+#import "TSListOfItems.h"
+#import "TSXMLSerializable.h"
+
 #import "JSNotifier.h"
+#import "XMLWriter.h"
+
 #import <DropboxSDK/DropboxSDK.h>
 #import <CommonCrypto/CommonDigest.h>
 #import <CommonCrypto/CommonCryptor.h>
@@ -19,10 +25,55 @@
 	NSArray *dropboxItems;//DBMetadata
 	
 	DBRestClient *dropboxRestClient;
+	
+	TSListOfItems *xmlParserItemsList;
+	TSItem *xmlParserItem;
 }
 @end
 
 @implementation TSFilesystemTableViewController
+
+#pragma mark - XML
+
+- (TSItem *)demoItem
+{
+	TSItem *ret = [[TSItem alloc] init];
+	ret.string = @"this is a string";
+	ret.date = [[NSDate alloc] init];
+	ret.integer = 13;
+	return ret;
+}
+
+- (NSString *)demoFileContent
+{
+	XMLWriter *xmlWriter = [[XMLWriter alloc] init];
+	TSListOfItems *listOfItems = [[TSListOfItems alloc] init];
+	[listOfItems addItem:[self demoItem]];
+	[listOfItems addItem:[self demoItem]];
+	[listOfItems writeTo:xmlWriter];
+	
+	return [xmlWriter toString];
+}
+
+- (void)readListOfItems:(NSData *)data
+{
+	NSError *error;
+	SMXMLDocument *document = [SMXMLDocument documentWithData:data error:&error];
+	if (error == nil) {
+		NSLog(@"root name : %@", document.root.name);
+		TSListOfItems *listOfItems = [TSListOfItems readFrom:document.root];
+		if (listOfItems != nil) {
+			NSLog(@"Successfully read list of %d items", [listOfItems.items count]);
+			for (TSItem *item in listOfItems.items) {
+				NSLog(@"Item with string %@ date %@ and int %d", item.string, item.date, item.integer);
+			}
+		}else {
+			NSLog(@"Failed to read list of items.");
+		}
+	}else {
+		NSLog(@"XML read error : %@", [error debugDescription]);
+	}
+}
 
 #pragma mark - Encryption
 
@@ -273,7 +324,8 @@
 	NSString *filename = [dateFormat stringFromDate:[NSDate date]];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
-	NSString *fileContent = [NSString stringWithFormat:@"This is the content of the file named %@.\nA newline was added before and after this phrase.\nAnd this is the end of the content. Point!", filename];
+//	NSString *fileContent = [NSString stringWithFormat:@"This is the content of the file named %@.\nA newline was added before and after this phrase.\nAnd this is the end of the content. Point!", filename];
+	NSString *fileContent = [self demoFileContent];
 	NSLog(@"Encrypt-decrypt test for |%@|", fileContent);
 	NSData *encryptedData = [self encryptData:[fileContent dataUsingEncoding:NSUTF8StringEncoding]];
 	NSData *decryptedData = [self decryptData:encryptedData];
@@ -281,6 +333,7 @@
 		  [[NSString alloc] initWithBytes:[decryptedData bytes] 
 								   length:[decryptedData length] 
 								 encoding:NSUTF8StringEncoding]);
+	[self readListOfItems:decryptedData];
 	[fileManager createFileAtPath: filePath
 						 contents:encryptedData 
 					   attributes:nil];

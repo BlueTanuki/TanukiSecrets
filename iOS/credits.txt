@@ -1,0 +1,11 @@
+[[TBD]]
+
+Using components/libraries :
+
+ * XMLWriter: An XML stream writer for iOS. http://code.google.com/p/xswi/
+	~MIT License - Thomas Rørvik Skjølberg
+ * SMXMLDocument: lightweight XML parser for iOS. https://github.com/nfarina/xmldocument
+	 MIT License - Spotlight Mobile
+ * JSNotifier: unobtrusive gui notifications. https://github.com/jonahsiegle/JSNotifier
+	Apache License, Version 2.0 http://www.apache.org/licenses/LICENSE-2.0 - Jonah Siegle
+ * 

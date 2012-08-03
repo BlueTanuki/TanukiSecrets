@@ -27,7 +27,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3Ot-bF-JZW" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="1RU-l6-G5J" customClass="TSFilesystemTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="UTv-hg-qgv">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <button key="tableFooterView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="a0C-hV-3zM">
@@ -178,7 +178,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="091-sK-ApN" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="Zh7-KV-F1x" customClass="TSUnlockViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="JZU-JT-YMW">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="VuM-an-QFl">
@@ -205,7 +205,7 @@
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="936" y="-1148"/>
+            <point key="canvasLocation" x="1226" y="-1184"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="MPK-TT-JBO">
@@ -218,8 +218,12 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
+                    <toolbar key="toolbar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="SDZ-HE-Z3q">
+                        <rect key="frame" x="0.0" y="436" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
-                        <segue destination="Zh7-KV-F1x" kind="relationship" relationship="rootViewController" id="Hdg-3y-3wK"/>
+                        <segue destination="1RU-l6-G5J" kind="relationship" relationship="rootViewController" id="DAQ-jV-UYh"/>
                     </connections>
                 </navigationController>
             </objects>
