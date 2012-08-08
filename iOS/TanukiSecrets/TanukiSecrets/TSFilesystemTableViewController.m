@@ -94,13 +94,13 @@
 	return [NSData dataWithBytes:hash length:CC_MD5_DIGEST_LENGTH];
 }
 
-- (NSData *) salt
+- (NSData *) randomDataOfLength:(NSInteger)length
 {
-	uint8_t *buf = malloc( CC_SHA512_DIGEST_LENGTH * sizeof(uint8_t) );
-	OSStatus sanityCheck = SecRandomCopyBytes(kSecRandomDefault, CC_SHA512_DIGEST_LENGTH, buf);
+	uint8_t *buf = malloc( length * sizeof(uint8_t) );
+	OSStatus sanityCheck = SecRandomCopyBytes(kSecRandomDefault, length, buf);
 	NSData *ret = nil;
 	if (sanityCheck == noErr) {
-		ret = [[NSData alloc] initWithBytes:buf length:CC_SHA512_DIGEST_LENGTH];
+		ret = [[NSData alloc] initWithBytes:buf length:length];
 	}else {
 		NSLog(@"Random data generation failed");
 	}
@@ -350,8 +350,8 @@
 //	[dateFormat setDateFormat:@"yyyy-MM-dd_HH:mm:ss"];
 //	NSString *filename = [dateFormat stringFromDate:[NSDate date]];
 	
-	NSData *salt = [self salt];
-	NSData *key = [self tanukiHash:@"Ihl4pwd!" usingSalt:salt];
+	NSData *salt = [self randomDataOfLength:(32 + arc4random() % 64)];
+	NSData *key = [self tanukiHash:@"TheTanukiSais...NI-PAH~!" usingSalt:salt];
 	NSString *filename = [self hexStringFor:salt];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
