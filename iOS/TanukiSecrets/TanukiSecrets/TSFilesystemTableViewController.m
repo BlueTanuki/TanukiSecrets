@@ -18,6 +18,7 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <CommonCrypto/CommonCryptor.h>
 #import <CommonCrypto/CommonKeyDerivation.h>
+#import <Security/Security.h>
 
 @interface TSFilesystemTableViewController () <DBRestClientDelegate> {
 
@@ -93,29 +94,58 @@
 	return [NSData dataWithBytes:hash length:CC_MD5_DIGEST_LENGTH];
 }
 
-- (NSData *) tanukiHash:(NSString *) secret
+- (NSData *) salt
 {
-	NSData *bytes = [secret dataUsingEncoding:NSUTF8StringEncoding];
-	unsigned char hash[CC_SHA512_DIGEST_LENGTH];
-	CC_SHA512([bytes bytes], [bytes length], hash);
-	bytes = [NSData dataWithBytes:hash length:CC_SHA512_DIGEST_LENGTH];
-	for (int i=0; i<13666; i++) {
-		CC_SHA512([bytes bytes], [bytes length], hash);
-		bytes = [NSData dataWithBytes:hash length:CC_SHA512_DIGEST_LENGTH];
+	uint8_t *buf = malloc( CC_SHA512_DIGEST_LENGTH * sizeof(uint8_t) );
+	OSStatus sanityCheck = SecRandomCopyBytes(kSecRandomDefault, CC_SHA512_DIGEST_LENGTH, buf);
+	NSData *ret = nil;
+	if (sanityCheck == noErr) {
+		ret = [[NSData alloc] initWithBytes:buf length:CC_SHA512_DIGEST_LENGTH];
+	}else {
+		NSLog(@"Random data generation failed");
 	}
-	unsigned char hash2[CC_MD5_DIGEST_LENGTH];
-	CC_MD5([bytes bytes], [bytes length], hash2);
-	return [NSData dataWithBytes:hash2 length:CC_MD5_DIGEST_LENGTH];
+	free(buf);
+	buf = NULL;
+	return ret;
 }
 
-- (NSData *)encryptData:(NSData *) data 
+- (NSString *) hexStringFor:(NSData *) data
+{
+	NSString *ret = [data description];
+	ret = [ret stringByReplacingOccurrencesOfString:@" " withString:@""];
+	ret = [ret stringByReplacingOccurrencesOfString:@"<" withString:@""];
+	ret = [ret stringByReplacingOccurrencesOfString:@">" withString:@""];
+	return ret;
+}
+
+- (NSData *) tanukiHash:(NSString *) secret usingSalt:(NSData *)salt
+{
+	NSLog(@"TanukiHash called, using secret %@ and salt %@", secret, [salt description]);
+	unsigned long bufSize = 1024l * 1024 * 13;
+	uint8_t *buf = malloc(bufSize * sizeof(uint8_t));
+	NSData *secretBytes = [secret dataUsingEncoding:NSUTF8StringEncoding];
+	CC_SHA512([secretBytes bytes], [secretBytes length], buf);
+	CC_SHA512([salt bytes], [salt length], buf + CC_SHA512_DIGEST_LENGTH);
+	unsigned long n = bufSize / CC_SHA512_DIGEST_LENGTH;
+	for (unsigned long i=2; i<n; i++) {
+		CC_SHA512(buf + (i - 2) * CC_SHA512_DIGEST_LENGTH, CC_SHA512_DIGEST_LENGTH,
+				  buf + i * CC_SHA512_DIGEST_LENGTH);
+	}
+	
+	NSData *bytes = [NSData dataWithBytes:buf length:bufSize];
+	free(buf);
+	unsigned char hash2[CC_MD5_DIGEST_LENGTH];
+	CC_MD5([bytes bytes], [bytes length], hash2);
+	NSData *ret = [NSData dataWithBytes:hash2 length:CC_MD5_DIGEST_LENGTH];
+	NSLog(@"TanukiHash returning %@", [ret description]);
+	return ret;
+}
+
+- (NSData *)encryptData:(NSData *) data usingKey:(NSData *)key
 {
 	NSLog(@"encryptData start...");
-	NSData *keyHash = [self tanukiHash:@"Ihl4pwd!"];
-	NSLog(@"key hash : %@", [keyHash description]);
-	//Note : salting goes inside the keyHash computation
 	
-	NSData *initializationVector = [self tanukiHash:@"TanukiSecrets"];
+	NSData *initializationVector = [self tanukiHash:@"TanukiSecrets" usingSalt:key];
 	NSLog(@"iv : %@", [initializationVector description]);
 	
 	NSMutableData *encryptedData = [NSMutableData dataWithLength:data.length + kCCBlockSizeAES128];
@@ -123,7 +153,7 @@
 	CCCryptorStatus cryptStatus = 
 	CCCrypt(
 			kCCEncrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
-			[keyHash bytes], [keyHash length], [initializationVector bytes],
+			[key bytes], [key length], [initializationVector bytes],
 			[data bytes], [data length],
 			[encryptedData mutableBytes], [encryptedData length],
 			&outLength);
@@ -138,14 +168,11 @@
 	return encryptedData;
 }
 
-- (NSData *)decryptData:(NSData *) data 
+- (NSData *)decryptData:(NSData *) data usingKey:(NSData *)key
 {
 	NSLog(@"decryptData start...");
-	NSData *keyHash = [self tanukiHash:@"Ihl4pwd!"];
-	NSLog(@"key hash : %@", [keyHash description]);
-	//Note : salting goes inside the keyHash computation
 	
-	NSData *initializationVector = [self tanukiHash:@"TanukiSecrets"];
+	NSData *initializationVector = [self tanukiHash:@"TanukiSecrets" usingSalt:key];
 	NSLog(@"iv : %@", [initializationVector description]);
 	
 	NSMutableData *decryptedData = [NSMutableData dataWithLength:data.length + kCCBlockSizeAES128];
@@ -153,7 +180,7 @@
 	CCCryptorStatus cryptStatus = 
 	CCCrypt(
 			kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
-			[keyHash bytes], [keyHash length], [initializationVector bytes],
+			[key bytes], [key length], [initializationVector bytes],
 			[data bytes], [data length],
 			[decryptedData mutableBytes], [decryptedData length],
 			&outLength);
@@ -319,16 +346,20 @@
 }
 
 - (IBAction)addDropboxItem:(UIButton *)sender {
-	NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-	[dateFormat setDateFormat:@"yyyy-MM-dd_HH:mm:ss"];
-	NSString *filename = [dateFormat stringFromDate:[NSDate date]];
+//	NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+//	[dateFormat setDateFormat:@"yyyy-MM-dd_HH:mm:ss"];
+//	NSString *filename = [dateFormat stringFromDate:[NSDate date]];
+	
+	NSData *salt = [self salt];
+	NSData *key = [self tanukiHash:@"Ihl4pwd!" usingSalt:salt];
+	NSString *filename = [self hexStringFor:salt];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
-//	NSString *fileContent = [NSString stringWithFormat:@"This is the content of the file named %@.\nA newline was added before and after this phrase.\nAnd this is the end of the content. Point!", filename];
+
 	NSString *fileContent = [self demoFileContent];
 	NSLog(@"Encrypt-decrypt test for |%@|", fileContent);
-	NSData *encryptedData = [self encryptData:[fileContent dataUsingEncoding:NSUTF8StringEncoding]];
-	NSData *decryptedData = [self decryptData:encryptedData];
+	NSData *encryptedData = [self encryptData:[fileContent dataUsingEncoding:NSUTF8StringEncoding] usingKey:key];
+	NSData *decryptedData = [self decryptData:encryptedData usingKey:key];
 	NSLog(@"Result of encrypt-decrypt : |%@|", 
 		  [[NSString alloc] initWithBytes:[decryptedData bytes] 
 								   length:[decryptedData length] 
