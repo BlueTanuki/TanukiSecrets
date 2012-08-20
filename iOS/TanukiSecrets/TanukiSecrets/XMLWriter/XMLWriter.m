@@ -86,7 +86,7 @@ static NSString *const XSI_NAMESPACE_URI_PREFIX = @"xsi";
 		automaticEmptyElements = YES;
 		
 		// setup default xml namespaces. assume both are previously known.
-		[namespaceCounts addObject:[NSNumber numberWithInt:2]];
+		[namespaceCounts addObject:@2];
 		[self setPrefix:XML_NAMESPACE_URI_PREFIX namespaceURI:XML_NAMESPACE_URI];
 		[self setPrefix:XMLNS_NAMESPACE_URI_PREFIX namespaceURI:XMLNS_NAMESPACE_URI];
 	}

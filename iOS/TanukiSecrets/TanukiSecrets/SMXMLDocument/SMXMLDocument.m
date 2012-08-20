@@ -4,8 +4,8 @@ NSString *const SMXMLDocumentErrorDomain = @"SMXMLDocumentErrorDomain";
 
 static NSError *SMXMLDocumentError(NSXMLParser *parser, NSError *parseError) {	
 	NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObject:parseError forKey:NSUnderlyingErrorKey];
-	NSNumber *lineNumber = [NSNumber numberWithInteger:parser.lineNumber];
-	NSNumber *columnNumber = [NSNumber numberWithInteger:parser.columnNumber];
+	NSNumber *lineNumber = @(parser.lineNumber);
+	NSNumber *columnNumber = @(parser.columnNumber);
 	[userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"Malformed XML document. Error at line %@:%@.", @""), lineNumber, columnNumber] forKey:NSLocalizedDescriptionKey];
 	[userInfo setObject:lineNumber forKey:@"LineNumber"];
 	[userInfo setObject:columnNumber forKey:@"ColumnNumber"];
