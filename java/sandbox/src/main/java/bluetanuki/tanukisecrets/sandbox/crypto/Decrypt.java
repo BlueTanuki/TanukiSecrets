@@ -75,9 +75,9 @@ public class Decrypt {
 //			System.out.println (string);
 //		}
 		
-		File baseFolder = new File ("/home/ganea/Desktop/Dropbox/Apps/Tanuki Secrets");
+		File baseFolder = new File ("/Users/lucian/Dropbox/Apps/Tanuki Secrets");
 		for (File file : baseFolder.listFiles ()) {
-			if (!file.getName ().startsWith (".")) {
+			if ((!file.getName ().startsWith (".")) && (!file.getName ().startsWith ("Icon"))) {
 				long start = System.currentTimeMillis ();
 				System.out.println ("File :: " + file.getName ());
 				byte[] salt = Hex.decodeHex (file.getName ().toCharArray ());
