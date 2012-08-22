@@ -9,20 +9,25 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>bluetanuki.tanukisecrets</groupId>
-	<artifactId>sandbox</artifactId>
+	<artifactId>common</artifactId>
 	<packaging>jar</packaging>
 	<version>${bluetanuki.tanukisecrets.version}</version>
 
-	<name>TanukiSecrets sandbox</name>
+	<name>TanukiSecrets common</name>
 	<description>
-		Sandbox for various tests. Playground for features that have not yet been integrated in the main project.
+		Common components shared by all projects.
 	</description>
 
 	<dependencies>
 		<dependency>
-			<groupId>bluetanuki.tanukisecrets</groupId>
-			<artifactId>common</artifactId>
-			<version>${bluetanuki.tanukisecrets.version}</version>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.1</version>
 		</dependency>
 	</dependencies>
 

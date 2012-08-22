@@ -1,0 +1,37 @@
+package bluetanuki.tanukisecrets.sandbox.crypto;
+
+import bluetanuki.tanukisecrets.common.crypto.HashFunctions;
+import java.io.File;
+import org.apache.commons.codec.binary.Hex;
+
+/**
+ *
+ * @author lucian
+ */
+public class OpensslDecryptHelper {
+	
+	private static void printUsage () {
+		System.err.println ("Usage : java ... OpensslDecryptHelper secret salt");
+		System.err.println ();
+		System.err.println ("secret : the plaintext password used during encryption");
+		System.err.println ("salt : the random binary salt used during encryption (hex-encoded)");
+	}
+	
+	public static void main (String[] args) throws Exception {
+		if (args.length != 2) {
+			printUsage ();
+			System.exit (13);
+		}
+		String secret = args[0];
+		byte[] salt = Hex.decodeHex (args[1].toCharArray ());
+		byte[] key = HashFunctions.tanukiHash (secret, salt);
+		byte[] iv = HashFunctions.tanukiHash ("TanukiSecrets", key);
+		
+		String keyString = Hex.encodeHexString (key);
+		String ivString = Hex.encodeHexString (iv);
+		System.out.println ("Execute the following command : \n"
+				  + "openssl enc -d -aes-128-cbc -in /path/to/encryptedFile -out /path/to/decryptedFile " 
+				  + "-K " + keyString + " -iv " + ivString + " -nosalt -nopad");
+	}
+
+}
