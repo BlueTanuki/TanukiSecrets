@@ -101,7 +101,7 @@ static NSString *const XSI_NAMESPACE_URI_PREFIX = @"xsi";
 		[namespaceCounts addObject:previousCount];
 	} else {
 		// the count has changed, save the it
-		NSNumber* count = [NSNumber numberWithInt:[namespaceURIs count]];
+		NSNumber* count = [NSNumber numberWithInteger:[namespaceURIs count]];
 	
 		[namespaceCounts addObject:count];
 	}

@@ -8,4 +8,5 @@ Using components/libraries :
 	 MIT License - Spotlight Mobile
  * JSNotifier: unobtrusive gui notifications. https://github.com/jonahsiegle/JSNotifier
 	Apache License, Version 2.0 http://www.apache.org/licenses/LICENSE-2.0 - Jonah Siegle
+	+ contributions by stevewilford that were not included in the main branch https://github.com/stevewilford/JSNotifier
  * 

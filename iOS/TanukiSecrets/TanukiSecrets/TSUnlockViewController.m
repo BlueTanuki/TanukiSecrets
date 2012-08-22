@@ -12,6 +12,7 @@
 
 @property (weak, nonatomic) IBOutlet UITextField *unlockCodeTextField;
 @property (weak, nonatomic) IBOutlet UILabel *unlockCodeLabel;
+@property (weak, nonatomic) IBOutlet UISwitch *onOffSwitch;
 
 @end
 
@@ -19,6 +20,7 @@
 
 @synthesize unlockCodeTextField;
 @synthesize unlockCodeLabel;
+@synthesize onOffSwitch;
 
 #pragma mark - Listeners
 
@@ -40,6 +42,20 @@
 {
 	[self.unlockCodeTextField resignFirstResponder];
 	NSLog(@"Editing ended, value is :: %@", unlockCodeTextField.text);
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+	NSLog(@"Segue %@ sender %@", [segue debugDescription], [sender debugDescription]);
+}
+
+- (IBAction)go:(id)sender {
+	NSLog(@"onOffSwitch :: %@", [self.onOffSwitch debugDescription]);
+	if (self.onOffSwitch.on) {
+		[self performSegueWithIdentifier:@"onSegue" sender:nil];
+	}else {
+		[self performSegueWithIdentifier:@"offSegue" sender:nil];
+	}
 }
 
 #pragma mark - view lifecycle
@@ -64,6 +80,7 @@
 {
 	[self setUnlockCodeTextField:nil];
 	[self setUnlockCodeLabel:nil];
+	[self setOnOffSwitch:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
