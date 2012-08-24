@@ -78,20 +78,30 @@
 
 #pragma mark - Encryption
 
-- (NSData *) sha512:(NSString *) string
+- (NSData *) sha512:(NSData *) bytes
 {
-	NSData *bytes = [string dataUsingEncoding:NSUTF8StringEncoding];
 	unsigned char hash[CC_SHA512_DIGEST_LENGTH];
 	CC_SHA512([bytes bytes], [bytes length], hash);
 	return [NSData dataWithBytes:hash length:CC_SHA512_DIGEST_LENGTH];
 }
 
-- (NSData *) md5:(NSString *) string
+- (NSData *) sha512text:(NSString *) string
 {
 	NSData *bytes = [string dataUsingEncoding:NSUTF8StringEncoding];
+	return [self sha512:bytes];
+}
+
+- (NSData *) md5:(NSData *) bytes
+{
 	unsigned char hash[CC_MD5_DIGEST_LENGTH];
 	CC_MD5([bytes bytes], [bytes length], hash);
 	return [NSData dataWithBytes:hash length:CC_MD5_DIGEST_LENGTH];
+}
+
+- (NSData *) md5text:(NSString *) string
+{
+	NSData *bytes = [string dataUsingEncoding:NSUTF8StringEncoding];
+	return [self md5:bytes];
 }
 
 - (NSData *) randomDataOfLength:(NSInteger)length
@@ -134,19 +144,18 @@
 	
 	NSData *bytes = [NSData dataWithBytes:buf length:bufSize];
 	free(buf);
-	unsigned char hash2[CC_MD5_DIGEST_LENGTH];
-	CC_MD5([bytes bytes], [bytes length], hash2);
-	NSData *ret = [NSData dataWithBytes:hash2 length:CC_MD5_DIGEST_LENGTH];
+	NSData *ret = [self md5:bytes];
 	NSLog(@"TanukiHash returning %@", [ret description]);
 	return ret;
 }
 
-- (NSData *)encryptData:(NSData *) data usingKey:(NSData *)key
+- (NSData *)encryptData:(NSData *) data usingSecret:(NSString *) secret andSalt:(NSData *)salt
 {
 	NSLog(@"encryptData start...");
 	
-	NSData *initializationVector = [self tanukiHash:@"TanukiSecrets" usingSalt:key];
-	NSLog(@"iv : %@", [initializationVector description]);
+	NSData *key = [self tanukiHash:secret usingSalt:salt];
+	NSData *initializationVector = [self md5:salt];
+//	NSLog(@"iv : %@", [initializationVector description]);
 	
 	NSMutableData *encryptedData = [NSMutableData dataWithLength:data.length + kCCBlockSizeAES128];
 	size_t outLength;
@@ -164,16 +173,17 @@
 		encryptedData = nil;
 	}
 
-	NSLog(@"encrypted :: %@", [encryptedData description]);
+//	NSLog(@"encrypted :: %@", [encryptedData description]);
 	return encryptedData;
 }
 
-- (NSData *)decryptData:(NSData *) data usingKey:(NSData *)key
+- (NSData *)decryptData:(NSData *) data usingSecret:(NSString *) secret andSalt:(NSData *)salt
 {
 	NSLog(@"decryptData start...");
 	
-	NSData *initializationVector = [self tanukiHash:@"TanukiSecrets" usingSalt:key];
-	NSLog(@"iv : %@", [initializationVector description]);
+	NSData *key = [self tanukiHash:secret usingSalt:salt];
+	NSData *initializationVector = [self md5:salt];
+//	NSLog(@"iv : %@", [initializationVector description]);
 	
 	NSMutableData *decryptedData = [NSMutableData dataWithLength:data.length + kCCBlockSizeAES128];
 	size_t outLength;
@@ -191,7 +201,7 @@
 		decryptedData = nil;
 	}
 	
-	NSLog(@"decrypted :: %@", [decryptedData description]);
+//	NSLog(@"decrypted :: %@", [decryptedData description]);
 	return decryptedData;
 }
 
@@ -351,20 +361,24 @@
 //	NSString *filename = [dateFormat stringFromDate:[NSDate date]];
 	
 	NSData *salt = [self randomDataOfLength:(32 + arc4random() % 64)];
-	NSData *key = [self tanukiHash:@"TheTanukiSais...NI-PAH~!" usingSalt:salt];
 	NSString *filename = [self hexStringFor:salt];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
-
 	NSString *fileContent = [self demoFileContent];
-	NSLog(@"Encrypt-decrypt test for |%@|", fileContent);
-	NSData *encryptedData = [self encryptData:[fileContent dataUsingEncoding:NSUTF8StringEncoding] usingKey:key];
-	NSData *decryptedData = [self decryptData:encryptedData usingKey:key];
-	NSLog(@"Result of encrypt-decrypt : |%@|", 
-		  [[NSString alloc] initWithBytes:[decryptedData bytes] 
-								   length:[decryptedData length] 
-								 encoding:NSUTF8StringEncoding]);
-	[self readListOfItems:decryptedData];
+	
+	NSLog(@"Encrypting...");
+	NSData *encryptedData = [self encryptData:[fileContent dataUsingEncoding:NSUTF8StringEncoding]
+									 usingSecret:@"TheTanukiSais...NI-PAH~!" andSalt:salt];
+	NSLog(@"Encrypt finished.");
+	
+//	NSLog(@"Encrypt-decrypt test for |%@|", fileContent);
+//	NSData *decryptedData = [self decryptData:encryptedData usingKey:key];
+//	NSLog(@"Result of encrypt-decrypt : |%@|", 
+//		  [[NSString alloc] initWithBytes:[decryptedData bytes] 
+//								   length:[decryptedData length] 
+//								 encoding:NSUTF8StringEncoding]);
+//	[self readListOfItems:decryptedData];
+	
 	[fileManager createFileAtPath: filePath
 						 contents:encryptedData 
 					   attributes:nil];

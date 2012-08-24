@@ -5,6 +5,7 @@ import bluetanuki.tanukisecrets.common.crypto.HashFunctions;
 import java.io.File;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -30,7 +31,7 @@ public class Decrypt {
 				System.out.println ("salt :: " + Hex.encodeHexString (salt));
 				byte[] key = HashFunctions.tanukiHash ("TheTanukiSais...NI-PAH~!", salt);
 				System.out.println ("key :: " + Hex.encodeHexString (key));
-				byte[] iv = HashFunctions.tanukiHash ("TanukiSecrets", key);
+				byte[] iv = DigestUtils.md5 (salt);
 				System.out.println ("iv :: " + Hex.encodeHexString (iv));
 				byte[] encrypted = FileUtils.readFileToByteArray (file);
 				System.out.println ("encrypted :: " + Base64.encodeBase64String (encrypted));
@@ -44,8 +45,4 @@ public class Decrypt {
 	}
 
 }
-/*
-openssl enc -d -aes-128-cbc -in '2012-08-01_10:54:08' -out /tmp/dec 
-   -K 2e9de8bf30e62e03693b3e4fd545be15 -iv f4d052713eab16fa577867aff40bcf82 -nosalt -nopad
-*/
  

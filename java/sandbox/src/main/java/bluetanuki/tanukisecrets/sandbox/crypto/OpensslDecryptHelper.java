@@ -1,8 +1,8 @@
 package bluetanuki.tanukisecrets.sandbox.crypto;
 
 import bluetanuki.tanukisecrets.common.crypto.HashFunctions;
-import java.io.File;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  *
@@ -25,13 +25,13 @@ public class OpensslDecryptHelper {
 		String secret = args[0];
 		byte[] salt = Hex.decodeHex (args[1].toCharArray ());
 		byte[] key = HashFunctions.tanukiHash (secret, salt);
-		byte[] iv = HashFunctions.tanukiHash ("TanukiSecrets", key);
+		byte[] iv = DigestUtils.md5 (salt);
 		
 		String keyString = Hex.encodeHexString (key);
 		String ivString = Hex.encodeHexString (iv);
 		System.out.println ("Execute the following command : \n"
 				  + "openssl enc -d -aes-128-cbc -in /path/to/encryptedFile -out /path/to/decryptedFile " 
-				  + "-K " + keyString + " -iv " + ivString + " -nosalt -nopad");
+				  + "-K " + keyString + " -iv " + ivString + " -nosalt");
 	}
 
 }
