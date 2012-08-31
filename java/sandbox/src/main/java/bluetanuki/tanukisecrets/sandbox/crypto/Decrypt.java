@@ -1,6 +1,6 @@
 package bluetanuki.tanukisecrets.sandbox.crypto;
 
-import bluetanuki.tanukisecrets.common.crypto.AES;
+import bluetanuki.tanukisecrets.common.crypto.CryptoUtils;
 import bluetanuki.tanukisecrets.common.crypto.HashFunctions;
 import java.io.File;
 import org.apache.commons.codec.binary.Base64;
@@ -29,13 +29,9 @@ public class Decrypt {
 				System.out.println ("File :: " + file.getName ());
 				byte[] salt = Hex.decodeHex (file.getName ().toCharArray ());
 				System.out.println ("salt :: " + Hex.encodeHexString (salt));
-				byte[] key = HashFunctions.tanukiHash ("TheTanukiSais...NI-PAH~!", salt);
-				System.out.println ("key :: " + Hex.encodeHexString (key));
-				byte[] iv = DigestUtils.md5 (salt);
-				System.out.println ("iv :: " + Hex.encodeHexString (iv));
 				byte[] encrypted = FileUtils.readFileToByteArray (file);
 				System.out.println ("encrypted :: " + Base64.encodeBase64String (encrypted));
-				byte[] decrypted = AES.decryptAes128CbcWithPadding (encrypted, key, iv);
+				byte[] decrypted = CryptoUtils.tanukiDecrypt (encrypted, "TheTanukiSais...NI-PAH~!", salt);
 				System.out.println ("decrypted :: " + Base64.encodeBase64String (decrypted));
 				System.out.println ("as string :: |" + new String (decrypted, "UTF-8") + "|");
 				long end = System.currentTimeMillis ();

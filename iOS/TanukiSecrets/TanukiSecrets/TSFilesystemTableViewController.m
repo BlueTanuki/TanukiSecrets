@@ -7,18 +7,18 @@
 //
 
 #import "TSFilesystemTableViewController.h"
+
+#import <DropboxSDK/DropboxSDK.h>
+
 #import "TSItem.h"
 #import "TSListOfItems.h"
-#import "TSXMLSerializable.h"
 
 #import "JSNotifier.h"
 #import "XMLWriter.h"
 
-#import <DropboxSDK/DropboxSDK.h>
-#import <CommonCrypto/CommonDigest.h>
-#import <CommonCrypto/CommonCryptor.h>
-#import <CommonCrypto/CommonKeyDerivation.h>
-#import <Security/Security.h>
+#import "TSCryptoUtils.h"
+#import "TSStringUtils.h"
+
 
 @interface TSFilesystemTableViewController () <DBRestClientDelegate> {
 
@@ -76,134 +76,6 @@
 	}
 }
 
-#pragma mark - Encryption
-
-- (NSData *) sha512:(NSData *) bytes
-{
-	unsigned char hash[CC_SHA512_DIGEST_LENGTH];
-	CC_SHA512([bytes bytes], [bytes length], hash);
-	return [NSData dataWithBytes:hash length:CC_SHA512_DIGEST_LENGTH];
-}
-
-- (NSData *) sha512text:(NSString *) string
-{
-	NSData *bytes = [string dataUsingEncoding:NSUTF8StringEncoding];
-	return [self sha512:bytes];
-}
-
-- (NSData *) md5:(NSData *) bytes
-{
-	unsigned char hash[CC_MD5_DIGEST_LENGTH];
-	CC_MD5([bytes bytes], [bytes length], hash);
-	return [NSData dataWithBytes:hash length:CC_MD5_DIGEST_LENGTH];
-}
-
-- (NSData *) md5text:(NSString *) string
-{
-	NSData *bytes = [string dataUsingEncoding:NSUTF8StringEncoding];
-	return [self md5:bytes];
-}
-
-- (NSData *) randomDataOfLength:(NSInteger)length
-{
-	uint8_t *buf = malloc( length * sizeof(uint8_t) );
-	OSStatus sanityCheck = SecRandomCopyBytes(kSecRandomDefault, length, buf);
-	NSData *ret = nil;
-	if (sanityCheck == noErr) {
-		ret = [[NSData alloc] initWithBytes:buf length:length];
-	}else {
-		NSLog(@"Random data generation failed");
-	}
-	free(buf);
-	buf = NULL;
-	return ret;
-}
-
-- (NSString *) hexStringFor:(NSData *) data
-{
-	NSString *ret = [data description];
-	ret = [ret stringByReplacingOccurrencesOfString:@" " withString:@""];
-	ret = [ret stringByReplacingOccurrencesOfString:@"<" withString:@""];
-	ret = [ret stringByReplacingOccurrencesOfString:@">" withString:@""];
-	return ret;
-}
-
-- (NSData *) tanukiHash:(NSString *) secret usingSalt:(NSData *)salt
-{
-	NSLog(@"TanukiHash called, using secret %@ and salt %@", secret, [salt description]);
-	unsigned long bufSize = 1024l * 1024 * 13;
-	uint8_t *buf = malloc(bufSize * sizeof(uint8_t));
-	NSData *secretBytes = [secret dataUsingEncoding:NSUTF8StringEncoding];
-	CC_SHA512([secretBytes bytes], [secretBytes length], buf);
-	CC_SHA512([salt bytes], [salt length], buf + CC_SHA512_DIGEST_LENGTH);
-	unsigned long n = bufSize / CC_SHA512_DIGEST_LENGTH;
-	for (unsigned long i=2; i<n; i++) {
-		CC_SHA512(buf + (i - 2) * CC_SHA512_DIGEST_LENGTH, CC_SHA512_DIGEST_LENGTH,
-				  buf + i * CC_SHA512_DIGEST_LENGTH);
-	}
-	
-	NSData *bytes = [NSData dataWithBytes:buf length:bufSize];
-	free(buf);
-	NSData *ret = [self md5:bytes];
-	NSLog(@"TanukiHash returning %@", [ret description]);
-	return ret;
-}
-
-- (NSData *)encryptData:(NSData *) data usingSecret:(NSString *) secret andSalt:(NSData *)salt
-{
-	NSLog(@"encryptData start...");
-	
-	NSData *key = [self tanukiHash:secret usingSalt:salt];
-	NSData *initializationVector = [self md5:salt];
-//	NSLog(@"iv : %@", [initializationVector description]);
-	
-	NSMutableData *encryptedData = [NSMutableData dataWithLength:data.length + kCCBlockSizeAES128];
-	size_t outLength;
-	CCCryptorStatus cryptStatus = 
-	CCCrypt(
-			kCCEncrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
-			[key bytes], [key length], [initializationVector bytes],
-			[data bytes], [data length],
-			[encryptedData mutableBytes], [encryptedData length],
-			&outLength);
-	if (cryptStatus == kCCSuccess) {
-		[encryptedData setLength:outLength];
-	}else {
-		NSLog(@"Something went wrong...");
-		encryptedData = nil;
-	}
-
-//	NSLog(@"encrypted :: %@", [encryptedData description]);
-	return encryptedData;
-}
-
-- (NSData *)decryptData:(NSData *) data usingSecret:(NSString *) secret andSalt:(NSData *)salt
-{
-	NSLog(@"decryptData start...");
-	
-	NSData *key = [self tanukiHash:secret usingSalt:salt];
-	NSData *initializationVector = [self md5:salt];
-//	NSLog(@"iv : %@", [initializationVector description]);
-	
-	NSMutableData *decryptedData = [NSMutableData dataWithLength:data.length + kCCBlockSizeAES128];
-	size_t outLength;
-	CCCryptorStatus cryptStatus = 
-	CCCrypt(
-			kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
-			[key bytes], [key length], [initializationVector bytes],
-			[data bytes], [data length],
-			[decryptedData mutableBytes], [decryptedData length],
-			&outLength);
-	if (cryptStatus == kCCSuccess) {
-		[decryptedData setLength:outLength];
-	}else {
-		NSLog(@"Something went wrong...");
-		decryptedData = nil;
-	}
-	
-//	NSLog(@"decrypted :: %@", [decryptedData description]);
-	return decryptedData;
-}
 
 #pragma mark - Dropbox 
 
@@ -360,14 +232,14 @@
 //	[dateFormat setDateFormat:@"yyyy-MM-dd_HH:mm:ss"];
 //	NSString *filename = [dateFormat stringFromDate:[NSDate date]];
 	
-	NSData *salt = [self randomDataOfLength:(32 + arc4random() % 64)];
-	NSString *filename = [self hexStringFor:salt];
+	NSData *salt = [TSCryptoUtils randomDataOfVariableLengthMinimum:32 maximum:96];
+	NSString *filename = [TSStringUtils hexStringFor:salt];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
 	NSString *fileContent = [self demoFileContent];
 	
 	NSLog(@"Encrypting...");
-	NSData *encryptedData = [self encryptData:[fileContent dataUsingEncoding:NSUTF8StringEncoding]
+	NSData *encryptedData = [TSCryptoUtils tanukiEncrypt:[fileContent dataUsingEncoding:NSUTF8StringEncoding]
 									 usingSecret:@"TheTanukiSais...NI-PAH~!" andSalt:salt];
 	NSLog(@"Encrypt finished.");
 	
