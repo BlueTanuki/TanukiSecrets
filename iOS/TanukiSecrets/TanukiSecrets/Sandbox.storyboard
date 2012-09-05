@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2549" systemVersion="12B19" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="Mro-bQ-c0c">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2549" systemVersion="12B19" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4cE-kc-Zx9">
     <dependencies>
         <deployment defaultVersion="1296" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1498"/>
@@ -11,7 +11,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kWM-KM-2Bc" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="XmC-4j-m8p" customClass="TSFilesystemTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="NbV-5O-Ixk">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <button key="tableFooterView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="QhH-Cf-xQN">
@@ -72,7 +72,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bEK-oi-6NA" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="9qk-JK-dHl" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Pf6-N7-kYp">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Off" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="4lb-SD-pBm">
@@ -88,7 +88,7 @@
                     <navigationItem key="navigationItem" id="SVi-0K-1As"/>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="1029" y="-1319"/>
+            <point key="canvasLocation" x="1549" y="-991"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="PqH-zF-gBX">
@@ -106,7 +106,7 @@
                     </connections>
                 </navigationController>
             </objects>
-            <point key="canvasLocation" x="232" y="-340"/>
+            <point key="canvasLocation" x="372" y="-254"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="TZA-qg-ruD">
@@ -114,7 +114,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nPT-eN-heF" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="Fwk-LF-P5u" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="HzA-aI-8J8">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="On" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="5Lp-fu-9fj">
@@ -130,7 +130,7 @@
                     <navigationItem key="navigationItem" id="LSN-lh-don"/>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="661" y="-1331"/>
+            <point key="canvasLocation" x="1557" y="-1639"/>
         </scene>
         <!--Unlock View Controller-->
         <scene sceneID="I5T-o2-3u8">
@@ -138,7 +138,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dCu-z1-neS" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="Rdo-KC-Vnd" customClass="TSUnlockViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="G6r-Qh-LGl">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="RFN-44-bMh">
@@ -155,7 +155,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="U2C-2H-AiJ">
-                                <rect key="frame" x="203" y="22" width="97" height="37"/>
+                                <rect key="frame" x="203" y="19" width="97" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Go!">
@@ -187,7 +187,25 @@
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="670" y="-676"/>
+            <point key="canvasLocation" x="898" y="-984"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="gKS-Pe-LBA">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4JM-3F-0ot" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <navigationController id="4cE-kc-Zx9" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="weO-aY-pua">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Rdo-KC-Vnd" kind="relationship" relationship="rootViewController" id="EDu-GQ-WHT"/>
+                    </connections>
+                </navigationController>
+            </objects>
+            <point key="canvasLocation" x="372" y="-984"/>
         </scene>
     </scenes>
     <classes>
@@ -213,6 +231,6 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="xD1-8m-QWG"/>
+        <segue reference="gFO-3U-ja5"/>
     </inferredMetricsTieBreakers>
 </document>

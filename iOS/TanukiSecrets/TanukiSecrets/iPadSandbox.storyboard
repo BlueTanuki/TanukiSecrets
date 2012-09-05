@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2549" systemVersion="12B19" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="rFh-yG-jqZ">
+    <dependencies>
+        <deployment defaultVersion="1296" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1498"/>
+    </dependencies>
+    <scenes>
+        <!--Filesystem Table View Controller-->
+        <scene sceneID="IKh-M3-pNf">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="WfG-eO-zLk" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tableViewController id="S62-Jb-3Kz" customClass="TSFilesystemTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="YH5-nn-t8v">
+                        <rect key="frame" x="0.0" y="64" width="768" height="960"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <button key="tableFooterView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="c9Y-ic-Q5f">
+                            <rect key="frame" x="0.0" y="66" width="768" height="44"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                            <state key="normal" title="Add Dropbox item">
+                                <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <state key="highlighted">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="addDropboxItem:" destination="S62-Jb-3Kz" eventType="touchUpInside" id="T0Q-b1-a6i"/>
+                            </connections>
+                        </button>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FSCell" id="6Am-zQ-vDs">
+                                <rect key="frame" x="0.0" y="22" width="768" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="768" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="S62-Jb-3Kz" id="BFS-12-wbR"/>
+                            <outlet property="delegate" destination="S62-Jb-3Kz" id="2xK-sO-Nyf"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="LZE-Ce-OXl"/>
+                </tableViewController>
+            </objects>
+            <point key="canvasLocation" x="1048" y="-122"/>
+        </scene>
+        <!--Table View Controller - Root View Controller-->
+        <scene sceneID="BZv-es-S0Q">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qnj-5N-3dN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tableViewController clearsSelectionOnViewWillAppear="NO" id="y0x-z1-0gk" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="dRD-L2-hT4">
+                        <rect key="frame" x="0.0" y="64" width="320" height="788"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="tsU-FN-0q3">
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="y0x-z1-0gk" id="a0i-NE-rpd"/>
+                            <outlet property="delegate" destination="y0x-z1-0gk" id="bwP-n1-5Kq"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Root View Controller" id="cGk-Ba-alJ"/>
+                </tableViewController>
+            </objects>
+            <point key="canvasLocation" x="548" y="-1785"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="xwA-FQ-QPv">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4JB-ms-dHn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <navigationController id="63E-dg-Yfy" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="qLq-Y8-BrM">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="y0x-z1-0gk" kind="relationship" relationship="rootViewController" id="8yI-ci-1S8"/>
+                    </connections>
+                </navigationController>
+            </objects>
+            <point key="canvasLocation" x="14" y="-1786"/>
+        </scene>
+        <!--Split View Controller-->
+        <scene sceneID="sOT-ku-QWt">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6Gc-rw-UH3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <splitViewController id="rFh-yG-jqZ" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <connections>
+                        <segue destination="63E-dg-Yfy" kind="relationship" relationship="masterViewController" id="7CH-ok-i3W"/>
+                        <segue destination="PvV-1L-87o" kind="relationship" relationship="detailViewController" id="GJ0-hZ-PZD"/>
+                    </connections>
+                </splitViewController>
+            </objects>
+            <point key="canvasLocation" x="-968" y="-1319"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="fzr-1p-ESw">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5gH-88-Ga6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <navigationController id="PvV-1L-87o" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="NQy-VU-okf">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="S62-Jb-3Kz" kind="relationship" relationship="rootViewController" id="MYg-CP-CgK"/>
+                    </connections>
+                </navigationController>
+            </objects>
+            <point key="canvasLocation" x="74" y="-122"/>
+        </scene>
+    </scenes>
+    <classes>
+        <class className="TSFilesystemTableViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSFilesystemTableViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="addDropboxItem:" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+    </classes>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination"/>
+    </simulatedMetricsContainer>
+</document>

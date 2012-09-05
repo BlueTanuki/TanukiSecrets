@@ -22,6 +22,8 @@
 @synthesize unlockCodeLabel;
 @synthesize onOffSwitch;
 
+BOOL firstTimeSegueTriggered = NO;
+
 #pragma mark - Listeners
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -88,6 +90,8 @@
 - (void) viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+	self.unlockCodeLabel.textColor = [UIColor blackColor];
+	self.unlockCodeTextField.text = nil;
 	[self.unlockCodeTextField becomeFirstResponder];
 //	self.unlockCodeTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
 //	self.unlockCodeTextField.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -95,6 +99,14 @@
 //	self.unlockCodeTextField.secureTextEntry = YES;
 //	self.unlockCodeTextField.keyboardType = UIKeyboardTypeNumberPad;
 //	self.unlockCodeTextField.returnKeyType = UIReturnKeyDone;
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+	if (!firstTimeSegueTriggered) {
+		firstTimeSegueTriggered = YES;
+		[self performSegueWithIdentifier:@"unlockCodeOkSegue" sender:nil];
+	}
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

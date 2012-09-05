@@ -25,6 +25,7 @@
 		9F8ED4B415B9A0EB00391EF8 /* TSFilesystemTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED4B315B9A0EB00391EF8 /* TSFilesystemTableViewController.m */; };
 		9F98D40E15F0CAB9001A2C82 /* TSCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98D40D15F0CAB9001A2C82 /* TSCryptoUtils.m */; };
 		9F98D41115F0CCB3001A2C82 /* TSStringUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98D41015F0CCB3001A2C82 /* TSStringUtils.m */; };
+		9F98D41715F7B137001A2C82 /* iPadSandbox.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F98D41615F7B137001A2C82 /* iPadSandbox.storyboard */; };
 		9F9D868E15CBFDF60066BC04 /* SMXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */; };
 		9F9D869115CC14CA0066BC04 /* Sandbox.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */; };
 		9FEC4DCF15C29894008B18D5 /* JSNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4DCE15C29894008B18D5 /* JSNotifier.m */; };
@@ -80,6 +81,7 @@
 		9F98D40D15F0CAB9001A2C82 /* TSCryptoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSCryptoUtils.m; sourceTree = "<group>"; };
 		9F98D40F15F0CCB3001A2C82 /* TSStringUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSStringUtils.h; sourceTree = "<group>"; };
 		9F98D41015F0CCB3001A2C82 /* TSStringUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSStringUtils.m; sourceTree = "<group>"; };
+		9F98D41615F7B137001A2C82 /* iPadSandbox.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = iPadSandbox.storyboard; sourceTree = "<group>"; };
 		9F9D868C15CBFDF60066BC04 /* SMXMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXMLDocument.h; sourceTree = "<group>"; };
 		9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXMLDocument.m; sourceTree = "<group>"; };
 		9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Sandbox.storyboard; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 				9F8ED47115B98C6A00391EF8 /* main.m */,
 				9F8ED47315B98C6A00391EF8 /* TanukiSecrets-Prefix.pch */,
 				9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */,
+				9F98D41615F7B137001A2C82 /* iPadSandbox.storyboard */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -381,6 +384,7 @@
 				9FEC4DD615C298E7008B18D5 /* NotifyX.png in Resources */,
 				9FEC4DD715C298E7008B18D5 /* NotifyX@2x.png in Resources */,
 				9F9D869115CC14CA0066BC04 /* Sandbox.storyboard in Resources */,
+				9F98D41715F7B137001A2C82 /* iPadSandbox.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

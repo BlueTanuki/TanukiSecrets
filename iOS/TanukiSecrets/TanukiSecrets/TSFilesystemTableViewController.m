@@ -21,9 +21,11 @@
 
 
 @interface TSFilesystemTableViewController () <DBRestClientDelegate> {
-
+	NSMetadataQuery *iCloudQuery;
+	
 	NSArray *tableContent;
 	NSArray *dropboxItems;//DBMetadata
+	NSArray *iCloudDocuments;// of NSURLs
 	
 	DBRestClient *dropboxRestClient;
 	
@@ -73,6 +75,95 @@
 		}
 	}else {
 		NSLog(@"XML read error : %@", [error debugDescription]);
+	}
+}
+
+#pragma mark - iCloud
+
+- (NSURL *) iCloudURL
+{
+	return [[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:nil];
+}
+
+- (NSURL *) iCloudDocumentsURL
+{
+	return [[self iCloudURL] URLByAppendingPathComponent:@"Documents"];
+}
+
+- (NSURL *) filePackageUrlForCloudURL:(NSURL *)url
+{
+	if ([[url path] hasPrefix:[[self iCloudDocumentsURL] path]]) {
+		NSArray *iCloudDocumentsURLComponents = [[self iCloudDocumentsURL] pathComponents];
+		NSArray *urlComponents = [url pathComponents];
+		if ([iCloudDocumentsURLComponents count] < [urlComponents count]) {
+			urlComponents = [urlComponents subarrayWithRange:NSMakeRange(0, [iCloudDocumentsURLComponents count] + 1)];
+			url = [NSURL fileURLWithPathComponents:urlComponents];
+		}
+	}
+	return url;
+}
+
+- (void) createCloudDocumentNamed:(NSString *)name withData:(NSData *)data
+{
+	NSURL *url = [[self iCloudDocumentsURL] URLByAppendingPathComponent:name];
+	NSError *error;
+	BOOL ok = [data writeToURL:url atomically:YES];
+	if (!ok) {
+		NSLog(@"iWrite fail : %@", [error debugDescription]);
+	}
+}
+
+- (void) removeCloudURL:(NSURL *)url
+{
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+		NSError *coordinationError;
+		[coordinator coordinateWritingItemAtURL:url options:NSFileCoordinatorWritingForDeleting error:&coordinationError byAccessor:^(NSURL *usedURL) {
+			NSError *deleteError;
+			[[[NSFileManager alloc] init] removeItemAtURL:usedURL error:&deleteError];
+			if (deleteError) {
+				NSLog(@"Error while deleting :: %@", [deleteError debugDescription]);
+			}
+		}];
+		if (coordinationError) {
+			NSLog(@"Synchronization error while deleting :: %@", [coordinationError debugDescription]);
+		}
+	});
+}
+
+- (void) startCloudQuery
+{
+	if (!iCloudQuery) {
+		iCloudQuery = [[NSMetadataQuery alloc] init];
+		iCloudQuery.searchScopes = [NSArray arrayWithObject:NSMetadataQueryUbiquitousDocumentsScope];
+		iCloudQuery.predicate = [NSPredicate predicateWithFormat:@"%K like '*'", NSMetadataItemFSNameKey];
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(processCloudQueryResults:)
+													 name:NSMetadataQueryDidFinishGatheringNotification
+												   object:iCloudQuery];
+//		[[NSNotificationCenter defaultCenter] addObserver:self
+//												 selector:@selector(processCloudQueryResults:)
+//													 name:NSMetadataQueryDidUpdateNotification
+//												   object:iCloudQuery];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(logCloudNotification:)
+													 name:NSMetadataQueryGatheringProgressNotification
+												   object:iCloudQuery];
+		[iCloudQuery startQuery];
+		[iCloudQuery enableUpdates];
+	}
+}
+
+-(void) stopCloudQuery
+{
+	if (iCloudQuery) {
+		[iCloudQuery disableUpdates];
+		if ([iCloudQuery isStarted]) {
+			[iCloudQuery stopQuery];
+		}
+		[[NSNotificationCenter defaultCenter] removeObserver:self];
+		iCloudQuery = nil;
 	}
 }
 
@@ -218,13 +309,16 @@
 
 - (void)refreshDropbox:(id)sender
 {
-	[[self dropboxRestClient] loadMetadata:@"/"];
-	UIActivityIndicatorView *busy = [[UIActivityIndicatorView alloc] 
-									 initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-	[busy startAnimating];
-	UIBarButtonItem *refreshDropboxButton = [[UIBarButtonItem alloc] 
-											 initWithCustomView:busy];	
-	self.navigationItem.rightBarButtonItem = refreshDropboxButton;
+	if ([[DBSession sharedSession] isLinked]) {
+		[[self dropboxRestClient] loadMetadata:@"/"];
+		UIActivityIndicatorView *busy = [[UIActivityIndicatorView alloc]
+										 initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+		[busy startAnimating];
+		UIBarButtonItem *refreshDropboxButton = [[UIBarButtonItem alloc]
+												 initWithCustomView:busy];
+		self.navigationItem.rightBarButtonItem = refreshDropboxButton;
+		[self startCloudQuery];
+	}
 }
 
 - (IBAction)addDropboxItem:(UIButton *)sender {
@@ -256,14 +350,35 @@
 					   attributes:nil];
 	tableContent = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSAllDomainsMask];
 	[[self dropboxRestClient] uploadFile:filename toPath:@"/" withParentRev:nil fromPath:filePath];
+	
+	[self createCloudDocumentNamed:filename withData:encryptedData];
 }
 
+- (void) logCloudNotification: (NSNotification *)notification
+{
+	NSLog(@"iCloud notification received :: %@", [notification debugDescription]);
+}
+
+- (void) processCloudQueryResults: (NSNotification *)notification
+{
+	[self logCloudNotification:notification];
+	NSMutableArray *documents = [NSMutableArray array];
+	int resultCount = [iCloudQuery resultCount];
+	for (int i=0; i<resultCount; i++) {
+		NSMetadataItem *item = [iCloudQuery resultAtIndex:i];
+		NSURL *url = [item valueForAttribute:NSMetadataItemURLKey];
+		url = [self filePackageUrlForCloudURL:url];
+		[documents addObject:url];
+	}
+	iCloudDocuments = [documents copy];
+	[self stopCloudQuery];
+}
 
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    return 3;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -272,6 +387,8 @@
 		return @"Dropbox";
 	}else if (section == 1) {
 		return @"Local";
+	}else if (section == 2) {
+		return @"iCloud";
 	}else {
 		return @"???";
 	}
@@ -301,6 +418,13 @@
 		}
 		
 		return [tableContent count];
+	}else if (section == 2) {
+		if (!iCloudDocuments) {
+			[self startCloudQuery];
+			return 1;
+		}else {
+			return [iCloudDocuments count];
+		}
 	}else {
 		if (!dropboxItems) {
 			[self refreshDropbox:nil];
@@ -323,6 +447,19 @@
 		cell.detailTextLabel.text = [url path];
 		
 		return cell;
+	}else if(indexPath.section == 2) {
+		static NSString *CellIdentifier = @"FSCell";
+		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+
+		if (iCloudDocuments) {
+			NSURL *url = [iCloudDocuments objectAtIndex:indexPath.row];
+			cell.textLabel.text = [url lastPathComponent];
+			cell.detailTextLabel.text = [url path];
+		}else {
+			cell.textLabel.text = @"Loading iCloud items...";
+		}
+
+		return cell;
 	}else {
 		static NSString *CellIdentifier = @"FSCell";
 		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -330,38 +467,39 @@
 		if (dropboxItems) {
 			DBMetadata *dropboxFileMetadata = [dropboxItems objectAtIndex:indexPath.row];
 			cell.textLabel.text = dropboxFileMetadata.filename;
-			
 			cell.detailTextLabel.text = dropboxFileMetadata.description;
 		}else {
-			cell.textLabel.text = @"Dropbox listing not loaded yet";
+			cell.textLabel.text = @"Loading Dropbox items...";
 		}
 		
 		return cell;
 	}
 }
 
-/*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
+	if (indexPath.section != 1) {
+		return YES;
+	}
+    return NO;
 }
-*/
 
-/*
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+	if (editingStyle == UITableViewCellEditingStyleDelete) {
+		if (indexPath.section == 2) {
+			NSURL *url = [iCloudDocuments objectAtIndex:indexPath.row];
+			[self removeCloudURL:url];
+			[self refreshDropbox:nil];
+		}else if (indexPath.section == 0) {
+			DBMetadata *dropboxFileMetadata = [dropboxItems objectAtIndex:indexPath.row];
+			[[self dropboxRestClient] deletePath:[dropboxFileMetadata path]];
+			[self refreshDropbox:nil];
+		}
+    }
 }
-*/
 
 /*
 // Override to support rearranging the table view.
@@ -404,6 +542,23 @@
 		JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
 		jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
 		[jsn showFor:2.0];
+	}else if(indexPath.section == 2) {
+		if (iCloudDocuments) {
+			NSURL *url = [iCloudDocuments objectAtIndex:indexPath.row];
+			NSString *text = [url lastPathComponent];
+			UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+			pasteboard.string = text;
+			
+			NSString *notificationMessage = [NSString stringWithFormat:@"%@ copied to clipboard", text];
+			JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
+			jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
+			[jsn showFor:2.0];
+		}else {
+			NSString *notificationMessage = @"Not loaded yet...";
+			JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
+			jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyX.png"]];
+			[jsn showFor:2.0];
+		}
 	}else {
 		if (dropboxItems) {
 			DBMetadata *dropboxFileMetadata = [dropboxItems objectAtIndex:indexPath.row];
