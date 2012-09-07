@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2549" systemVersion="12B19" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="rFh-yG-jqZ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2549" systemVersion="12B19" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="CI0-ld-rIK">
     <dependencies>
         <deployment defaultVersion="1296" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1498"/>
@@ -11,11 +11,12 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WfG-eO-zLk" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="S62-Jb-3Kz" customClass="TSFilesystemTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="YH5-nn-t8v">
-                        <rect key="frame" x="0.0" y="64" width="768" height="960"/>
+                        <rect key="frame" x="0.0" y="64" width="703" height="704"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                         <button key="tableFooterView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="c9Y-ic-Q5f">
-                            <rect key="frame" x="0.0" y="66" width="768" height="44"/>
+                            <rect key="frame" x="0.0" y="66" width="703" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                             <state key="normal" title="Add Dropbox item">
@@ -31,10 +32,10 @@
                         </button>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FSCell" id="6Am-zQ-vDs">
-                                <rect key="frame" x="0.0" y="22" width="768" height="44"/>
+                                <rect key="frame" x="0.0" y="22" width="703" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="768" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="703" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
@@ -48,84 +49,95 @@
                     <navigationItem key="navigationItem" id="LZE-Ce-OXl"/>
                 </tableViewController>
             </objects>
-            <point key="canvasLocation" x="1048" y="-122"/>
+            <point key="canvasLocation" x="-76" y="-1290"/>
         </scene>
-        <!--Table View Controller - Root View Controller-->
-        <scene sceneID="BZv-es-S0Q">
+        <!--Navigation Controller-->
+        <scene sceneID="5Me-xz-li9">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Qnj-5N-3dN" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController clearsSelectionOnViewWillAppear="NO" id="y0x-z1-0gk" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="dRD-L2-hT4">
-                        <rect key="frame" x="0.0" y="64" width="320" height="788"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qui-oE-xWN" sceneMemberID="firstResponder"/>
+                <navigationController id="YsR-SC-14i" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="P0L-ZG-xev">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="VVq-FC-GyA" kind="relationship" relationship="rootViewController" id="tv0-My-jLe"/>
+                    </connections>
+                </navigationController>
+            </objects>
+            <point key="canvasLocation" x="-1024" y="-2398"/>
+        </scene>
+        <!--Split View Controller-->
+        <scene sceneID="2pw-h7-5SU">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gXD-Dl-GuD" sceneMemberID="firstResponder"/>
+                <splitViewController id="CI0-ld-rIK" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackTranslucent"/>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <connections>
+                        <segue destination="YsR-SC-14i" kind="relationship" relationship="masterViewController" id="Lwp-6z-Oe8"/>
+                        <segue destination="RIz-Sh-ru7" kind="relationship" relationship="detailViewController" id="Ynw-Vc-M22"/>
+                    </connections>
+                </splitViewController>
+            </objects>
+            <point key="canvasLocation" x="-2567" y="-1934"/>
+        </scene>
+        <!--Master View Controller - Master-->
+        <scene sceneID="ZdV-0g-VZK">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="M4D-Ir-soY" sceneMemberID="firstResponder"/>
+                <tableViewController storyboardIdentifier="" title="Master" clearsSelectionOnViewWillAppear="NO" id="VVq-FC-GyA" customClass="TSMasterViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="AuC-Vu-FQD">
+                        <rect key="frame" x="0.0" y="64" width="320" height="704"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="tsU-FN-0q3">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" textLabel="rYf-VY-HdZ" style="IBUITableViewCellStyleDefault" id="lDs-gw-yDX">
                                 <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="rYf-VY-HdZ">
+                                            <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </label>
+                                    </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableViewCell>
                         </prototypes>
+                        <sections/>
                         <connections>
-                            <outlet property="dataSource" destination="y0x-z1-0gk" id="a0i-NE-rpd"/>
-                            <outlet property="delegate" destination="y0x-z1-0gk" id="bwP-n1-5Kq"/>
+                            <outlet property="dataSource" destination="VVq-FC-GyA" id="SrQ-0S-uMd"/>
+                            <outlet property="delegate" destination="VVq-FC-GyA" id="C4r-bm-jeR"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="cGk-Ba-alJ"/>
+                    <navigationItem key="navigationItem" title="Master" id="cuR-zw-w4w"/>
                 </tableViewController>
             </objects>
-            <point key="canvasLocation" x="548" y="-1785"/>
+            <point key="canvasLocation" x="-597" y="-2391"/>
         </scene>
         <!--Navigation Controller-->
-        <scene sceneID="xwA-FQ-QPv">
+        <scene sceneID="U5t-KA-p2z">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="4JB-ms-dHn" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <navigationController id="63E-dg-Yfy" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="qLq-Y8-BrM">
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lmT-qO-w97" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <navigationController id="RIz-Sh-ru7" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="eSJ-1D-1Ci">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="y0x-z1-0gk" kind="relationship" relationship="rootViewController" id="8yI-ci-1S8"/>
+                        <segue destination="S62-Jb-3Kz" kind="relationship" relationship="rootViewController" id="mzb-WW-FNb"/>
                     </connections>
                 </navigationController>
             </objects>
-            <point key="canvasLocation" x="14" y="-1786"/>
-        </scene>
-        <!--Split View Controller-->
-        <scene sceneID="sOT-ku-QWt">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="6Gc-rw-UH3" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <splitViewController id="rFh-yG-jqZ" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <connections>
-                        <segue destination="63E-dg-Yfy" kind="relationship" relationship="masterViewController" id="7CH-ok-i3W"/>
-                        <segue destination="PvV-1L-87o" kind="relationship" relationship="detailViewController" id="GJ0-hZ-PZD"/>
-                    </connections>
-                </splitViewController>
-            </objects>
-            <point key="canvasLocation" x="-968" y="-1319"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="fzr-1p-ESw">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="5gH-88-Ga6" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <navigationController id="PvV-1L-87o" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="NQy-VU-okf">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="S62-Jb-3Kz" kind="relationship" relationship="rootViewController" id="MYg-CP-CgK"/>
-                    </connections>
-                </navigationController>
-            </objects>
-            <point key="canvasLocation" x="74" y="-122"/>
+            <point key="canvasLocation" x="-1006" y="-1304"/>
         </scene>
     </scenes>
     <classes>
@@ -134,6 +146,9 @@
             <relationships>
                 <relationship kind="action" name="addDropboxItem:" candidateClass="UIButton"/>
             </relationships>
+        </class>
+        <class className="TSMasterViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSMasterViewController.h"/>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
