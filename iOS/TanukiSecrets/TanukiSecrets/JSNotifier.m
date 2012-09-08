@@ -37,13 +37,7 @@ BOOL JSIsPad() {
 
 CGFloat JSStatusHeight()
 {
-    if (JSIsPad())
-    {
-        return 0;
-    }
-    
     CGRect statusBarFrame = [UIApplication sharedApplication].statusBarFrame;
-    
     UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
     if (UIInterfaceOrientationIsLandscape(orientation))
     {
@@ -84,13 +78,19 @@ CGRect JSScreenBounds()
     switch (position) {
         case JSNotifierPositionBottom:
             top = screenBounds.size.height;
+			if (JSIsPad()) {
+				top -= JSStatusHeight();
+			}
             break;
             
         default:
-            top = JSStatusHeight() - kHeight;
+            top = -kHeight;
+			if (!JSIsPad()) {
+				top += JSStatusHeight();
+			}
             break;
     }
-    
+	
     if (self = [super initWithFrame:CGRectMake(0, top, width, kHeight)]){
 		
         _position = position;
