@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9F1463BA15FE342000EA03D6 /* TSSharedState.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463B915FE342000EA03D6 /* TSSharedState.m */; };
+		9F1463BE15FE41B600EA03D6 /* TSUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463BD15FE41B600EA03D6 /* TSUserDefaults.m */; };
 		9F8ED46615B98C6A00391EF8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46515B98C6A00391EF8 /* UIKit.framework */; };
 		9F8ED46815B98C6A00391EF8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46715B98C6A00391EF8 /* Foundation.framework */; };
 		9F8ED46A15B98C6A00391EF8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46915B98C6A00391EF8 /* CoreGraphics.framework */; };
@@ -53,6 +55,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9F1463B815FE342000EA03D6 /* TSSharedState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSSharedState.h; sourceTree = "<group>"; };
+		9F1463B915FE342000EA03D6 /* TSSharedState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSSharedState.m; sourceTree = "<group>"; };
+		9F1463BC15FE41B600EA03D6 /* TSUserDefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUserDefaults.h; sourceTree = "<group>"; };
+		9F1463BD15FE41B600EA03D6 /* TSUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUserDefaults.m; sourceTree = "<group>"; };
+		9F1463BF15FE441F00EA03D6 /* TSConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSConstants.h; sourceTree = "<group>"; };
 		9F8ED46115B98C6A00391EF8 /* TanukiSecrets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TanukiSecrets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F8ED46515B98C6A00391EF8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		9F8ED46715B98C6A00391EF8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -177,6 +184,7 @@
 				9F9D868F15CC10530066BC04 /* controller */,
 				9F8ED46C15B98C6A00391EF8 /* Supporting Files */,
 				9FEC4DE215C2C43C008B18D5 /* secrets.h */,
+				9F1463BF15FE441F00EA03D6 /* TSConstants.h */,
 			);
 			path = TanukiSecrets;
 			sourceTree = "<group>";
@@ -241,6 +249,8 @@
 				9F98D40D15F0CAB9001A2C82 /* TSCryptoUtils.m */,
 				9F98D40F15F0CCB3001A2C82 /* TSStringUtils.h */,
 				9F98D41015F0CCB3001A2C82 /* TSStringUtils.m */,
+				9F1463BC15FE41B600EA03D6 /* TSUserDefaults.h */,
+				9F1463BD15FE41B600EA03D6 /* TSUserDefaults.m */,
 			);
 			name = utils;
 			sourceTree = "<group>";
@@ -291,6 +301,8 @@
 		9FEC4E3B15CAA349008B18D5 /* model */ = {
 			isa = PBXGroup;
 			children = (
+				9F1463B815FE342000EA03D6 /* TSSharedState.h */,
+				9F1463B915FE342000EA03D6 /* TSSharedState.m */,
 			);
 			name = model;
 			sourceTree = "<group>";
@@ -432,6 +444,8 @@
 				9F9D868E15CBFDF60066BC04 /* SMXMLDocument.m in Sources */,
 				9F98D40E15F0CAB9001A2C82 /* TSCryptoUtils.m in Sources */,
 				9F98D41115F0CCB3001A2C82 /* TSStringUtils.m in Sources */,
+				9F1463BA15FE342000EA03D6 /* TSSharedState.m in Sources */,
+				9F1463BE15FE41B600EA03D6 /* TSUserDefaults.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

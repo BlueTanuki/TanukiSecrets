@@ -90,24 +90,6 @@
             </objects>
             <point key="canvasLocation" x="1549" y="-991"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="PqH-zF-gBX">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="1v2-B9-51B" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <navigationController id="Mro-bQ-c0c" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="2yi-B5-Du8">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="XmC-4j-m8p" kind="relationship" relationship="rootViewController" id="gFO-3U-ja5"/>
-                    </connections>
-                </navigationController>
-            </objects>
-            <point key="canvasLocation" x="372" y="-254"/>
-        </scene>
         <!--View Controller-->
         <scene sceneID="TZA-qg-ruD">
             <objects>
@@ -230,7 +212,4 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
-    <inferredMetricsTieBreakers>
-        <segue reference="gFO-3U-ja5"/>
-    </inferredMetricsTieBreakers>
 </document>

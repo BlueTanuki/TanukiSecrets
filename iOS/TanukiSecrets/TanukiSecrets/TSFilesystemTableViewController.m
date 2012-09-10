@@ -255,6 +255,20 @@
 												action:@selector(refreshDropbox:)];
 		self.navigationItem.rightBarButtonItem = refreshDropboxButton;
 	}
+	
+//	NSLog (@"Unique Device IDentifier : %@", [[UIDevice currentDevice] uniqueIdentifier]);
+	
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	NSString *uid = [defaults stringForKey:@"TS_SIMPLE_PASWORD_SALT"];
+	if (uid) {
+		NSLog(@"UID retrieved from NSUserDefaults : %@", uid);
+	}else {
+		CFUUIDRef uuidref = CFUUIDCreate(CFAllocatorGetDefault());
+		uid = (__bridge NSString *)(CFUUIDCreateString(CFAllocatorGetDefault(), uuidref));
+		NSLog(@"UID generated via CFUUIDCreate : %@", uid);
+		[defaults setObject:uid forKey:@"TS_SIMPLE_PASWORD_SALT"];
+		[defaults synchronize];
+	}
 }
 
 - (void)viewDidUnload
