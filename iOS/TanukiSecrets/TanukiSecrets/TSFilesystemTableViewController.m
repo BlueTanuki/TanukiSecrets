@@ -341,7 +341,7 @@
 //	NSString *filename = [dateFormat stringFromDate:[NSDate date]];
 	
 	NSData *salt = [TSCryptoUtils randomDataOfVariableLengthMinimum:32 maximum:96];
-	NSString *filename = [TSStringUtils hexStringFor:salt];
+	NSString *filename = [TSStringUtils hexStringFromData:salt];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
 	NSString *fileContent = [self demoFileContent];

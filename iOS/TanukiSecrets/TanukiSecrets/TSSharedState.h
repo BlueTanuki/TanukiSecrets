@@ -15,9 +15,8 @@
  need a single central means of accessing (for example because they expire 
  after a certain time).
 */
-
 @interface TSSharedState : NSObject
 
-- (NSString*) instanceUID;
+- (NSString *) instanceUID;
 
 @end

@@ -10,6 +10,7 @@
 
 @interface TSStringUtils : NSObject
 
-+ (NSString *) hexStringFor:(NSData *) data;
++ (NSString *) hexStringFromData:(NSData *) data;
++ (NSData *) dataFromHexString:(NSString *)string;
 
 @end

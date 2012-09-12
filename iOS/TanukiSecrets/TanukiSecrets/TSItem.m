@@ -7,6 +7,7 @@
 //
 
 #import "TSItem.h"
+#import "TSDateUtils.h"
 
 @implementation TSItem
 
@@ -14,14 +15,12 @@
 
 -(void)writeTo:(XMLWriter *)writer
 {
-	NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-	[dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 	[writer writeStartElement:@"item"];
 	[writer writeStartElement:@"string"];
 	[writer writeCharacters:self.string];
 	[writer writeEndElement];
 	[writer writeStartElement:@"date"];
-	[writer writeCharacters:[dateFormat stringFromDate:self.date]];
+	[writer writeCharacters:[TSDateUtils stringFromDate:self.date]];
 	[writer writeEndElement];
 	[writer writeStartElement:@"int"];
 	[writer writeCharacters:[NSString stringWithFormat:@"%d", self.integer]];
@@ -32,11 +31,9 @@
 +(TSItem *)readFrom:(SMXMLElement *)element
 {
 	if ([element.name isEqualToString:@"item"]) {
-		NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-		[dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 		TSItem *ret = [[TSItem alloc] init];
 		ret.string = [element valueWithPath:@"string"];
-		ret.date = [dateFormat dateFromString:[element valueWithPath:@"date"]];
+		ret.date = [TSDateUtils dateFromString:[element valueWithPath:@"date"]];
 		ret.integer = [[element valueWithPath:@"int"] intValue];
 		return ret;
 	}

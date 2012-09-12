@@ -12,7 +12,6 @@
  Collection of helper methods wrapping NSUserDefaults <TYPE>ForKey: methods,
  that automtically set the value to the given default if it is not set.
  */
-
 @interface TSUserDefaults : NSObject
 
 + (NSString *) stringForKey:(NSString *)key usingDefaultValue:(NSString *)defaultValue;
