@@ -177,7 +177,7 @@
 				9F1463D71600D3AA00EA03D6 /* TSVersion.m */,
 				9FEC4E6315CABC77008B18D5 /* TSXMLSerializable.h */,
 			);
-			name = xml;
+			path = xml;
 			sourceTree = "<group>";
 		};
 		9F1463E41600E69A00EA03D6 /* utils */ = {
@@ -194,8 +194,18 @@
 				9F1463BC15FE41B600EA03D6 /* TSUserDefaults.h */,
 				9F1463BD15FE41B600EA03D6 /* TSUserDefaults.m */,
 			);
-			name = utils;
-			path = src/utils;
+			path = utils;
+			sourceTree = "<group>";
+		};
+		9F1463E61600EB0800EA03D6 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				9F1463BF15FE441F00EA03D6 /* TSConstants.h */,
+				9F9D868F15CC10530066BC04 /* controller */,
+				9FEC4E3B15CAA349008B18D5 /* model */,
+				9F1463E41600E69A00EA03D6 /* utils */,
+			);
+			path = src;
 			sourceTree = "<group>";
 		};
 		9F8ED45615B98C6900391EF8 = {
@@ -234,14 +244,11 @@
 		9F8ED46B15B98C6A00391EF8 /* TanukiSecrets */ = {
 			isa = PBXGroup;
 			children = (
-				9F1463E41600E69A00EA03D6 /* utils */,
-				9FEC4E3B15CAA349008B18D5 /* model */,
+				9F1463E61600EB0800EA03D6 /* src */,
 				9FEC4DCB15C29847008B18D5 /* lib */,
 				9F8ED4B015B9A0AC00391EF8 /* sandbox */,
-				9F9D868F15CC10530066BC04 /* controller */,
 				9F8ED46C15B98C6A00391EF8 /* Supporting Files */,
 				9FEC4DE215C2C43C008B18D5 /* secrets.h */,
-				9F1463BF15FE441F00EA03D6 /* TSConstants.h */,
 			);
 			path = TanukiSecrets;
 			sourceTree = "<group>";
@@ -249,19 +256,19 @@
 		9F8ED46C15B98C6A00391EF8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				9F8ED46E15B98C6A00391EF8 /* InfoPlist.strings */,
+				9F98D41615F7B137001A2C82 /* iPadSandbox.storyboard */,
+				9F8ED47115B98C6A00391EF8 /* main.m */,
+				9F8ED47A15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard */,
+				9F8ED47715B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard */,
+				9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */,
+				9F8ED46D15B98C6A00391EF8 /* TanukiSecrets-Info.plist */,
+				9F8ED47315B98C6A00391EF8 /* TanukiSecrets-Prefix.pch */,
 				9FEC4DC515C18107008B18D5 /* TanukiSecrets.entitlements */,
 				9F8ED47415B98C6A00391EF8 /* TSAppDelegate.h */,
 				9F8ED47515B98C6A00391EF8 /* TSAppDelegate.m */,
-				9F8ED47715B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard */,
-				9F8ED47A15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard */,
-				9F8ED46D15B98C6A00391EF8 /* TanukiSecrets-Info.plist */,
-				9F8ED46E15B98C6A00391EF8 /* InfoPlist.strings */,
-				9F8ED47115B98C6A00391EF8 /* main.m */,
-				9F8ED47315B98C6A00391EF8 /* TanukiSecrets-Prefix.pch */,
-				9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */,
-				9F98D41615F7B137001A2C82 /* iPadSandbox.storyboard */,
 			);
-			name = "Supporting Files";
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		9F8ED48F15B98C6A00391EF8 /* TanukiSecretsTests */ = {
@@ -295,7 +302,7 @@
 				9FEC4E3F15CAA396008B18D5 /* TSItem.h */,
 				9FEC4E4015CAA396008B18D5 /* TSItem.m */,
 			);
-			name = sandbox;
+			path = sandbox;
 			sourceTree = "<group>";
 		};
 		9F9D868B15CBFDF60066BC04 /* SMXMLDocument */ = {
@@ -315,7 +322,7 @@
 				9F8ED48015B98C6A00391EF8 /* TSDetailViewController.h */,
 				9F8ED48115B98C6A00391EF8 /* TSDetailViewController.m */,
 			);
-			name = controller;
+			path = controller;
 			sourceTree = "<group>";
 		};
 		9FEC4DCB15C29847008B18D5 /* lib */ = {
@@ -325,7 +332,7 @@
 				9FEC4E5F15CABA1E008B18D5 /* XMLWriter */,
 				9FEC4DCC15C29870008B18D5 /* JSNotifier */,
 			);
-			name = lib;
+			path = lib;
 			sourceTree = "<group>";
 		};
 		9FEC4DCC15C29870008B18D5 /* JSNotifier */ = {
@@ -338,7 +345,7 @@
 				9FEC4DCD15C29894008B18D5 /* JSNotifier.h */,
 				9FEC4DCE15C29894008B18D5 /* JSNotifier.m */,
 			);
-			name = JSNotifier;
+			path = JSNotifier;
 			sourceTree = "<group>";
 		};
 		9FEC4E3B15CAA349008B18D5 /* model */ = {
@@ -348,7 +355,7 @@
 				9F1463B815FE342000EA03D6 /* TSSharedState.h */,
 				9F1463B915FE342000EA03D6 /* TSSharedState.m */,
 			);
-			name = model;
+			path = model;
 			sourceTree = "<group>";
 		};
 		9FEC4E5F15CABA1E008B18D5 /* XMLWriter */ = {
@@ -525,6 +532,7 @@
 				9F8ED46F15B98C6A00391EF8 /* en */,
 			);
 			name = InfoPlist.strings;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		9F8ED47715B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard */ = {
