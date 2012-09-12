@@ -541,6 +541,7 @@
 				9F8ED47815B98C6A00391EF8 /* en */,
 			);
 			name = MainStoryboard_iPhone.storyboard;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		9F8ED47A15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard */ = {
@@ -549,6 +550,7 @@
 				9F8ED47B15B98C6A00391EF8 /* en */,
 			);
 			name = MainStoryboard_iPad.storyboard;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		9F8ED49215B98C6A00391EF8 /* InfoPlist.strings */ = {
