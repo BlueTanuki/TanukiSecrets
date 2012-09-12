@@ -180,6 +180,24 @@
 			name = xml;
 			sourceTree = "<group>";
 		};
+		9F1463E41600E69A00EA03D6 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				9F98D40C15F0CAB9001A2C82 /* TSCryptoUtils.h */,
+				9F98D40D15F0CAB9001A2C82 /* TSCryptoUtils.m */,
+				9F1463CD15FF7BEC00EA03D6 /* TSDateUtils.h */,
+				9F1463CE15FF7BEC00EA03D6 /* TSDateUtils.m */,
+				9F1463D015FF820400EA03D6 /* TSDeviceUtils.h */,
+				9F1463D115FF820400EA03D6 /* TSDeviceUtils.m */,
+				9F98D40F15F0CCB3001A2C82 /* TSStringUtils.h */,
+				9F98D41015F0CCB3001A2C82 /* TSStringUtils.m */,
+				9F1463BC15FE41B600EA03D6 /* TSUserDefaults.h */,
+				9F1463BD15FE41B600EA03D6 /* TSUserDefaults.m */,
+			);
+			name = utils;
+			path = src/utils;
+			sourceTree = "<group>";
+		};
 		9F8ED45615B98C6900391EF8 = {
 			isa = PBXGroup;
 			children = (
@@ -216,7 +234,7 @@
 		9F8ED46B15B98C6A00391EF8 /* TanukiSecrets */ = {
 			isa = PBXGroup;
 			children = (
-				9F98D40715F0C2F1001A2C82 /* utils */,
+				9F1463E41600E69A00EA03D6 /* utils */,
 				9FEC4E3B15CAA349008B18D5 /* model */,
 				9FEC4DCB15C29847008B18D5 /* lib */,
 				9F8ED4B015B9A0AC00391EF8 /* sandbox */,
@@ -278,23 +296,6 @@
 				9FEC4E4015CAA396008B18D5 /* TSItem.m */,
 			);
 			name = sandbox;
-			sourceTree = "<group>";
-		};
-		9F98D40715F0C2F1001A2C82 /* utils */ = {
-			isa = PBXGroup;
-			children = (
-				9F98D40C15F0CAB9001A2C82 /* TSCryptoUtils.h */,
-				9F98D40D15F0CAB9001A2C82 /* TSCryptoUtils.m */,
-				9F98D40F15F0CCB3001A2C82 /* TSStringUtils.h */,
-				9F98D41015F0CCB3001A2C82 /* TSStringUtils.m */,
-				9F1463BC15FE41B600EA03D6 /* TSUserDefaults.h */,
-				9F1463BD15FE41B600EA03D6 /* TSUserDefaults.m */,
-				9F1463CD15FF7BEC00EA03D6 /* TSDateUtils.h */,
-				9F1463CE15FF7BEC00EA03D6 /* TSDateUtils.m */,
-				9F1463D015FF820400EA03D6 /* TSDeviceUtils.h */,
-				9F1463D115FF820400EA03D6 /* TSDeviceUtils.m */,
-			);
-			name = utils;
 			sourceTree = "<group>";
 		};
 		9F9D868B15CBFDF60066BC04 /* SMXMLDocument */ = {
