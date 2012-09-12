@@ -268,7 +268,7 @@
 				9F8ED47415B98C6A00391EF8 /* TSAppDelegate.h */,
 				9F8ED47515B98C6A00391EF8 /* TSAppDelegate.m */,
 			);
-			path = "Supporting Files";
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		9F8ED48F15B98C6A00391EF8 /* TanukiSecretsTests */ = {
@@ -532,7 +532,6 @@
 				9F8ED46F15B98C6A00391EF8 /* en */,
 			);
 			name = InfoPlist.strings;
-			path = ..;
 			sourceTree = "<group>";
 		};
 		9F8ED47715B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard */ = {
@@ -541,7 +540,6 @@
 				9F8ED47815B98C6A00391EF8 /* en */,
 			);
 			name = MainStoryboard_iPhone.storyboard;
-			path = ..;
 			sourceTree = "<group>";
 		};
 		9F8ED47A15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard */ = {
@@ -550,7 +548,6 @@
 				9F8ED47B15B98C6A00391EF8 /* en */,
 			);
 			name = MainStoryboard_iPad.storyboard;
-			path = ..;
 			sourceTree = "<group>";
 		};
 		9F8ED49215B98C6A00391EF8 /* InfoPlist.strings */ = {
