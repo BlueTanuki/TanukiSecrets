@@ -49,6 +49,10 @@
 		9FEC4E4115CAA396008B18D5 /* TSItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4E4015CAA396008B18D5 /* TSItem.m */; };
 		9FEC4E6215CABA1E008B18D5 /* XMLWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4E6115CABA1E008B18D5 /* XMLWriter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9FF76E3E160109BA00613DA1 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FEC4DDC15C2C187008B18D5 /* DropboxSDK.framework */; };
+		9FF76E491601232600613DA1 /* TSDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E481601232500613DA1 /* TSDatabase.m */; };
+		9FF76E4D16020A2600613DA1 /* TSDBItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E4C16020A2600613DA1 /* TSDBItem.m */; };
+		9FF76E5016020A3D00613DA1 /* TSDBGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E4F16020A3C00613DA1 /* TSDBGroup.m */; };
+		9FF76E5316020C0D00613DA1 /* TSDBItemField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E5216020C0C00613DA1 /* TSDBItemField.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +137,14 @@
 		9FEC4E6015CABA1E008B18D5 /* XMLWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLWriter.h; sourceTree = "<group>"; };
 		9FEC4E6115CABA1E008B18D5 /* XMLWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLWriter.m; sourceTree = "<group>"; };
 		9FEC4E6315CABC77008B18D5 /* TSXMLSerializable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSXMLSerializable.h; sourceTree = "<group>"; };
+		9FF76E471601232500613DA1 /* TSDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDatabase.h; sourceTree = "<group>"; };
+		9FF76E481601232500613DA1 /* TSDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDatabase.m; sourceTree = "<group>"; };
+		9FF76E4B16020A2600613DA1 /* TSDBItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDBItem.h; sourceTree = "<group>"; };
+		9FF76E4C16020A2600613DA1 /* TSDBItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDBItem.m; sourceTree = "<group>"; };
+		9FF76E4E16020A3C00613DA1 /* TSDBGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDBGroup.h; sourceTree = "<group>"; };
+		9FF76E4F16020A3C00613DA1 /* TSDBGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDBGroup.m; sourceTree = "<group>"; };
+		9FF76E5116020C0C00613DA1 /* TSDBItemField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDBItemField.h; sourceTree = "<group>"; };
+		9FF76E5216020C0C00613DA1 /* TSDBItemField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDBItemField.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,10 +179,18 @@
 			children = (
 				9F1463DF1600DF7A00EA03D6 /* TSAuthor.h */,
 				9F1463E01600DF7A00EA03D6 /* TSAuthor.m */,
+				9FF76E471601232500613DA1 /* TSDatabase.h */,
+				9FF76E481601232500613DA1 /* TSDatabase.m */,
 				9F1463D31600B6DD00EA03D6 /* TSDatabaseLock.h */,
 				9F1463D41600B6DD00EA03D6 /* TSDatabaseLock.m */,
 				9F1463CA15FF75FB00EA03D6 /* TSDatabaseMetadata.h */,
 				9F1463CB15FF75FB00EA03D6 /* TSDatabaseMetadata.m */,
+				9FF76E4E16020A3C00613DA1 /* TSDBGroup.h */,
+				9FF76E4F16020A3C00613DA1 /* TSDBGroup.m */,
+				9FF76E4B16020A2600613DA1 /* TSDBItem.h */,
+				9FF76E4C16020A2600613DA1 /* TSDBItem.m */,
+				9FF76E5116020C0C00613DA1 /* TSDBItemField.h */,
+				9FF76E5216020C0C00613DA1 /* TSDBItemField.m */,
 				9F1463D91600D49400EA03D6 /* TSLocalMetadata.h */,
 				9F1463DA1600D49400EA03D6 /* TSLocalMetadata.m */,
 				9F1463D61600D3AA00EA03D6 /* TSVersion.h */,
@@ -256,17 +276,17 @@
 		9F8ED46C15B98C6A00391EF8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				9F8ED46E15B98C6A00391EF8 /* InfoPlist.strings */,
-				9F98D41615F7B137001A2C82 /* iPadSandbox.storyboard */,
-				9F8ED47115B98C6A00391EF8 /* main.m */,
-				9F8ED47A15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard */,
-				9F8ED47715B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard */,
-				9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */,
-				9F8ED46D15B98C6A00391EF8 /* TanukiSecrets-Info.plist */,
-				9F8ED47315B98C6A00391EF8 /* TanukiSecrets-Prefix.pch */,
 				9FEC4DC515C18107008B18D5 /* TanukiSecrets.entitlements */,
 				9F8ED47415B98C6A00391EF8 /* TSAppDelegate.h */,
+				9F8ED47115B98C6A00391EF8 /* main.m */,
 				9F8ED47515B98C6A00391EF8 /* TSAppDelegate.m */,
+				9F8ED47315B98C6A00391EF8 /* TanukiSecrets-Prefix.pch */,
+				9F8ED46D15B98C6A00391EF8 /* TanukiSecrets-Info.plist */,
+				9F98D41615F7B137001A2C82 /* iPadSandbox.storyboard */,
+				9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */,
+				9F8ED46E15B98C6A00391EF8 /* InfoPlist.strings */,
+				9F8ED47A15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard */,
+				9F8ED47715B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -504,6 +524,10 @@
 				9F1463D81600D3AA00EA03D6 /* TSVersion.m in Sources */,
 				9F1463DB1600D49400EA03D6 /* TSLocalMetadata.m in Sources */,
 				9F1463E11600DF7A00EA03D6 /* TSAuthor.m in Sources */,
+				9FF76E491601232600613DA1 /* TSDatabase.m in Sources */,
+				9FF76E4D16020A2600613DA1 /* TSDBItem.m in Sources */,
+				9FF76E5016020A3D00613DA1 /* TSDBGroup.m in Sources */,
+				9FF76E5316020C0D00613DA1 /* TSDBItemField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

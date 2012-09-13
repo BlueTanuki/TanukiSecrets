@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TSVersion : NSObject
+@interface TSVersion : NSObject//<TSXMLSerializable>
 
 //version number (int, incremented each time the database is synchronized with remote version)
 //version checksum (a sha512 hash of the unencrypted database, needed in the rather

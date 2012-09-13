@@ -1,0 +1,980 @@
+//
+//  TSFilesystemTableViewController.m
+//  TanukiSecrets
+//
+//  Created by Lucian Ganea on 7/20/12.
+//  Copyright (c) 2012 BlueTanuki. All rights reserved.
+//
+
+#import "TSFilesystemTableViewController.h"
+
+#import <DropboxSDK/DropboxSDK.h>
+
+#include <sys/socket.h>
+#include <sys/dirent.h>
+
+#import "TSItem.h"
+#import "TSListOfItems.h"
+
+#import "JSNotifier.h"
+#import "XMLWriter.h"
+
+#import "TSCryptoUtils.h"
+#import "TSStringUtils.h"
+
+#import "secrets.h"
+
+@interface TSFilesystemTableViewController () <DBRestClientDelegate, NSStreamDelegate> {
+	
+	NSArray *tableContent;
+	NSArray *dropboxItems;//DBMetadata
+	NSArray *iCloudDocuments;// of NSURLs
+	NSMutableArray *ftpItems;//NSDictionary
+	
+	NSMetadataQuery *iCloudQuery;
+	DBRestClient *dropboxRestClient;
+	NSOutputStream *ftpNetworkOutputStream;
+	NSInputStream *ftpNetworkInputStream;
+	NSMutableData *ftpReadData;
+	
+	TSListOfItems *xmlParserItemsList;
+	TSItem *xmlParserItem;
+}
+@end
+
+@implementation TSFilesystemTableViewController
+
+#pragma mark - FTP
+
+- (void) startFtpMkdir:(NSString *)directoryName
+{
+	if (!ftpNetworkOutputStream) {
+		NSString *urlString = [NSString stringWithFormat:@"ftp://%@/%@", FTP_SERVER, directoryName];
+		NSURL *url = [[NSURL alloc] initWithString:urlString];
+        ftpNetworkOutputStream = CFBridgingRelease(
+				CFWriteStreamCreateWithFTPURL(NULL, (__bridge CFURLRef) url));
+		[ftpNetworkOutputStream setProperty:FTP_USER forKey:(id)kCFStreamPropertyFTPUserName];
+		[ftpNetworkOutputStream setProperty:FTP_PASSWORD forKey:(id)kCFStreamPropertyFTPPassword];		
+        ftpNetworkOutputStream.delegate = self;
+        [ftpNetworkOutputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        [ftpNetworkOutputStream open];
+	}
+}
+
+- (void) startFtpList:(NSString *)directoryName
+{
+	if (!ftpNetworkInputStream) {
+		ftpReadData = [NSMutableData data];
+		ftpItems = [[NSMutableArray alloc] init];
+		NSString *urlString = [NSString stringWithFormat:@"ftp://%@/%@", FTP_SERVER, directoryName];
+		NSURL *url = [[NSURL alloc] initWithString:urlString];
+        ftpNetworkInputStream = CFBridgingRelease(
+				CFReadStreamCreateWithFTPURL(NULL, (__bridge CFURLRef) url));
+		[ftpNetworkInputStream setProperty:FTP_USER forKey:(id)kCFStreamPropertyFTPUserName];
+		[ftpNetworkInputStream setProperty:FTP_PASSWORD forKey:(id)kCFStreamPropertyFTPPassword];
+        ftpNetworkInputStream.delegate = self;
+        [ftpNetworkInputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        [ftpNetworkInputStream open];
+	}
+}
+
+-(void) stopFtpAction
+{
+    if (ftpNetworkOutputStream != nil) {
+        [ftpNetworkOutputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        ftpNetworkOutputStream.delegate = nil;
+        [ftpNetworkOutputStream close];
+        ftpNetworkOutputStream = nil;
+		if (ftpNetworkOutputStream != nil) {
+			[ftpNetworkOutputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+			ftpNetworkOutputStream.delegate = nil;
+			[ftpNetworkOutputStream close];
+			ftpNetworkOutputStream = nil;
+		}
+    }
+    if (ftpNetworkInputStream != nil) {
+        [ftpNetworkInputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        ftpNetworkInputStream.delegate = nil;
+        [ftpNetworkInputStream close];
+        ftpNetworkInputStream = nil;
+    }
+}
+
+- (NSDictionary *)entryByReencodingNameInEntry:(NSDictionary *)entry encoding:(NSStringEncoding)newEncoding
+// CFFTPCreateParsedResourceListing always interprets the file name as MacRoman,
+// which is clearly bogus <rdar://problem/7420589>.  This code attempts to fix
+// that by converting the Unicode name back to MacRoman (to get the original bytes;
+// this works because there's a lossless round trip between MacRoman and Unicode)
+// and then reconverting those bytes to Unicode using the encoding provided.
+{
+    NSDictionary *  result;
+    NSString *      name;
+    NSData *        nameData;
+    NSString *      newName;
+    
+    newName = nil;
+    
+    // Try to get the name, convert it back to MacRoman, and then reconvert it
+    // with the preferred encoding.
+    
+    name = [entry objectForKey:(id) kCFFTPResourceName];
+    if (name != nil) {
+        assert([name isKindOfClass:[NSString class]]);
+        
+        nameData = [name dataUsingEncoding:NSMacOSRomanStringEncoding];
+        if (nameData != nil) {
+            newName = [[NSString alloc] initWithData:nameData encoding:newEncoding];
+        }
+    }
+    
+    // If the above failed, just return the entry unmodified.  If it succeeded,
+    // make a copy of the entry and replace the name with the new name that we
+    // calculated.
+    
+    if (newName == nil) {
+        assert(NO);                 // in the debug builds, if this fails, we should investigate why
+        result = (NSDictionary *) entry;
+    } else {
+        NSMutableDictionary *   newEntry;
+        
+        newEntry = [entry mutableCopy];
+        assert(newEntry != nil);
+        
+        [newEntry setObject:newName forKey:(id) kCFFTPResourceName];
+        
+        result = newEntry;
+    }
+    
+    return result;
+}
+
+- (NSString *)stringForNumber:(double)num asUnits:(NSString *)units
+{
+    NSString *  result;
+    double      fractional;
+    double      integral;
+    
+    fractional = modf(num, &integral);
+    if ( (fractional < 0.1) || (fractional > 0.9) ) {
+        result = [NSString stringWithFormat:@"%.0f %@", round(num), units];
+    } else {
+        result = [NSString stringWithFormat:@"%.1f %@", num, units];
+    }
+    return result;
+}
+
+- (NSString *)stringForFileSize:(unsigned long long)fileSizeExact
+{
+    double  fileSize;
+    NSString *  result;
+    
+    fileSize = (double) fileSizeExact;
+    if (fileSizeExact == 1) {
+        result = @"1 byte";
+    } else if (fileSizeExact < 1024) {
+        result = [NSString stringWithFormat:@"%llu bytes", fileSizeExact];
+    } else if (fileSize < (1024.0 * 1024.0 * 0.1)) {
+        result = [self stringForNumber:fileSize / 1024.0 asUnits:@"KB"];
+    } else if (fileSize < (1024.0 * 1024.0 * 1024.0 * 0.1)) {
+        result = [self stringForNumber:fileSize / (1024.0 * 1024.0) asUnits:@"MB"];
+    } else {
+        result = [self stringForNumber:fileSize / (1024.0 * 1024.0 * 1024.0) asUnits:@"MB"];
+    }
+    return result;
+}
+
+- (void)addListEntries:(NSArray *)newEntries
+{
+    [ftpItems addObjectsFromArray:newEntries];
+    [self.tableView reloadData];
+}
+
+- (void)parseFtpListData
+{
+    NSMutableArray *    newEntries;
+    NSUInteger          offset;
+    
+    // We accumulate the new entries into an array to avoid a) adding items to the
+    // table one-by-one, and b) repeatedly shuffling the listData buffer around.
+    
+    newEntries = [NSMutableArray array];
+    assert(newEntries != nil);
+    
+    offset = 0;
+    do {
+        CFIndex         bytesConsumed;
+        CFDictionaryRef thisEntry;
+        
+        thisEntry = NULL;
+        
+        assert(offset <= [ftpReadData length]);
+        bytesConsumed = CFFTPCreateParsedResourceListing(NULL, &((const uint8_t *) ftpReadData.bytes)[offset], (CFIndex) ([ftpReadData length] - offset), &thisEntry);
+        if (bytesConsumed > 0) {
+			
+            // It is possible for CFFTPCreateParsedResourceListing to return a
+            // positive number but not create a parse dictionary.  For example,
+            // if the end of the listing text contains stuff that can't be parsed,
+            // CFFTPCreateParsedResourceListing returns a positive number (to tell
+            // the caller that it has consumed the data), but doesn't create a parse
+            // dictionary (because it couldn't make sense of the data).  So, it's
+            // important that we check for NULL.
+			
+            if (thisEntry != NULL) {
+                NSDictionary *  entryToAdd;
+                
+                // Try to interpret the name as UTF-8, which makes things work properly
+                // with many UNIX-like systems, including the Mac OS X built-in FTP
+                // server.  If you have some idea what type of text your target system
+                // is going to return, you could tweak this encoding.  For example,
+                // if you know that the target system is running Windows, then
+                // NSWindowsCP1252StringEncoding would be a good choice here.
+                //
+                // Alternatively you could let the user choose the encoding up
+                // front, or reencode the listing after they've seen it and decided
+                // it's wrong.
+                //
+                // Ain't FTP a wonderful protocol!
+				
+                entryToAdd = [self entryByReencodingNameInEntry:(__bridge NSDictionary *) thisEntry encoding:NSUTF8StringEncoding];
+                
+                [newEntries addObject:entryToAdd];
+            }
+            
+            // We consume the bytes regardless of whether we get an entry.
+            
+            offset += (NSUInteger) bytesConsumed;
+        }
+        
+        if (thisEntry != NULL) {
+            CFRelease(thisEntry);
+        }
+        
+        if (bytesConsumed == 0) {
+            // We haven't yet got enough data to parse an entry.  Wait for more data
+            // to arrive.
+            break;
+        } else if (bytesConsumed < 0) {
+            // We totally failed to parse the listing.  Fail.
+			NSLog (@"Listing parse failed");
+            [self stopFtpAction];
+            break;
+        }
+    } while (YES);
+	
+    if ([newEntries count] != 0) {
+        [self addListEntries:newEntries];
+    }
+    if (offset != 0) {
+        [ftpReadData replaceBytesInRange:NSMakeRange(0, offset) withBytes:NULL length:0];
+    }
+}
+
+- (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode
+{
+    switch (eventCode) {
+        case NSStreamEventOpenCompleted: {
+            NSLog (@"FTP action OK.");
+            // Despite what it says in the documentation <rdar://problem/7163693>,
+            // you should wait for the NSStreamEventEndEncountered event to see
+            // if the directory was created successfully.  If you shut the stream
+            // down now, you miss any errors coming back from the server in response
+            // to the MKD command.
+            //
+            // [self stopCreateWithStatus:nil];
+        } break;
+        case NSStreamEventHasBytesAvailable: {
+            NSInteger       bytesRead;
+            uint8_t         buffer[32768];
+			
+            bytesRead = [ftpNetworkInputStream read:buffer maxLength:sizeof(buffer)];
+            if (bytesRead < 0) {
+                NSLog (@"Network read error");
+            } else if (bytesRead == 0) {
+				NSLog (@"Network read zero bytes (???)");
+                [self stopFtpAction];
+            } else {
+                [ftpReadData appendBytes:buffer length:(NSUInteger) bytesRead];
+                [self parseFtpListData];
+            }
+        } break;
+        case NSStreamEventHasSpaceAvailable: {
+            assert(NO);
+        } break;
+        case NSStreamEventErrorOccurred: {
+            NSLog (@"FTP error (NSStreamEventErrorOccurred)...");
+            [self stopFtpAction];
+        } break;
+        case NSStreamEventEndEncountered: {
+			NSLog (@"FTP error (NSStreamEventEndEncountered)...");
+            [self stopFtpAction];
+        } break;
+        default: {
+            assert(NO);
+        } break;
+    }
+}
+
+
+#pragma mark - XML
+
+- (TSItem *)demoItem
+{
+	TSItem *ret = [[TSItem alloc] init];
+	ret.string = @"this is a string";
+	ret.date = [[NSDate alloc] init];
+	ret.integer = 13;
+	return ret;
+}
+
+- (NSString *)demoFileContent
+{
+	XMLWriter *xmlWriter = [[XMLWriter alloc] init];
+	TSListOfItems *listOfItems = [[TSListOfItems alloc] init];
+	[listOfItems addItem:[self demoItem]];
+	[listOfItems addItem:[self demoItem]];
+	[listOfItems writeTo:xmlWriter];
+	
+	return [xmlWriter toString];
+}
+
+- (void)readListOfItems:(NSData *)data
+{
+	NSError *error;
+	SMXMLDocument *document = [SMXMLDocument documentWithData:data error:&error];
+	if (error == nil) {
+		NSLog(@"root name : %@", document.root.name);
+		TSListOfItems *listOfItems = [TSListOfItems readFrom:document.root];
+		if (listOfItems != nil) {
+			NSLog(@"Successfully read list of %d items", [listOfItems.items count]);
+			for (TSItem *item in listOfItems.items) {
+				NSLog(@"Item with string %@ date %@ and int %d", item.string, item.date, item.integer);
+			}
+		}else {
+			NSLog(@"Failed to read list of items.");
+		}
+	}else {
+		NSLog(@"XML read error : %@", [error debugDescription]);
+	}
+}
+
+#pragma mark - iCloud
+
+- (NSURL *) iCloudURL
+{
+	return [[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:nil];
+}
+
+- (NSURL *) iCloudDocumentsURL
+{
+	return [[self iCloudURL] URLByAppendingPathComponent:@"Documents"];
+}
+
+- (NSURL *) filePackageUrlForCloudURL:(NSURL *)url
+{
+	if ([[url path] hasPrefix:[[self iCloudDocumentsURL] path]]) {
+		NSArray *iCloudDocumentsURLComponents = [[self iCloudDocumentsURL] pathComponents];
+		NSArray *urlComponents = [url pathComponents];
+		if ([iCloudDocumentsURLComponents count] < [urlComponents count]) {
+			urlComponents = [urlComponents subarrayWithRange:NSMakeRange(0, [iCloudDocumentsURLComponents count] + 1)];
+			url = [NSURL fileURLWithPathComponents:urlComponents];
+		}
+	}
+	return url;
+}
+
+- (void) createCloudDocumentNamed:(NSString *)name withData:(NSData *)data
+{
+	NSURL *url = [[self iCloudDocumentsURL] URLByAppendingPathComponent:name];
+	NSError *error;
+	BOOL ok = [data writeToURL:url atomically:YES];
+	if (!ok) {
+		NSLog(@"iWrite fail : %@", [error debugDescription]);
+	}
+}
+
+- (void) removeCloudURL:(NSURL *)url
+{
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+		NSError *coordinationError;
+		[coordinator coordinateWritingItemAtURL:url options:NSFileCoordinatorWritingForDeleting error:&coordinationError byAccessor:^(NSURL *usedURL) {
+			NSError *deleteError;
+			[[[NSFileManager alloc] init] removeItemAtURL:usedURL error:&deleteError];
+			if (deleteError) {
+				NSLog(@"Error while deleting :: %@", [deleteError debugDescription]);
+			}
+		}];
+		if (coordinationError) {
+			NSLog(@"Synchronization error while deleting :: %@", [coordinationError debugDescription]);
+		}
+	});
+}
+
+- (void) startCloudQuery
+{
+	if (!iCloudQuery) {
+		iCloudQuery = [[NSMetadataQuery alloc] init];
+		iCloudQuery.searchScopes = [NSArray arrayWithObject:NSMetadataQueryUbiquitousDocumentsScope];
+		iCloudQuery.predicate = [NSPredicate predicateWithFormat:@"%K like '*'", NSMetadataItemFSNameKey];
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(processCloudQueryResults:)
+													 name:NSMetadataQueryDidFinishGatheringNotification
+												   object:iCloudQuery];
+//		[[NSNotificationCenter defaultCenter] addObserver:self
+//												 selector:@selector(processCloudQueryResults:)
+//													 name:NSMetadataQueryDidUpdateNotification
+//												   object:iCloudQuery];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(logCloudNotification:)
+													 name:NSMetadataQueryGatheringProgressNotification
+												   object:iCloudQuery];
+		[iCloudQuery startQuery];
+		[iCloudQuery enableUpdates];
+	}
+}
+
+-(void) stopCloudQuery
+{
+	if (iCloudQuery) {
+		[iCloudQuery disableUpdates];
+		if ([iCloudQuery isStarted]) {
+			[iCloudQuery stopQuery];
+		}
+		[[NSNotificationCenter defaultCenter] removeObserver:self];
+		iCloudQuery = nil;
+	}
+}
+
+
+#pragma mark - Dropbox 
+
+- (DBRestClient *)dropboxRestClient {
+	if (!dropboxRestClient) {
+		dropboxRestClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
+		dropboxRestClient.delegate = self;
+	}
+	return dropboxRestClient;
+}
+
+- (void)restClient:(DBRestClient *)client loadedMetadata:(DBMetadata *)metadata {
+    if (metadata.isDirectory) {
+        NSLog(@"Folder '%@' contains:", metadata.path);
+		for (DBMetadata *file in metadata.contents) {
+			NSLog(@"\t%@", file.filename);
+		}
+		dropboxItems = metadata.contents;
+		UIBarButtonItem *refreshDropboxButton = [[UIBarButtonItem alloc] 
+												 initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
+												 target:self 
+												 action:@selector(refreshDropbox:)];
+		self.navigationItem.rightBarButtonItem = refreshDropboxButton;
+		[self.tableView reloadData];
+    }
+}
+
+- (void)restClient:(DBRestClient *)client loadMetadataFailedWithError:(NSError *)error {
+	
+    NSLog(@"Error loading metadata: %@", error);
+}
+
+- (void)restClient:(DBRestClient*)client uploadedFile:(NSString*)destPath
+			  from:(NSString*)srcPath metadata:(DBMetadata*)metadata {
+    NSLog(@"File uploaded successfully to path: %@", metadata.path);
+	NSError *error;
+	[[NSFileManager defaultManager] removeItemAtPath:srcPath error:&error];
+	if (error) {
+		NSLog(@"Error : %@", [error debugDescription]);
+	}else {
+		NSLog(@"Successfully deleted temporary file %@", srcPath);
+	}
+	[self refreshDropbox:nil];
+}
+
+- (void)restClient:(DBRestClient*)client uploadFileFailedWithError:(NSError*)error {
+    NSLog(@"File upload failed with error - %@", error);
+}
+
+#pragma mark - View lifecycle
+
+- (id)initWithStyle:(UITableViewStyle)style
+{
+    self = [super initWithStyle:style];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    // Uncomment the following line to preserve selection between presentations.
+    // self.clearsSelectionOnViewWillAppear = NO;
+ 
+    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+	
+    if (![[DBSession sharedSession] isLinked]) {
+		NSLog(@"Session is not linked");
+		UIBarButtonItem *linkToDropboxButton = [[UIBarButtonItem alloc] 
+												initWithTitle:@"Link with Dropbox" 
+												style:UIBarButtonItemStyleBordered
+												target:self 
+												action:@selector(linkWithDropbox:)];
+		NSLog(@"%@", [linkToDropboxButton debugDescription]);
+		self.navigationItem.rightBarButtonItem = linkToDropboxButton;
+		NSLog(@"%@", [self.navigationItem.rightBarButtonItem debugDescription]);
+	}else {
+		NSLog(@"Session is already linked");
+		UIBarButtonItem *refreshDropboxButton = [[UIBarButtonItem alloc] 
+												initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
+												target:self 
+												action:@selector(refreshDropbox:)];
+		self.navigationItem.rightBarButtonItem = refreshDropboxButton;
+	}
+	
+//	NSLog (@"Unique Device IDentifier : %@", [[UIDevice currentDevice] uniqueIdentifier]);
+	
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	NSString *uid = [defaults stringForKey:@"TS_SIMPLE_PASWORD_SALT"];
+	if (uid) {
+		NSLog(@"UID retrieved from NSUserDefaults : %@", uid);
+	}else {
+		CFUUIDRef uuidref = CFUUIDCreate(CFAllocatorGetDefault());
+		uid = (__bridge NSString *)(CFUUIDCreateString(CFAllocatorGetDefault(), uuidref));
+		NSLog(@"UID generated via CFUUIDCreate : %@", uid);
+		[defaults setObject:uid forKey:@"TS_SIMPLE_PASWORD_SALT"];
+		[defaults synchronize];
+	}
+}
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    // Release any retained subviews of the main view.
+    // e.g. self.myOutlet = nil;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	[[NSNotificationCenter defaultCenter] addObserver:self 
+											 selector:@selector(notificationCenterCallback:) 
+												 name:@"TScopy" 
+											   object:nil];
+	[[UIApplication sharedApplication] cancelAllLocalNotifications];
+	[[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+	[super viewWillDisappear:animated];
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return YES;
+}
+
+#pragma mark - Listeners
+
+- (void)notificationCenterCallback:(NSNotification *)notification
+{
+	NSLog(@"Received notification :: %@", [notification debugDescription]);
+}
+
+- (void)linkWithDropbox:(id)sender
+{
+    if (![[DBSession sharedSession] isLinked]) {
+        [[DBSession sharedSession] linkFromController:self.navigationController];
+    }
+}
+
+- (void)unlinkDropbox:(id)sender
+{
+    if ([[DBSession sharedSession] isLinked]) {
+        [[DBSession sharedSession] unlinkAll];
+    }
+}
+
+- (void)refreshDropbox:(id)sender
+{
+	if ([[DBSession sharedSession] isLinked]) {
+		[[self dropboxRestClient] loadMetadata:@"/"];
+		UIActivityIndicatorView *busy = [[UIActivityIndicatorView alloc]
+										 initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+		[busy startAnimating];
+		UIBarButtonItem *refreshDropboxButton = [[UIBarButtonItem alloc]
+												 initWithCustomView:busy];
+		self.navigationItem.rightBarButtonItem = refreshDropboxButton;
+		[self startCloudQuery];
+	}
+}
+
+- (IBAction)addDropboxItem:(UIButton *)sender {
+//	NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+//	[dateFormat setDateFormat:@"yyyy-MM-dd_HH:mm:ss"];
+//	NSString *filename = [dateFormat stringFromDate:[NSDate date]];
+	
+	NSData *salt = [TSCryptoUtils randomDataOfVariableLengthMinimum:32 maximum:96];
+	NSString *filename = [TSStringUtils hexStringFromData:salt];
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
+	NSString *fileContent = [self demoFileContent];
+	
+	NSLog(@"Encrypting...");
+	NSData *encryptedData = [TSCryptoUtils tanukiEncrypt:[fileContent dataUsingEncoding:NSUTF8StringEncoding]
+									 usingSecret:@"TheTanukiSais...NI-PAH~!" andSalt:salt];
+	NSLog(@"Encrypt finished.");
+	
+//	NSLog(@"Encrypt-decrypt test for |%@|", fileContent);
+//	NSData *decryptedData = [self decryptData:encryptedData usingKey:key];
+//	NSLog(@"Result of encrypt-decrypt : |%@|", 
+//		  [[NSString alloc] initWithBytes:[decryptedData bytes] 
+//								   length:[decryptedData length] 
+//								 encoding:NSUTF8StringEncoding]);
+//	[self readListOfItems:decryptedData];
+	
+	[fileManager createFileAtPath: filePath
+						 contents:encryptedData 
+					   attributes:nil];
+	tableContent = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSAllDomainsMask];
+	[[self dropboxRestClient] uploadFile:filename toPath:@"/" withParentRev:nil fromPath:filePath];
+	
+	[self createCloudDocumentNamed:filename withData:encryptedData];
+}
+
+- (void) logCloudNotification: (NSNotification *)notification
+{
+	NSLog(@"iCloud notification received :: %@", [notification debugDescription]);
+}
+
+- (void) processCloudQueryResults: (NSNotification *)notification
+{
+	[self logCloudNotification:notification];
+	NSMutableArray *documents = [NSMutableArray array];
+	int resultCount = [iCloudQuery resultCount];
+	for (int i=0; i<resultCount; i++) {
+		NSMetadataItem *item = [iCloudQuery resultAtIndex:i];
+		NSURL *url = [item valueForAttribute:NSMetadataItemURLKey];
+		url = [self filePackageUrlForCloudURL:url];
+		[documents addObject:url];
+	}
+	iCloudDocuments = [documents copy];
+	[self stopCloudQuery];
+}
+
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 4;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+	if (section == 0) {
+		return @"Dropbox";
+	}else if (section == 1) {
+		return @"Local";
+	}else if (section == 2) {
+		return @"iCloud";
+	}else if (section == 3) {
+		return @"FTP";
+	}else {
+		return @"???";
+	}
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+	if (section == 0) {
+		if (!dropboxItems) {
+			[self refreshDropbox:nil];
+			return 1;
+		}else {
+			return [dropboxItems count];
+		}
+	}else if (section == 1) {
+		NSFileManager *fileManager = [NSFileManager defaultManager];
+		if (!tableContent) {
+			tableContent = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSAllDomainsMask];
+			//		tableContent = [fileManager URLsForDirectory:NSAllApplicationsDirectory inDomains:NSAllDomainsMask];
+		}
+		if (tableContent) {
+			for (int i=0; i<[tableContent count]; i++) {
+				NSLog(@"Contents of folder : %@", [tableContent objectAtIndex:i]);
+				NSError *error;
+				NSArray *dirList = [fileManager contentsOfDirectoryAtPath:[[tableContent objectAtIndex:i] path] error:&error];
+				if (error) {
+					NSLog(@"ERROR :: %@", [error debugDescription]);
+				}else {
+					for (int j=0; j<[dirList count]; j++) {
+						NSLog(@"Child : %@", [dirList objectAtIndex:j]);
+					}
+				}
+			}
+		}
+		
+		return [tableContent count];
+	}else if (section == 2) {
+		if (!iCloudDocuments) {
+			[self startCloudQuery];
+			return 1;
+		}else {
+			return [iCloudDocuments count];
+		}
+	}else if (section == 3) {
+		if (!ftpItems) {
+			[self startFtpList:@"/tmp"];
+			return 1;
+		}else {
+			return [ftpItems count];
+		}
+	}else {
+		return 0;
+	}
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if(indexPath.section == 0) {
+		static NSString *CellIdentifier = @"FSCell";
+		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+		
+		if (dropboxItems) {
+			DBMetadata *dropboxFileMetadata = [dropboxItems objectAtIndex:indexPath.row];
+			cell.textLabel.text = dropboxFileMetadata.filename;
+			cell.detailTextLabel.text = dropboxFileMetadata.description;
+		}else {
+			cell.textLabel.text = @"Loading Dropbox items...";
+		}
+		
+		return cell;
+	}else if(indexPath.section == 1) {
+		static NSString *CellIdentifier = @"FSCell";
+		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+		
+		NSURL *url = [tableContent objectAtIndex:indexPath.row];
+		cell.textLabel.text = [url lastPathComponent];
+		
+		cell.detailTextLabel.text = [url path];
+		
+		return cell;
+	}else if(indexPath.section == 2) {
+		static NSString *CellIdentifier = @"FSCell";
+		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+
+		if (iCloudDocuments) {
+			NSURL *url = [iCloudDocuments objectAtIndex:indexPath.row];
+			cell.textLabel.text = [url lastPathComponent];
+			cell.detailTextLabel.text = [url path];
+		}else {
+			cell.textLabel.text = @"Loading iCloud items...";
+		}
+
+		return cell;
+	}else if(indexPath.section == 3) {
+		static NSString *CellIdentifier = @"FSCell";
+		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+		
+		if ((ftpItems) && ([ftpItems count] > 0)) {
+			NSDictionary *listEntry = [ftpItems objectAtIndex:indexPath.row];
+			
+			NSNumber *          typeNum;
+			int                 type;
+			NSNumber *          sizeNum;
+			NSString *          sizeStr;
+			NSNumber *          modeNum;
+			char                modeCStr[12];
+			NSDate *            date;
+			NSString *          dateStr;
+			NSDateFormatter *sDateFormatter = [[NSDateFormatter alloc] init];
+			assert(sDateFormatter != nil);
+			sDateFormatter.dateStyle = NSDateFormatterShortStyle;
+			sDateFormatter.timeStyle = NSDateFormatterShortStyle;
+
+			typeNum = [listEntry objectForKey:(id) kCFFTPResourceType];
+			if (typeNum != nil) {
+				assert([typeNum isKindOfClass:[NSNumber class]]);
+				type = [typeNum intValue];
+			} else {
+				type = 0;
+			}
+			
+			modeNum = [listEntry objectForKey:(id) kCFFTPResourceMode];
+			if (modeNum != nil) {
+				assert([modeNum isKindOfClass:[NSNumber class]]);
+				
+				strmode([modeNum intValue] + DTTOIF(type), modeCStr);
+			} else {
+				strlcat(modeCStr, "???????????", sizeof(modeCStr));
+			}
+			
+			sizeNum = [listEntry objectForKey:(id) kCFFTPResourceSize];
+			if (sizeNum != nil) {
+				if (type == DT_REG) {
+					assert([sizeNum isKindOfClass:[NSNumber class]]);
+					sizeStr = [self stringForFileSize:[sizeNum unsignedLongLongValue]];
+				} else {
+					sizeStr = @"-";
+				}
+			} else {
+				sizeStr = @"?";
+			}
+			
+			date = [listEntry objectForKey:(id) kCFFTPResourceModDate];
+			if (date != nil) {
+				if (sDateFormatter == nil) {
+					sDateFormatter = [[NSDateFormatter alloc] init];
+					assert(sDateFormatter != nil);
+					
+					sDateFormatter.dateStyle = NSDateFormatterShortStyle;
+					sDateFormatter.timeStyle = NSDateFormatterShortStyle;
+				}
+				dateStr = [sDateFormatter stringFromDate:date];
+			} else {
+				dateStr = @"";
+			}
+			
+			cell.textLabel.text = [listEntry objectForKey:(id) kCFFTPResourceName];
+			cell.detailTextLabel.text = [NSString stringWithFormat:@"%s %@ %@", modeCStr, sizeStr, dateStr];
+		}else {
+			cell.textLabel.text = @"Loading FTP items...";
+		}
+		
+		return cell;
+	}else {
+		return nil;
+	}
+}
+
+// Override to support conditional editing of the table view.
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	switch (indexPath.section) {
+		case 0:
+		case 2:
+			return YES;
+		default:
+			return NO;
+	}
+}
+
+// Override to support editing the table view.
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if (editingStyle == UITableViewCellEditingStyleDelete) {
+		if (indexPath.section == 2) {
+			NSURL *url = [iCloudDocuments objectAtIndex:indexPath.row];
+			[self removeCloudURL:url];
+			[self refreshDropbox:nil];
+		}else if (indexPath.section == 0) {
+			DBMetadata *dropboxFileMetadata = [dropboxItems objectAtIndex:indexPath.row];
+			[[self dropboxRestClient] deletePath:[dropboxFileMetadata path]];
+			[self refreshDropbox:nil];
+		}
+    }
+}
+
+/*
+// Override to support rearranging the table view.
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+{
+}
+*/
+
+/*
+// Override to support conditional rearranging of the table view.
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Return NO if you do not want the item to be re-orderable.
+    return YES;
+}
+*/
+
+#pragma mark - Table view delegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if (indexPath.section == 0) {
+		if (dropboxItems) {
+			DBMetadata *dropboxFileMetadata = [dropboxItems objectAtIndex:indexPath.row];
+			NSString *text = dropboxFileMetadata.filename;
+			UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+			pasteboard.string = text;
+			
+			NSString *notificationMessage = [NSString stringWithFormat:@"%@ copied to clipboard", text];
+			JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
+			jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
+			[jsn showFor:2.0];
+		}else {
+			NSString *notificationMessage = @"Not loaded yet...";
+			JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
+			jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyX.png"]];
+			[jsn showFor:2.0];
+		}
+	}else if (indexPath.section == 1) {
+		NSURL *url = [tableContent objectAtIndex:indexPath.row];
+		UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+		pasteboard.string = [url path];
+		
+		//	[[NSNotificationCenter defaultCenter] postNotificationName:@"TScopy" 
+		//				object:[NSString stringWithFormat:@"%@ copied to clipboard", [url lastPathComponent]]];
+		//	[[NSNotificationCenter defaultCenter] postNotificationName:@"TScopy" object:self];
+		
+		
+		//	UILocalNotification *notif = [[UILocalNotification alloc] init];
+		//	notif.alertBody = [NSString stringWithFormat:@"%@ copied to clipboard", [url lastPathComponent]];
+		//    notif.alertAction = @"View Details";
+		//	notif.soundName = UILocalNotificationDefaultSoundName;
+		//	notif.applicationIconBadgeNumber = 666;
+		//    [[UIApplication sharedApplication] presentLocalNotificationNow:notif];
+		
+		NSString *notificationMessage = [NSString stringWithFormat:@"%@ copied to clipboard", [url lastPathComponent]];
+		JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
+		jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
+		[jsn showFor:2.0];
+	}else if(indexPath.section == 2) {
+		if (iCloudDocuments) {
+			NSURL *url = [iCloudDocuments objectAtIndex:indexPath.row];
+			NSString *text = [url lastPathComponent];
+			UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+			pasteboard.string = text;
+			
+			NSString *notificationMessage = [NSString stringWithFormat:@"%@ copied to clipboard", text];
+			JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
+			jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
+			[jsn showFor:2.0];
+		}else {
+			NSString *notificationMessage = @"Not loaded yet...";
+			JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
+			jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyX.png"]];
+			[jsn showFor:2.0];
+		}
+	}else if(indexPath.section == 3) {
+		if (iCloudDocuments) {
+			NSDictionary *listEntry = [ftpItems objectAtIndex:indexPath.row];
+			NSString *text = [listEntry objectForKey:(id) kCFFTPResourceName];
+			UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+			pasteboard.string = text;
+			
+			NSString *notificationMessage = [NSString stringWithFormat:@"%@ copied to clipboard", text];
+			JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
+			jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
+			[jsn showFor:2.0];
+		}else {
+			NSString *notificationMessage = @"Not loaded yet...";
+			JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
+			jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyX.png"]];
+			[jsn showFor:2.0];
+		}
+	}else {
+	}
+	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+@end

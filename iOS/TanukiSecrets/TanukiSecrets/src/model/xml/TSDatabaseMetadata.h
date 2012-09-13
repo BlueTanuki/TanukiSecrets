@@ -18,7 +18,7 @@
  */
 @interface TSDatabaseMetadata : NSObject//<TSXMLSerializable>
 
-//id == the filename CANNOT be changed, acts as UID for the database
+//id == the filename, CANNOT be changed, acts as UID for the database
 //name (same as the filename probably, need to decide if the name can be changed)
 //description
 //
