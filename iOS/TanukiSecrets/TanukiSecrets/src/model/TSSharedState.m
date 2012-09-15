@@ -10,38 +10,36 @@
 
 @implementation TSSharedState
 
-static TSSharedState *sharedState = nil;
+@synthesize instanceUID = _instanceUID;
 
-NSString *uid = nil;
+#pragma mark - singleton creation
 
 + (TSSharedState*)sharedState
 {
-	@synchronized(self) {
-        if (sharedState == nil) {
-            sharedState = [[self alloc] init];
-		}
-    }
+    static TSSharedState *sharedState = nil;
+    static dispatch_once_t once = 0;
+    dispatch_once(&once, ^{sharedState = [[self alloc] init];});
     return sharedState;
 }
 
-#pragma mark - permanent properties
+#pragma mark - read-only properties
 
 - (NSString *)instanceUID
 {
-	if (uid == nil) {
+	if (_instanceUID == nil) {
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-		uid = [defaults stringForKey:TS_INSTANCE_UID_KEY];
-		if (uid != nil) {
-			NSLog(@"UID retrieved from NSUserDefaults : %@", uid);
+		_instanceUID = [defaults stringForKey:TS_INSTANCE_UID_KEY];
+		if (_instanceUID != nil) {
+			NSLog(@"UID retrieved from NSUserDefaults : %@", _instanceUID);
 		}else {
 			CFUUIDRef uuidref = CFUUIDCreate(CFAllocatorGetDefault());
-			uid = (__bridge NSString *)(CFUUIDCreateString(CFAllocatorGetDefault(), uuidref));
-			NSLog(@"UID generated via CFUUIDCreate : %@", uid);
-			[defaults setObject:uid forKey:TS_INSTANCE_UID_KEY];
+			_instanceUID = (__bridge NSString *)(CFUUIDCreateString(CFAllocatorGetDefault(), uuidref));
+			NSLog(@"UID generated via CFUUIDCreate : %@", _instanceUID);
+			[defaults setObject:_instanceUID forKey:TS_INSTANCE_UID_KEY];
 			[defaults synchronize];
 		}
 	}
-	return uid;
+	return _instanceUID;
 }
 
 @end

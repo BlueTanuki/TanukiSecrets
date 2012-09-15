@@ -10,6 +10,8 @@
 
 @implementation TSStringUtils
 
+#pragma mark - conversion
+
 + (NSData *) dataFromHexString:(NSString *)string
 {
     NSMutableData *stringData = [[NSMutableData alloc] init];
@@ -43,6 +45,37 @@
                                                            length:data.length*2
                                                      freeWhenDone:YES];
     return retVal;
+}
+
++ (NSString *)stringFromInteger:(NSInteger)value
+{
+	return [NSString stringWithFormat:@"%d", value];
+}
+
+#pragma mark - transform
+
++ (NSString *)trim:(NSString *)string
+{
+	return [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+}
+
+#pragma mark - information
+
++ (BOOL)isBlank:(NSString *)string
+{
+	BOOL ret = YES;
+	if (string != nil) {
+		NSString *trimmed = [self trim:string];
+		if ([trimmed length] > 0) {
+			ret = NO;
+		}
+	}
+	return ret;
+}
+
++ (BOOL)isNotBlank:(NSString *)string
+{
+	return ![self isBlank:string];
 }
 
 @end

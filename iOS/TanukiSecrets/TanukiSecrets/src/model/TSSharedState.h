@@ -17,6 +17,8 @@
 */
 @interface TSSharedState : NSObject
 
-- (NSString *) instanceUID;
++ (TSSharedState*)sharedState;
+
+@property(nonatomic, readonly) NSString *instanceUID;
 
 @end

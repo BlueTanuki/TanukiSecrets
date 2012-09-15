@@ -10,7 +10,13 @@
 
 @interface TSStringUtils : NSObject
 
-+ (NSString *) hexStringFromData:(NSData *) data;
++ (NSString *) hexStringFromData:(NSData *)data;
 + (NSData *) dataFromHexString:(NSString *)string;
+
++ (NSString *) stringFromInteger:(NSInteger)value;
+
++ (NSString *) trim:(NSString *)string;
++ (BOOL) isBlank:(NSString *)string;
++ (BOOL) isNotBlank:(NSString *)string;
 
 @end

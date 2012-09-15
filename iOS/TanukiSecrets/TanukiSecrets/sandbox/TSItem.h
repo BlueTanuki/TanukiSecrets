@@ -15,4 +15,6 @@
 @property (readwrite, copy) NSString* string;
 @property (readwrite, assign) NSInteger integer;
 
+- (NSDictionary *)asDictionary;
+
 @end

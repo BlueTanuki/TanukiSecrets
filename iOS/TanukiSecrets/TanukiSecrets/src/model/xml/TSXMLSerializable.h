@@ -12,7 +12,11 @@
 
 @protocol TSXMLSerializable <NSObject>
 
--(void)writeTo:(XMLWriter *)writer;
-+(id<TSXMLSerializable>)readFrom:(SMXMLElement *)element;
+- (void)writeTo:(XMLWriter *)writer;
++ (id<TSXMLSerializable>)readFrom:(SMXMLElement *)element;
+
+@optional
+- (void)writeTo:(XMLWriter *)writer usingTagName:(NSString *)tagName;
++ (id<TSXMLSerializable>)readFrom:(SMXMLElement *)element usingTagName:(NSString *)tagName;
 
 @end

@@ -16,4 +16,6 @@
 
 -(void)addItem:(TSItem *)item;
 
+- (NSDictionary *)asDictionary;
+
 @end

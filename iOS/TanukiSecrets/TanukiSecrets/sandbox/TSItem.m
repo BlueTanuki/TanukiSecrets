@@ -40,4 +40,13 @@
 	return nil;
 }
 
+- (NSDictionary *)asDictionary
+{
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+				self.date, @"date",
+				self.string, @"string",
+				self.integer, @"int",
+			nil];
+}
+
 @end

@@ -45,4 +45,13 @@
 	return nil;
 }
 
+- (NSDictionary *)asDictionary
+{
+	NSMutableDictionary *ret = [[NSMutableDictionary alloc] init];
+	for (TSItem *item in self.items) {
+		[ret setObject:[item asDictionary] forKey:@"item"];
+	}
+	return ret;
+}
+
 @end

@@ -18,6 +18,7 @@
 
 #import "TSCryptoUtils.h"
 #import "TSStringUtils.h"
+#import "TSVersion.h"
 
 
 @interface TSFilesystemTableViewController () <DBRestClientDelegate> {
@@ -47,15 +48,39 @@
 	return ret;
 }
 
-- (NSString *)demoFileContent
+- (NSData *)demoFileContentUsingXMLWriter
 {
-	XMLWriter *xmlWriter = [[XMLWriter alloc] init];
 	TSListOfItems *listOfItems = [[TSListOfItems alloc] init];
 	[listOfItems addItem:[self demoItem]];
 	[listOfItems addItem:[self demoItem]];
-	[listOfItems writeTo:xmlWriter];
 	
-	return [xmlWriter toString];
+	XMLWriter *xmlWriter = [[XMLWriter alloc] init];
+	[xmlWriter writeStartElement:@"demoFileContent"];
+	TSVersion *version = [TSVersion versionWithNumber:13 andChecksum:@"666"];
+	[version writeTo:xmlWriter];
+	[listOfItems writeTo:xmlWriter];
+	[xmlWriter writeEndElement];
+	return [xmlWriter toData];
+}
+
+- (NSData *)demoFileContentUsingPropertyListSerialization
+{
+	NSData *dataRep;
+	NSString *errorStr = nil;
+	NSDictionary *propertyList;
+	
+	propertyList = [NSDictionary dictionaryWithObjectsAndKeys:
+                    @"Javier", @"FirstNameKey",
+                    @"Alegria", @"LastNameKey", nil];
+	dataRep = [NSPropertyListSerialization dataFromPropertyList: propertyList
+														 format: NSPropertyListXMLFormat_v1_0
+											   errorDescription: &errorStr];
+	return dataRep;
+}
+
+- (NSData *)demoFileContent
+{
+	return [self demoFileContentUsingXMLWriter];
 }
 
 - (void)readListOfItems:(NSData *)data
@@ -344,10 +369,10 @@
 	NSString *filename = [TSStringUtils hexStringFromData:salt];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
-	NSString *fileContent = [self demoFileContent];
+	NSData *fileContent = [self demoFileContent];
 	
 	NSLog(@"Encrypting...");
-	NSData *encryptedData = [TSCryptoUtils tanukiEncrypt:[fileContent dataUsingEncoding:NSUTF8StringEncoding]
+	NSData *encryptedData = [TSCryptoUtils tanukiEncrypt:fileContent 
 									 usingSecret:@"TheTanukiSais...NI-PAH~!" andSalt:salt];
 	NSLog(@"Encrypt finished.");
 	

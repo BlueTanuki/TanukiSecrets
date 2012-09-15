@@ -53,6 +53,7 @@
 		9FF76E4D16020A2600613DA1 /* TSDBItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E4C16020A2600613DA1 /* TSDBItem.m */; };
 		9FF76E5016020A3D00613DA1 /* TSDBGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E4F16020A3C00613DA1 /* TSDBGroup.m */; };
 		9FF76E5316020C0D00613DA1 /* TSDBItemField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E5216020C0C00613DA1 /* TSDBItemField.m */; };
+		9FF76E65160388F300613DA1 /* TSXMLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E64160388F300613DA1 /* TSXMLUtils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -145,6 +146,8 @@
 		9FF76E4F16020A3C00613DA1 /* TSDBGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDBGroup.m; sourceTree = "<group>"; };
 		9FF76E5116020C0C00613DA1 /* TSDBItemField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDBItemField.h; sourceTree = "<group>"; };
 		9FF76E5216020C0C00613DA1 /* TSDBItemField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDBItemField.m; sourceTree = "<group>"; };
+		9FF76E63160388F200613DA1 /* TSXMLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSXMLUtils.h; sourceTree = "<group>"; };
+		9FF76E64160388F300613DA1 /* TSXMLUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSXMLUtils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -213,6 +216,8 @@
 				9F98D41015F0CCB3001A2C82 /* TSStringUtils.m */,
 				9F1463BC15FE41B600EA03D6 /* TSUserDefaults.h */,
 				9F1463BD15FE41B600EA03D6 /* TSUserDefaults.m */,
+				9FF76E63160388F200613DA1 /* TSXMLUtils.h */,
+				9FF76E64160388F300613DA1 /* TSXMLUtils.m */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -528,6 +533,7 @@
 				9FF76E4D16020A2600613DA1 /* TSDBItem.m in Sources */,
 				9FF76E5016020A3D00613DA1 /* TSDBGroup.m in Sources */,
 				9FF76E5316020C0D00613DA1 /* TSDBItemField.m in Sources */,
+				9FF76E65160388F300613DA1 /* TSXMLUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
