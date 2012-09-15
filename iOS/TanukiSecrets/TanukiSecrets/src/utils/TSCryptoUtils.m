@@ -8,6 +8,8 @@
 
 #import "TSCryptoUtils.h"
 
+#import "TSStringUtils.h"
+
 @implementation TSCryptoUtils
 
 #pragma mark - Random data generation
@@ -133,5 +135,26 @@
 	return [self aes128CbcWithPaddingDecrypt:data usingKey:key andIV:iv];
 }
 
++ (NSString *)tanukiEncryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
+					 usingSecret:(NSString *)secret
+{
+	NSData *key = [self md5text:secret];
+	NSData *iv = [self md5text:itemId];
+	NSData *filedValueBytes = [fieldValue dataUsingEncoding:NSUTF8StringEncoding];
+	NSData *encryptedFieldValue = [self aes128CbcWithPaddingEncrypt:filedValueBytes usingKey:key andIV:iv];
+	return [TSStringUtils hexStringFromData:encryptedFieldValue];
+}
+
++ (NSString *)tanukDecryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
+					usingSecret:(NSString *)secret
+{
+	NSData *key = [self md5text:secret];
+	NSData *iv = [self md5text:itemId];
+	NSData *filedValueBytes = [TSStringUtils dataFromHexString:fieldValue];
+	NSData *decryptedFieldValue = [self aes128CbcWithPaddingDecrypt:filedValueBytes usingKey:key andIV:iv];
+	return [[NSString alloc] initWithBytes:[decryptedFieldValue bytes]
+									length:[decryptedFieldValue length]
+								  encoding:NSUTF8StringEncoding];
+}
 
 @end

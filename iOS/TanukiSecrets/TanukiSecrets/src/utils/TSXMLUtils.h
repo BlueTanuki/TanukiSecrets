@@ -20,10 +20,12 @@
 		  withIntegerContent:(NSInteger)content
 				   toWriter:(XMLWriter *)writer;
 
+///binary data is encoded as hex string using [TSStringUtils hexStringFromData:content]
 + (void)writeSimpleTagNamed:(NSString *)tagName
 		  withBinaryContent:(NSData *)content
 				   toWriter:(XMLWriter *)writer;
 
+///the date is encoded using [TSDateUtils stringFromDate:content]
 + (void)writeSimpleTagNamed:(NSString *)tagName
 		  withDateTimeContent:(NSDate *)content
 				   toWriter:(XMLWriter *)writer;

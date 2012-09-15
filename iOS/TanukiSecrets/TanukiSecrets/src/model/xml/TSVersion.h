@@ -10,11 +10,6 @@
 
 #import "TSXMLSerializable.h"
 
-#define TS_XML_VERSION_TAG_NAME @"version"
-#define TS_XML_VERSION_NUMBER_TAG_NAME @"versionNumber"
-#define TS_XML_VERSION_LABEL_TAG_NAME @"label"
-#define TS_XML_VERSION_CHECKSUM_TAG_NAME @"checksum"
-
 @interface TSVersion : NSObject<TSXMLSerializable>
 
 @property(nonatomic, assign) NSInteger versionNumber;
@@ -23,7 +18,7 @@
 
 + (id)versionWithNumber:(NSInteger)number andChecksum:(NSString *)checksum;
 
-// Designated initializer
+/// Designated initializer
 - (id)initWithNumber:(NSInteger)number andChecksum:(NSString *)checksum;
 - (id)init;
 

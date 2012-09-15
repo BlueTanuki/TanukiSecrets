@@ -38,4 +38,9 @@
 + (NSData *)tanukiEncrypt:(NSData *) data usingSecret:(NSString *) secret andSalt:(NSData *)salt;
 + (NSData *)tanukiDecrypt:(NSData *) data usingSecret:(NSString *) secret andSalt:(NSData *)salt;
 
++ (NSString *)tanukiEncryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
+					 usingSecret:(NSString *)secret;
++ (NSString *)tanukDecryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
+					usingSecret:(NSString *)secret;
+
 @end

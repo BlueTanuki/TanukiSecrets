@@ -11,6 +11,11 @@
 #import "TSXMLUtils.h"
 #import "TSStringUtils.h"
 
+#define TS_XML_VERSION_TAG_NAME @"version"
+#define TS_XML_VERSION_NUMBER_TAG_NAME @"versionNumber"
+#define TS_XML_VERSION_LABEL_TAG_NAME @"label"
+#define TS_XML_VERSION_CHECKSUM_TAG_NAME @"checksum"
+
 @implementation TSVersion
 
 @synthesize checksum = _checksum, label = _label, versionNumber = _versionNumber;

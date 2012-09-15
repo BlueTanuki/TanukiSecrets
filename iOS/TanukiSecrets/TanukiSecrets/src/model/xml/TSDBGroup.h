@@ -8,10 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TSDBGroup : NSObject//<TSXMLSerializable>
+#import "TSXMLSerializable.h"
 
-//name (unique among all groups/items belonging to the same parent)
-//list of subgroups
-//list of items
+@interface TSDBGroup : NSObject<TSXMLSerializable>
+
+@property(nonatomic, weak) TSDBGroup *parent;
+
+@property(nonatomic, strong) NSString *name;
+@property(nonatomic, strong) NSArray *subgroups;//of TSDBGroup
+@property(nonatomic, strong) NSArray *items;//of TSDBItem
+
+//string uniquely identifying this field inside the database
+- (NSString *)uniqueGlobalId;
 
 @end

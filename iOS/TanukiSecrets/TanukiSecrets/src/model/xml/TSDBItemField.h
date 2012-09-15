@@ -8,11 +8,22 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TSDBItemField : NSObject//<TSXMLSerializable>
+#import "TSXMLSerializable.h"
+#import "TSDBItem.h"
 
-//name
-//type
-//value
-//protected? (-> corresponds to a hidden-input field, and also is stored encrypted)
+@interface TSDBItemField : NSObject<TSXMLSerializable>
+
+@property(nonatomic, weak) TSDBItem *parent;
+
+//unique inside parent item
+@property(nonatomic, strong) NSString *name;
+@property(nonatomic, assign) BOOL encrypted;
+@property(nonatomic, strong) NSString *value;
+
+//string uniquely identifying this field inside the database
+- (NSString *)uniqueGlobalId;
+
+//return a template value based on the current state
+- (TSDBItemField *)createTemplate;
 
 @end

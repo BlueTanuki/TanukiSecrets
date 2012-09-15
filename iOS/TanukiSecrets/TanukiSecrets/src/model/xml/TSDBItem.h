@@ -8,7 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TSDBItem : NSObject//<TSXMLSerializable>
+#import "TSXMLSerializable.h"
+#import "TSDBGroup.h"
+
+@interface TSDBItem : NSObject<TSXMLSerializable>
 
 //- (id)copyWithZone:(NSZone *)zone
 //{
@@ -26,6 +29,11 @@
 //    return copy;
 //}
 
+@property(nonatomic, weak) TSDBGroup *parent;
+
+//unique inside parent group
+@property(nonatomic, strong) NSString *name;
+
 //name (unique among all groups/items belonging to the same parent)
 //description (short, can be used as subtitle, can be automatically set from one of the fields)
 //		e.g. "User: <valueOfFieldUserName>" is a good subtitle and the password is a good quick-copy source
@@ -33,8 +41,14 @@
 //list of tags (typically the names of all ancestor groups)
 
 //default field name (the source of the quick-copy command)
-//fields (name->value (struvture) map)
+//fields (name->value (structure) map)
 
 //item and fields should provide deep copy methods (implement NSCopying???)
+
+//string uniquely identifying this field inside the database
+- (NSString *)uniqueGlobalId;
+
+//return a template value based on the current state
+- (TSDBItem *)createTemplate;
 
 @end
