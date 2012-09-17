@@ -8,9 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TSDatabase : NSObject//<TSXMLSerializable>
+#import "TSXMLSerializable.h"
+#import "TSDBGroup.h"
 
-//list of containers (container has exactly the same structure as the top-level database)
-//list of items
+@interface TSDatabase : NSObject<TSXMLSerializable>
+
+@property(nonatomic, strong) TSDBGroup *root;
 
 @end

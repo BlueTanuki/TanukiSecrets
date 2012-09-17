@@ -39,4 +39,13 @@
 	   insideWrapperNodeNamed:(NSString *)parentNodeName
 					 toWriter:(XMLWriter *)writer;
 
++ (void)writeStringArray:(NSArray *)stringValues
+			usingTagName:(NSString *)itemTagName
+		  andWrapperNode:(NSString *)wrapperNodeName
+				toWriter:(XMLWriter *)writer;
+
++ (void)writeArrayOfTSXMLSerializableObjects:(NSArray *)arrayOfTsxmlSerializable
+		  usingWrapperNode:(NSString *)wrapperNodeName
+				toWriter:(XMLWriter *)writer;
+
 @end

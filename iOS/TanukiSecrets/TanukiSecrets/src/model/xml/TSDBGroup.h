@@ -14,9 +14,10 @@
 
 @property(nonatomic, weak) TSDBGroup *parent;
 
+//unique inside parent group
 @property(nonatomic, strong) NSString *name;
-@property(nonatomic, strong) NSArray *subgroups;//of TSDBGroup
-@property(nonatomic, strong) NSArray *items;//of TSDBItem
+@property(nonatomic, strong) NSMutableArray *subgroups;//of TSDBGroup
+@property(nonatomic, strong) NSMutableArray *items;//of TSDBItem
 
 //string uniquely identifying this field inside the database
 - (NSString *)uniqueGlobalId;

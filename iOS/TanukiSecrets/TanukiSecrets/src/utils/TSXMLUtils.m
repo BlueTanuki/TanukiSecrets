@@ -10,6 +10,7 @@
 
 #import "TSStringUtils.h"
 #import "TSDateUtils.h"
+#import "TSXMLSerializable.h"
 
 @implementation TSXMLUtils
 
@@ -61,6 +62,30 @@
 {
 	[writer writeStartElement:parentNodeName];
 	[self writeSimpleNodesNamed:tagNames andContents:stringContents toWriter:writer];
+	[writer writeEndElement];
+}
+
++ (void)writeStringArray:(NSArray *)stringValues
+			usingTagName:(NSString *)itemTagName
+		  andWrapperNode:(NSString *)wrapperNodeName
+				toWriter:(XMLWriter *)writer
+
+{
+	[writer writeStartElement:wrapperNodeName];
+	for (NSString *value in stringValues) {
+		[self writeSimpleTagNamed:itemTagName withStringContent:value toWriter:writer];
+	}
+	[writer writeEndElement];
+}
+
++ (void)writeArrayOfTSXMLSerializableObjects:(NSArray *)arrayOfTsxmlSerializable
+							usingWrapperNode:(NSString *)wrapperNodeName
+									toWriter:(XMLWriter *)writer
+{
+	[writer writeStartElement:wrapperNodeName];
+	for (id<TSXMLSerializable> item in arrayOfTsxmlSerializable) {
+		[item writeTo:writer];
+	}
 	[writer writeEndElement];
 }
 
