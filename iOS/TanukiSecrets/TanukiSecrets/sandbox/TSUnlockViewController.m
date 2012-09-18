@@ -8,6 +8,17 @@
 
 #import "TSUnlockViewController.h"
 
+#import "TSDatabaseMetadata.h"
+#import "TSVersion.h"
+#import "TSAuthor.h"
+#import "TSDatabase.h"
+#import "TSDBGroup.h"
+#import "TSDBItem.h"
+#import "TSDBItemField.h"
+#import "TSDatabaseLock.h"
+
+#import "TSCryptoUtils.h"
+
 @interface TSUnlockViewController () <UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextField *unlockCodeTextField;
@@ -23,6 +34,47 @@
 @synthesize onOffSwitch;
 
 BOOL firstTimeSegueTriggered = NO;
+
+#pragma mark - test database
+
+- (TSDatabase *)testDatabase
+{
+	TSDBItem *item = [TSDBItem itemNamed:@"item1"];
+	TSDBItemField *field = [TSDBItemField fieldWithName:@"field1" andValue:@"value ichi"];
+	[item addField:field];
+	item.defaultFieldName = field.name;
+	field = [TSDBItemField fieldWithName:@"field2" andValue:@"futatsu no value"];
+	[item addField:field];
+	
+	TSDBGroup *subgroup = [TSDBGroup groupNamed:@"group1"];
+	[subgroup addItem:item];
+	TSDBGroup *rootGroup = [TSDBGroup groupNamed:@"rootGroup"];
+	[rootGroup addSubgroup:subgroup];
+	
+	return [TSDatabase databaseWithRoot:rootGroup];
+}
+
+- (void)addEncryptedFieldTo:(TSDatabase *)db usingSecret:(NSString *)secret
+{
+	NSString *plaintextValue = @"himitsu desu~";
+	NSString *itemName = @"itemWithEncryptedField";
+	NSString *encryptedValue = [TSCryptoUtils tanukiEncryptField:plaintextValue
+												 belongingToItem:itemName
+													 usingSecret:secret];
+	TSDBItemField *field = [TSDBItemField encryptedFieldWithName:@"encryptedField" andValue:encryptedValue];
+	TSDBItem *item = [TSDBItem itemNamed:itemName];
+	[item addField:field];
+	[db.root addItem:item];
+}
+
+- (TSDatabase *)testDatabaseWithEncryptedItemUsingSecret:(NSString *)secret
+{
+	TSDatabase *ret = [self testDatabase];
+	[self addEncryptedFieldTo:ret usingSecret:secret];
+	return ret;
+}
+
+
 
 #pragma mark - Listeners
 
@@ -58,6 +110,9 @@ BOOL firstTimeSegueTriggered = NO;
 	}else {
 		[self performSegueWithIdentifier:@"offSegue" sender:nil];
 	}
+}
+- (IBAction)createTestDatabase:(UIButton *)sender {
+	TODO
 }
 
 #pragma mark - view lifecycle

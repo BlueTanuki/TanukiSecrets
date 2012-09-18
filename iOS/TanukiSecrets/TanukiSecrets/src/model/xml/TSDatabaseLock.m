@@ -8,9 +8,9 @@
 
 #import "TSDatabaseLock.h"
 
-#define TS_XML_DB_LOCK_TAG_NAME @"database_lock"
-#define TS_XML_DB_LOCK_OPTIMISTIC_TAG_NAME @"optimistic_lock"
-#define TS_XML_DB_LOCK_WRITE_TAG_NAME @"write_lock"
+#define TS_XML_DB_LOCK_TAG_NAME @"tsdbLock"
+#define TS_XML_DB_LOCK_OPTIMISTIC_TAG_NAME @"optimisticLock"
+#define TS_XML_DB_LOCK_WRITE_TAG_NAME @"writeLock"
 
 @implementation TSDatabaseLock
 
@@ -30,7 +30,7 @@
 	[writer writeEndElement];
 }
 
--(void)writeTo:(XMLWriter *)writer
+- (void)writeTo:(XMLWriter *)writer
 {
 	[self writeTo:writer usingTagName:TS_XML_DB_LOCK_TAG_NAME];
 }

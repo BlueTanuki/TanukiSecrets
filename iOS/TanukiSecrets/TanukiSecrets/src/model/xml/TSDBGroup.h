@@ -10,6 +10,8 @@
 
 #import "TSXMLSerializable.h"
 
+@class TSDBItem;
+
 @interface TSDBGroup : NSObject<TSXMLSerializable>
 
 @property(nonatomic, weak) TSDBGroup *parent;
@@ -21,5 +23,10 @@
 
 //string uniquely identifying this field inside the database
 - (NSString *)uniqueGlobalId;
+
+- (void)addSubgroup:(TSDBGroup *)group;
+- (void)addItem:(TSDBItem *)item;
+
++ (TSDBGroup *)groupNamed:(NSString *)name;
 
 @end

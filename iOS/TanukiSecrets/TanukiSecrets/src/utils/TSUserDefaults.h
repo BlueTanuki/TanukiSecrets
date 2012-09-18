@@ -14,8 +14,10 @@
  */
 @interface TSUserDefaults : NSObject
 
-+ (NSString *) stringForKey:(NSString *)key usingDefaultValue:(NSString *)defaultValue;
++ (NSString *)stringForKey:(NSString *)key usingDefaultValue:(NSString *)defaultValue;
 
-+ (NSInteger) integerForKey:(NSString *)key usingDefaultValue:(NSInteger)defaultValue;
++ (NSInteger)integerForKey:(NSString *)key usingDefaultValue:(NSInteger)defaultValue;
+
++ (void)setString:(NSString *)value forKey:(NSString *)key;
 
 @end

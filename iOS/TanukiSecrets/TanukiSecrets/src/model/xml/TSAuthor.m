@@ -11,6 +11,8 @@
 #import "TSXMLUtils.h"
 #import "TSStringUtils.h"
 #import "TSDateUtils.h"
+#import "TSDeviceUtils.h"
+#import "TSSharedState.h"
 
 #define TS_XML_AUTHOR_TAG_NAME @"author"
 #define TS_XML_AUTHOR_UID_TAG_NAME @"uid"
@@ -23,11 +25,6 @@
 @synthesize uid = _uid, name = _name, date =_date, comment = _comment;
 
 #pragma mark - initialization
-
-+ (id)authorWithId:(NSString *)uid andName:(NSString *)name
-{
-	return [[TSAuthor alloc] initWithId:uid andName:name];
-}
 
 - (id)initWithId:(NSString *)uid andName:(NSString *)name
 {
@@ -66,7 +63,7 @@
 	[writer writeEndElement];
 }
 
--(void)writeTo:(XMLWriter *)writer
+- (void)writeTo:(XMLWriter *)writer
 {
 	[self writeTo:writer usingTagName:TS_XML_AUTHOR_TAG_NAME];
 }
@@ -87,6 +84,19 @@
 + (id<TSXMLSerializable>)readFrom:(SMXMLElement *)element
 {
 	return [self readFrom:element usingTagName:TS_XML_AUTHOR_TAG_NAME];
+}
+
+#pragma mark - factory
+
++ (TSAuthor *)authorWithId:(NSString *)uid andName:(NSString *)name
+{
+	return [[TSAuthor alloc] initWithId:uid andName:name];
+}
+
++ (TSAuthor *)authorFromCurrentDevice
+{
+	TSSharedState *sharedState = [TSSharedState sharedState];
+	return [self authorWithId:[sharedState instanceUID] andName:[TSDeviceUtils deviceName]];
 }
 
 @end

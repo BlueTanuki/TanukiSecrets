@@ -16,7 +16,7 @@
 
 #pragma mark - TSXMLSerializable
 
--(void)writeTo:(XMLWriter *)writer
+- (void)writeTo:(XMLWriter *)writer
 {
 	[self.root writeTo:writer usingTagName:TS_XML_DB_ROOT_TAG_NAME];
 }
@@ -25,6 +25,15 @@
 {
 	TSDatabase *ret = [[TSDatabase alloc] init];
 	ret.root = [TSDBGroup readFrom:element usingTagName:TS_XML_DB_ROOT_TAG_NAME];
+	return ret;
+}
+
+#pragma mark - factory
+
++ (TSDatabase *)databaseWithRoot:(TSDBGroup *)root
+{
+	TSDatabase * ret = [[TSDatabase alloc] init];
+	ret.root = rootGroup;
 	return ret;
 }
 

@@ -11,6 +11,7 @@
 #import "TSXMLSerializable.h"
 #import "TSDBGroup.h"
 
+@class TSDBItemField;
 @interface TSDBItem : NSObject<TSXMLSerializable>
 
 @property(nonatomic, weak) TSDBGroup *parent;
@@ -29,5 +30,9 @@
 
 //return a template value based on the current state
 - (TSDBItem *)createTemplate;
+
+- (void) addField:(TSDBItemField *)field;
+
++ (TSDBItem *)itemNamed:(NSString *)name;
 
 @end

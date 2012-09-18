@@ -26,4 +26,7 @@
 //return a template value based on the current state
 - (TSDBItemField *)createTemplate;
 
++ (TSDBItemField *)fieldWithName:(NSString *)name andValue:(NSString *)value;
++ (TSDBItemField *)encryptedFieldWithName:(NSString *)name andValue:(NSString *)value;
+
 @end

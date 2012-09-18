@@ -8,6 +8,9 @@
 
 #import "TSSharedState.h"
 
+#import "TSStringUtils.h"
+#import "TSUserDefaults.h"
+
 @implementation TSSharedState
 
 @synthesize instanceUID = _instanceUID;
@@ -27,17 +30,8 @@
 - (NSString *)instanceUID
 {
 	if (_instanceUID == nil) {
-		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-		_instanceUID = [defaults stringForKey:TS_INSTANCE_UID_KEY];
-		if (_instanceUID != nil) {
-			NSLog(@"UID retrieved from NSUserDefaults : %@", _instanceUID);
-		}else {
-			CFUUIDRef uuidref = CFUUIDCreate(CFAllocatorGetDefault());
-			_instanceUID = (__bridge NSString *)(CFUUIDCreateString(CFAllocatorGetDefault(), uuidref));
-			NSLog(@"UID generated via CFUUIDCreate : %@", _instanceUID);
-			[defaults setObject:_instanceUID forKey:TS_INSTANCE_UID_KEY];
-			[defaults synchronize];
-		}
+		NSString *defaultUid = [TSStringUtils generateUid];
+		_instanceUID = [TSUserDefaults stringForKey:TS_INSTANCE_UID_KEY usingDefaultValue:defaultUid];
 	}
 	return _instanceUID;
 }

@@ -21,11 +21,11 @@
 @property(nonatomic, strong) NSDate *date;
 @property(nonatomic, strong) NSString *comment;//optional
 
-+ (id)authorWithId:(NSString *)uid andName:(NSString *)name;
-
 // Designated initializer
 - (id)initWithId:(NSString *)uid andName:(NSString *)name;
 - (id)init;
 
++ (TSAuthor *)authorWithId:(NSString *)uid andName:(NSString *)name;
++ (TSAuthor *)authorFromCurrentDevice;
 
 @end

@@ -34,4 +34,11 @@
 	return ret;
 }
 
++ (void)setString:(NSString *)value forKey:(NSString *)key
+{
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	[defaults setObject:value forKey:key];
+	[defaults synchronize];
+}
+
 @end

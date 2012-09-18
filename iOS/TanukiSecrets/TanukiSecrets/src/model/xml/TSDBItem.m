@@ -57,7 +57,7 @@ tags = _tags, fields = _fields, defaultFieldName = _defaultFieldName;
 	[writer writeEndElement];
 }
 
--(void)writeTo:(XMLWriter *)writer
+- (void)writeTo:(XMLWriter *)writer
 {
 	[self writeTo:writer usingTagName:TS_XML_DB_ITEM_TAG_NAME];
 }
@@ -123,6 +123,24 @@ tags = _tags, fields = _fields, defaultFieldName = _defaultFieldName;
 		}
 	}
 	ret.defaultFieldName = [self.defaultFieldName copy];
+	return ret;
+}
+
+- (void) addField:(TSDBItemField *)field
+{
+	if (self.fields == nil) {
+		self.fields = [NSMutableArray arrayWithObject:field];
+	}else {
+		[self.fields addObject:field];
+	}
+}
+
+#pragma mark - factory
+
++ (TSDBItem *)itemNamed:(NSString *)name
+{
+	TSDBItem *ret = [[TSDBItem alloc] init];
+	ret.name = name;
 	return ret;
 }
 

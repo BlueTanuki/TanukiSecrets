@@ -7,7 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import "TSXMLSerializable.h"
+#import "TSVersion.h"
+#import "TSAuthor.h"
 
 /*
  Entity saved in a separate non-encrypted file that accompanies the encrypted
@@ -16,18 +19,18 @@
  
  This object is saved to the database.tsm file (local and remote).
  */
-@interface TSDatabaseMetadata : NSObject//<TSXMLSerializable>
+@interface TSDatabaseMetadata : NSObject<TSXMLSerializable>
 
-//id == the filename, CANNOT be changed, acts as UID for the database
-//name (same as the filename probably, need to decide if the name can be changed)
-//description
-//
-//version
-//
-//encryption salt
-//
-//createdBy(authorStructure)
-//lastModifiedBy(authorStructure)
+@property(nonatomic, strong) NSString *uid;
+@property(nonatomic, strong) TSVersion *version;
+@property(nonatomic, strong) NSData *salt;
 
+@property(nonatomic, strong) NSString *name;
+@property(nonatomic, strong) NSString *description;
+
+@property(nonatomic, strong) TSAuthor *createdBy;
+@property(nonatomic, strong) TSAuthor *lastModifiedBy;
+
++ (TSDatabaseMetadata *)newDatabaseNamed:(NSString *)name;
 
 @end

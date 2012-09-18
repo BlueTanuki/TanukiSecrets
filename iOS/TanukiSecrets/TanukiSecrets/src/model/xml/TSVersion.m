@@ -22,11 +22,6 @@
 
 #pragma mark - initialization
 
-+ (id)versionWithNumber:(NSInteger)number andChecksum:(NSString *)checksum
-{
-	return [[TSVersion alloc] initWithNumber:number andChecksum:checksum];
-}
-
 - (id)initWithNumber:(NSInteger)versionNumber andChecksum:(NSString *)checksum
 {
 	if (self = [super init]) {
@@ -60,7 +55,7 @@
 	[writer writeEndElement];
 }
 
--(void)writeTo:(XMLWriter *)writer
+- (void)writeTo:(XMLWriter *)writer
 {
 	[self writeTo:writer usingTagName:TS_XML_VERSION_TAG_NAME];
 }
@@ -80,6 +75,20 @@
 + (id<TSXMLSerializable>)readFrom:(SMXMLElement *)element
 {
 	return [self readFrom:element usingTagName:TS_XML_VERSION_TAG_NAME];
+}
+
+#pragma mark - factory
+
++ (TSVersion *)versionWithNumber:(NSInteger)number andChecksum:(NSString *)checksum
+{
+	return [[TSVersion alloc] initWithNumber:number andChecksum:checksum];
+}
+
++ (TSVersion *)newVersion
+{
+	TSVersion *ret = [[TSVersion alloc] init];
+	ret.versionNumber = 0;
+	return ret;
 }
 
 @end

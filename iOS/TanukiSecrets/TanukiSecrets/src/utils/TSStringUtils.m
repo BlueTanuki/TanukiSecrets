@@ -78,4 +78,12 @@
 	return ![self isBlank:string];
 }
 
+#pragma mark - factory
+
++ (NSString *)generateUid
+{
+	CFUUIDRef uuidref = CFUUIDCreate(CFAllocatorGetDefault());
+	return (__bridge NSString *)(CFUUIDCreateString(CFAllocatorGetDefault(), uuidref));
+}
+
 @end

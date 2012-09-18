@@ -16,10 +16,11 @@
 @property(nonatomic, strong) NSString *label;//optional
 @property(nonatomic, strong) NSString *checksum;
 
-+ (id)versionWithNumber:(NSInteger)number andChecksum:(NSString *)checksum;
-
 /// Designated initializer
 - (id)initWithNumber:(NSInteger)number andChecksum:(NSString *)checksum;
 - (id)init;
+
++ (TSVersion *)versionWithNumber:(NSInteger)number andChecksum:(NSString *)checksum;
++ (TSVersion *)newVersion;
 
 @end

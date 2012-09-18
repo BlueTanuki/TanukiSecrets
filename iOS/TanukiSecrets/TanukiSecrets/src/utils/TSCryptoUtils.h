@@ -43,4 +43,10 @@
 + (NSString *)tanukDecryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
 					usingSecret:(NSString *)secret;
 
+encryptDatabase ::
+	- generate random salt
+	- increment version
+	- compute checksum
+	- return encrypted database
+
 @end

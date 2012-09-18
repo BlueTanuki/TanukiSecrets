@@ -19,4 +19,6 @@
 + (BOOL) isBlank:(NSString *)string;
 + (BOOL) isNotBlank:(NSString *)string;
 
++ (NSString *)generateUid;
+
 @end

@@ -38,7 +38,7 @@
 	[writer writeEndElement];
 }
 
--(void)writeTo:(XMLWriter *)writer
+- (void)writeTo:(XMLWriter *)writer
 {
 	[self writeTo:writer usingTagName:TS_XML_DB_ITEM_FIELD_TAG_NAME];
 }
@@ -79,6 +79,24 @@
 	TSDBItemField *ret = [[TSDBItemField alloc] init];
 	ret.name = [self.name copy];
 	ret.encrypted = self.encrypted;
+	return ret;
+}
+
+#pragma mark - factory
+
++ (TSDBItemField *)fieldWithName:(NSString *)name andValue:(NSString *)value
+{
+	TSDBItemField *ret = [[TSDBItemField alloc] init];
+	ret.name = name;
+	ret.encrypted = NO;
+	ret.value = value;
+	return ret;
+}
+
++ (TSDBItemField *)encryptedFieldWithName:(NSString *)name andValue:(NSString *)value
+{
+	TSDBItemField *ret = [self fieldWithName:name andValue:value];
+	ret.encrypted = YES;
 	return ret;
 }
 

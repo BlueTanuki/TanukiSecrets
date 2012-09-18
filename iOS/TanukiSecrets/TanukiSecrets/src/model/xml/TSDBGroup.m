@@ -41,7 +41,7 @@
 	[writer writeEndElement];
 }
 
--(void)writeTo:(XMLWriter *)writer
+- (void)writeTo:(XMLWriter *)writer
 {
 	[self writeTo:writer usingTagName:TS_XML_DB_GROUP_TAG_NAME];
 }
@@ -90,6 +90,33 @@
 		parentUid = [self.parent uniqueGlobalId];
 	}
 	return [parentUid stringByAppendingPathComponent:self.name];
+}
+
+- (void)addItem:(TSDBItem *)item
+{
+	if (self.items == nil) {
+		self.items = [NSMutableArray arrayWithObject:item];
+	}else {
+		[self.items addObject:item];
+	}
+}
+
+- (void)addSubgroup:(TSDBGroup *)group
+{
+	if (self.subgroups == nil) {
+		self.subgroups = [NSMutableArray arrayWithObject:group];
+	}else {
+		[self.subgroups addObject:group];
+	}
+}
+
+#pragma mark - factory
+
++ (TSDBGroup *)groupNamed:(NSString *)name
+{
+	TSDBGroup *ret = [[TSDBGroup alloc] init];
+	ret.name = name;
+	return ret;
 }
 
 @end
