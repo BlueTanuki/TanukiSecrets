@@ -55,6 +55,7 @@
 		9FF76E5316020C0D00613DA1 /* TSDBItemField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E5216020C0C00613DA1 /* TSDBItemField.m */; };
 		9FF76E65160388F300613DA1 /* TSXMLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E64160388F300613DA1 /* TSXMLUtils.m */; };
 		9FF76E7A1608CD4100613DA1 /* TSIOUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E791608CD3E00613DA1 /* TSIOUtils.m */; };
+		9FF76E84160A160A00613DA1 /* TSNotifierUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E83160A160700613DA1 /* TSNotifierUtils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -151,6 +152,9 @@
 		9FF76E64160388F300613DA1 /* TSXMLUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSXMLUtils.m; sourceTree = "<group>"; };
 		9FF76E781608CD3C00613DA1 /* TSIOUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSIOUtils.h; sourceTree = "<group>"; };
 		9FF76E791608CD3E00613DA1 /* TSIOUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSIOUtils.m; sourceTree = "<group>"; };
+		9FF76E801609FA9C00613DA1 /* TSBinarySerializable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSBinarySerializable.h; sourceTree = "<group>"; };
+		9FF76E82160A160300613DA1 /* TSNotifierUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNotifierUtils.h; sourceTree = "<group>"; };
+		9FF76E83160A160700613DA1 /* TSNotifierUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSNotifierUtils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,6 +227,8 @@
 				9F1463BD15FE41B600EA03D6 /* TSUserDefaults.m */,
 				9FF76E63160388F200613DA1 /* TSXMLUtils.h */,
 				9FF76E64160388F300613DA1 /* TSXMLUtils.m */,
+				9FF76E82160A160300613DA1 /* TSNotifierUtils.h */,
+				9FF76E83160A160700613DA1 /* TSNotifierUtils.m */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -384,6 +390,7 @@
 				9F1463E21600E0D300EA03D6 /* xml */,
 				9F1463B815FE342000EA03D6 /* TSSharedState.h */,
 				9F1463B915FE342000EA03D6 /* TSSharedState.m */,
+				9FF76E801609FA9C00613DA1 /* TSBinarySerializable.h */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -540,6 +547,7 @@
 				9FF76E5316020C0D00613DA1 /* TSDBItemField.m in Sources */,
 				9FF76E65160388F300613DA1 /* TSXMLUtils.m in Sources */,
 				9FF76E7A1608CD4100613DA1 /* TSIOUtils.m in Sources */,
+				9FF76E84160A160A00613DA1 /* TSNotifierUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

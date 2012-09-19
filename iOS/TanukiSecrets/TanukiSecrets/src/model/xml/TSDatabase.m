@@ -18,7 +18,9 @@
 
 - (void)writeTo:(XMLWriter *)writer
 {
+	[writer writeStartDocument];
 	[self.root writeTo:writer usingTagName:TS_XML_DB_ROOT_TAG_NAME];
+	[writer writeEndDocument];
 }
 
 + (id<TSXMLSerializable>)readFrom:(SMXMLElement *)element
@@ -28,12 +30,32 @@
 	return ret;
 }
 
+#pragma mark - TSBinarySerializable
+
+- (NSData *)toData
+{
+	XMLWriter *writer = [[XMLWriter alloc] init];
+	[self writeTo:writer];
+	return [writer toData];
+}
+
++ (id<TSBinarySerializable>)fromData:(NSData *)data
+{
+	TSDatabase *ret = nil;
+	NSError *error;
+	SMXMLDocument *document = [SMXMLDocument documentWithData:data error:&error];
+	if (error == nil) {
+		ret = (TSDatabase *)[self readFrom:[document root]];
+	}
+	return ret;
+}
+
 #pragma mark - factory
 
 + (TSDatabase *)databaseWithRoot:(TSDBGroup *)root
 {
 	TSDatabase * ret = [[TSDatabase alloc] init];
-	ret.root = rootGroup;
+	ret.root = root;
 	return ret;
 }
 

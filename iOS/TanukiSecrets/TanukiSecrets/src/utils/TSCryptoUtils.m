@@ -8,7 +8,15 @@
 
 #import "TSCryptoUtils.h"
 
+#import <CommonCrypto/CommonDigest.h>
+#import <CommonCrypto/CommonCryptor.h>
+#import <CommonCrypto/CommonKeyDerivation.h>
+#import <Security/Security.h>
+
 #import "TSStringUtils.h"
+
+#define TS_SALT_BYTES_MIN 64
+#define TS_SALT_BYTES_MAX 128
 
 @implementation TSCryptoUtils
 
@@ -145,7 +153,7 @@
 	return [TSStringUtils hexStringFromData:encryptedFieldValue];
 }
 
-+ (NSString *)tanukDecryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
++ (NSString *)tanukiDecryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
 					usingSecret:(NSString *)secret
 {
 	NSData *key = [self md5text:secret];
@@ -155,6 +163,23 @@
 	return [[NSString alloc] initWithBytes:[decryptedFieldValue bytes]
 									length:[decryptedFieldValue length]
 								  encoding:NSUTF8StringEncoding];
+}
+
++ (NSData *)tanukiEncryptDatabase:(TSDatabase *)database
+				   havingMetadata:(TSDatabaseMetadata *)databaseMetadata
+					  usingSecret:(NSString *)secret
+{
+	NSData *unencryptedDatabase = [database toData];
+	
+	NSData *salt = [self randomDataOfVariableLengthMinimum:TS_SALT_BYTES_MIN maximum:TS_SALT_BYTES_MAX];
+	databaseMetadata.salt = salt;
+	
+	if (databaseMetadata.version == nil) {
+		databaseMetadata.version = [TSVersion newVersion];
+	}
+	databaseMetadata.version.checksum = [TSStringUtils hexStringFromData:[self sha512:unencryptedDatabase]];
+	
+	return [self tanukiEncrypt:unencryptedDatabase usingSecret:secret andSalt:salt];
 }
 
 @end

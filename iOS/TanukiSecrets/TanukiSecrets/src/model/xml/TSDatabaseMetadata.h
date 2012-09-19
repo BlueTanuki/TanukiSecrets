@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "TSXMLSerializable.h"
+#import "TSBinarySerializable.h"
 #import "TSVersion.h"
 #import "TSAuthor.h"
 
@@ -19,7 +20,7 @@
  
  This object is saved to the database.tsm file (local and remote).
  */
-@interface TSDatabaseMetadata : NSObject<TSXMLSerializable>
+@interface TSDatabaseMetadata : NSObject<TSXMLSerializable, TSBinarySerializable>
 
 @property(nonatomic, strong) NSString *uid;
 @property(nonatomic, strong) TSVersion *version;

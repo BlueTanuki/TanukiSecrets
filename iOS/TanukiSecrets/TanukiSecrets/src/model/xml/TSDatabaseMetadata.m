@@ -29,6 +29,7 @@ description= _description, createdBy = _createdBy, lastModifiedBy = _lastModifie
 
 - (void)writeTo:(XMLWriter *)writer
 {
+	[writer writeStartDocument];
 	[writer writeStartElement:TS_XML_DB_META_TAG_NAME];
 	[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_META_UID_TAG_NAME
 				  withStringContent:self.uid toWriter:writer];
@@ -42,6 +43,7 @@ description= _description, createdBy = _createdBy, lastModifiedBy = _lastModifie
 	[self.createdBy writeTo:writer usingTagName:TS_XML_DB_META_CREATED_TAG_NAME];
 	[self.lastModifiedBy writeTo:writer usingTagName:TS_XML_DB_META_MODIFIED_TAG_NAME];
 	[writer writeEndElement];
+	[writer writeEndDocument];
 }
 
 + (id<TSXMLSerializable>)readFrom:(SMXMLElement *)element
@@ -65,6 +67,26 @@ description= _description, createdBy = _createdBy, lastModifiedBy = _lastModifie
 		if (aux != nil) {
 			ret.lastModifiedBy = [TSAuthor readFrom:aux usingTagName:TS_XML_DB_META_MODIFIED_TAG_NAME];
 		}
+	}
+	return ret;
+}
+
+#pragma mark - TSBinarySerializable
+
+- (NSData *)toData
+{
+	XMLWriter *writer = [[XMLWriter alloc] init];
+	[self writeTo:writer];
+	return [writer toData];
+}
+
++ (id<TSBinarySerializable>)fromData:(NSData *)data
+{
+	TSDatabaseMetadata *ret = nil;
+	NSError *error;
+	SMXMLDocument *document = [SMXMLDocument documentWithData:data error:&error];
+	if (error == nil) {
+		ret = (TSDatabaseMetadata *)[self readFrom:[document root]];
 	}
 	return ret;
 }

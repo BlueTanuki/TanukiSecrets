@@ -6,9 +6,10 @@
 //  Copyright (c) 2012 BlueTanuki. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 #import "XMLWriter.h"
 #import "SMXMLDocument.h"
-#import <Foundation/Foundation.h>
 
 @protocol TSXMLSerializable <NSObject>
 
