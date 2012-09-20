@@ -56,6 +56,7 @@
 		9FF76E65160388F300613DA1 /* TSXMLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E64160388F300613DA1 /* TSXMLUtils.m */; };
 		9FF76E7A1608CD4100613DA1 /* TSIOUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E791608CD3E00613DA1 /* TSIOUtils.m */; };
 		9FF76E84160A160A00613DA1 /* TSNotifierUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E83160A160700613DA1 /* TSNotifierUtils.m */; };
+		9FF76E87160A5AC000613DA1 /* TSDropboxWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E86160A5ABD00613DA1 /* TSDropboxWrapper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,6 +156,8 @@
 		9FF76E801609FA9C00613DA1 /* TSBinarySerializable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSBinarySerializable.h; sourceTree = "<group>"; };
 		9FF76E82160A160300613DA1 /* TSNotifierUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNotifierUtils.h; sourceTree = "<group>"; };
 		9FF76E83160A160700613DA1 /* TSNotifierUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSNotifierUtils.m; sourceTree = "<group>"; };
+		9FF76E85160A5ABA00613DA1 /* TSDropboxWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDropboxWrapper.h; sourceTree = "<group>"; };
+		9FF76E86160A5ABD00613DA1 /* TSDropboxWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDropboxWrapper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -229,6 +232,8 @@
 				9FF76E64160388F300613DA1 /* TSXMLUtils.m */,
 				9FF76E82160A160300613DA1 /* TSNotifierUtils.h */,
 				9FF76E83160A160700613DA1 /* TSNotifierUtils.m */,
+				9FF76E85160A5ABA00613DA1 /* TSDropboxWrapper.h */,
+				9FF76E86160A5ABD00613DA1 /* TSDropboxWrapper.m */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -548,6 +553,7 @@
 				9FF76E65160388F300613DA1 /* TSXMLUtils.m in Sources */,
 				9FF76E7A1608CD4100613DA1 /* TSIOUtils.m in Sources */,
 				9FF76E84160A160A00613DA1 /* TSNotifierUtils.m in Sources */,
+				9FF76E87160A5AC000613DA1 /* TSDropboxWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

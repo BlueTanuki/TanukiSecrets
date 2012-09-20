@@ -112,7 +112,8 @@ BOOL firstTimeSegueTriggered = NO;
 	}
 }
 - (IBAction)createTestDatabase:(UIButton *)sender {
-	TODO
+	create local database
+	synchronize with dropbox
 }
 
 #pragma mark - view lifecycle
