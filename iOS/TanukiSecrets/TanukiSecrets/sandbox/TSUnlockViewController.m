@@ -8,6 +8,8 @@
 
 #import "TSUnlockViewController.h"
 
+#import "TSSharedState.h"
+
 #import "TSDatabaseMetadata.h"
 #import "TSVersion.h"
 #import "TSAuthor.h"
@@ -18,8 +20,11 @@
 #import "TSDatabaseLock.h"
 
 #import "TSCryptoUtils.h"
+#import "TSNotifierUtils.h"
+#import "TSIOUtils.h"
+#import "TSDropboxWrapper.h"
 
-@interface TSUnlockViewController () <UITextFieldDelegate>
+@interface TSUnlockViewController () <UITextFieldDelegate, TSDropboxUploadDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextField *unlockCodeTextField;
 @property (weak, nonatomic) IBOutlet UILabel *unlockCodeLabel;
@@ -74,7 +79,28 @@ BOOL firstTimeSegueTriggered = NO;
 	return ret;
 }
 
+- (TSDatabaseMetadata *)testDatabaseMetadata
+{
+	TSDatabaseMetadata *ret = [TSDatabaseMetadata newDatabaseNamed:@"myFirstDatabase"];
+	return ret;
+}
 
+#pragma mark - TSDropboxUploadDelegate
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper failedToUploadForDatabase:(NSString *)databaseUid errorString:(NSString *)error
+{
+	[TSNotifierUtils error:[NSString stringWithFormat:@"Failed to upload %@ :: %@", databaseUid, error]];
+}
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadedMetadataFileForDatabase:(NSString *)databaseUid
+{
+	[TSNotifierUtils info:[NSString stringWithFormat:@"Successfully uploaded metadata file for %@", databaseUid]];
+}
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadedMainFileForDatabase:(NSString *)databaseUid
+{
+	[TSNotifierUtils info:[NSString stringWithFormat:@"Successfully uploaded main file for %@", databaseUid]];
+}
 
 #pragma mark - Listeners
 
@@ -111,9 +137,22 @@ BOOL firstTimeSegueTriggered = NO;
 		[self performSegueWithIdentifier:@"offSegue" sender:nil];
 	}
 }
+
 - (IBAction)createTestDatabase:(UIButton *)sender {
-	create local database
-	synchronize with dropbox
+	NSString *secret = @"TheTanukiSais...NI-PAH~!";
+	TSDatabase *database = [self testDatabaseWithEncryptedItemUsingSecret:secret];
+	TSDatabaseMetadata *metadata = [self testDatabaseMetadata];
+	[TSNotifierUtils info:@"Writing local database"];
+	NSData *encryptedContent = [TSCryptoUtils tanukiEncryptDatabase:database
+													 havingMetadata:metadata
+														usingSecret:secret];
+	if ([TSIOUtils saveDatabaseWithMetadata:metadata andEncryptedContent:encryptedContent]) {
+		[TSNotifierUtils info:@"Uploading database to Dropbox"];
+		TSDropboxWrapper *dropboxWrapper = [TSSharedState sharedState].dropboxWrapper;
+		[dropboxWrapper uploadDatabaseWithId:metadata.uid andReportToDelegate:self];
+	}else {
+		[TSNotifierUtils error:@"Local database writing failed"];
+	}
 }
 
 #pragma mark - view lifecycle

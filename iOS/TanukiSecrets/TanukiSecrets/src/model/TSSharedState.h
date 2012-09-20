@@ -10,6 +10,9 @@
 
 #import "TSConstants.h"
 
+#import "TSDropboxWrapper.h"
+
+
 /*
  Singleton for shared properties. Only properties that need to be shared among
  unrelated objects should go here. Another acceptable use is for properties that
@@ -21,5 +24,6 @@
 + (TSSharedState*)sharedState;
 
 @property(nonatomic, readonly) NSString *instanceUID;
+@property(nonatomic, readonly) TSDropboxWrapper *dropboxWrapper;
 
 @end

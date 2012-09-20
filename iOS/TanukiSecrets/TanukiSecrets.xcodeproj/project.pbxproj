@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9F026A19160B61C90097BED4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F026A18160B61C90097BED4 /* Default-568h@2x.png */; };
+		9F026A1C160B76180097BED4 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F026A1B160B76180097BED4 /* DropboxSDK.framework */; };
 		9F1463BA15FE342000EA03D6 /* TSSharedState.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463B915FE342000EA03D6 /* TSSharedState.m */; };
 		9F1463BE15FE41B600EA03D6 /* TSUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463BD15FE41B600EA03D6 /* TSUserDefaults.m */; };
 		9F1463CC15FF75FC00EA03D6 /* TSDatabaseMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463CB15FF75FB00EA03D6 /* TSDatabaseMetadata.m */; };
@@ -48,7 +50,6 @@
 		9FEC4E3E15CAA386008B18D5 /* TSListOfItems.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4E3D15CAA386008B18D5 /* TSListOfItems.m */; };
 		9FEC4E4115CAA396008B18D5 /* TSItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4E4015CAA396008B18D5 /* TSItem.m */; };
 		9FEC4E6215CABA1E008B18D5 /* XMLWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4E6115CABA1E008B18D5 /* XMLWriter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		9FF76E3E160109BA00613DA1 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FEC4DDC15C2C187008B18D5 /* DropboxSDK.framework */; };
 		9FF76E491601232600613DA1 /* TSDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E481601232500613DA1 /* TSDatabase.m */; };
 		9FF76E4D16020A2600613DA1 /* TSDBItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E4C16020A2600613DA1 /* TSDBItem.m */; };
 		9FF76E5016020A3D00613DA1 /* TSDBGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF76E4F16020A3C00613DA1 /* TSDBGroup.m */; };
@@ -70,6 +71,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9F026A18160B61C90097BED4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
+		9F026A1B160B76180097BED4 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DropboxSDK.framework; sourceTree = "<group>"; };
 		9F1463B815FE342000EA03D6 /* TSSharedState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSSharedState.h; sourceTree = "<group>"; };
 		9F1463B915FE342000EA03D6 /* TSSharedState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSSharedState.m; sourceTree = "<group>"; };
 		9F1463BC15FE41B600EA03D6 /* TSUserDefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUserDefaults.h; sourceTree = "<group>"; };
@@ -128,7 +131,6 @@
 		9FEC4DD115C298E7008B18D5 /* NotifyCheck@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NotifyCheck@2x.png"; sourceTree = "<group>"; };
 		9FEC4DD215C298E7008B18D5 /* NotifyX.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NotifyX.png; sourceTree = "<group>"; };
 		9FEC4DD315C298E7008B18D5 /* NotifyX@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NotifyX@2x.png"; sourceTree = "<group>"; };
-		9FEC4DDC15C2C187008B18D5 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DropboxSDK.framework; path = TanukiSecrets/lib/DropboxSDK.framework; sourceTree = "<group>"; };
 		9FEC4DDE15C2C1C5008B18D5 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		9FEC4DE015C2C1E7008B18D5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		9FEC4DE215C2C43C008B18D5 /* secrets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secrets.h; sourceTree = "<group>"; };
@@ -165,12 +167,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9FF76E3E160109BA00613DA1 /* DropboxSDK.framework in Frameworks */,
 				9FEC4DE115C2C1E7008B18D5 /* QuartzCore.framework in Frameworks */,
 				9FEC4DDF15C2C1C5008B18D5 /* Security.framework in Frameworks */,
 				9F8ED46615B98C6A00391EF8 /* UIKit.framework in Frameworks */,
 				9F8ED46815B98C6A00391EF8 /* Foundation.framework in Frameworks */,
 				9F8ED46A15B98C6A00391EF8 /* CoreGraphics.framework in Frameworks */,
+				9F026A1C160B76180097BED4 /* DropboxSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,7 +273,6 @@
 		9F8ED46415B98C6A00391EF8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9FEC4DDC15C2C187008B18D5 /* DropboxSDK.framework */,
 				9FEC4DE015C2C1E7008B18D5 /* QuartzCore.framework */,
 				9FEC4DDE15C2C1C5008B18D5 /* Security.framework */,
 				9F8ED46515B98C6A00391EF8 /* UIKit.framework */,
@@ -297,6 +298,7 @@
 		9F8ED46C15B98C6A00391EF8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				9F026A18160B61C90097BED4 /* Default-568h@2x.png */,
 				9FEC4DC515C18107008B18D5 /* TanukiSecrets.entitlements */,
 				9F8ED47415B98C6A00391EF8 /* TSAppDelegate.h */,
 				9F8ED47115B98C6A00391EF8 /* main.m */,
@@ -369,6 +371,7 @@
 		9FEC4DCB15C29847008B18D5 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				9F026A1B160B76180097BED4 /* DropboxSDK.framework */,
 				9F9D868B15CBFDF60066BC04 /* SMXMLDocument */,
 				9FEC4E5F15CABA1E008B18D5 /* XMLWriter */,
 				9FEC4DCC15C29870008B18D5 /* JSNotifier */,
@@ -490,6 +493,7 @@
 				9FEC4DD715C298E7008B18D5 /* NotifyX@2x.png in Resources */,
 				9F9D869115CC14CA0066BC04 /* Sandbox.storyboard in Resources */,
 				9F98D41715F7B137001A2C82 /* iPadSandbox.storyboard in Resources */,
+				9F026A19160B61C90097BED4 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

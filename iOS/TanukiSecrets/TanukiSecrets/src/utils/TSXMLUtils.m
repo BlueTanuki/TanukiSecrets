@@ -16,9 +16,13 @@
 
 + (void)writeSimpleTagNamed:(NSString *)tagName withStringContent:(NSString *)content toWriter:(XMLWriter *)writer
 {
-	[writer writeStartElement:tagName];
-	[writer writeCharacters:content];
-	[writer writeEndElement];
+	if ([TSStringUtils isNotBlank:tagName]) {
+		[writer writeStartElement:tagName];
+		if ([TSStringUtils isNotBlank:content]) {
+			[writer writeCharacters:content];
+		}
+		[writer writeEndElement];
+	}
 }
 
 + (void)writeSimpleTagNamed:(NSString *)tagName withIntegerContent:(NSInteger)content toWriter:(XMLWriter *)writer
