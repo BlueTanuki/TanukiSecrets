@@ -38,7 +38,7 @@
 			stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA];
 }
 
-+ (NSArray *)listLocalDatabaseIds
++ (NSArray *)listLocalFiles
 {
 	NSMutableArray *ret = nil;
 	NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -51,14 +51,52 @@
 		}else {
 			ret = [NSMutableArray array];
 			for (NSString *filepath in files) {
-				NSString *filename = [filepath lastPathComponent];
-				if ([filename hasSuffix:TS_FILE_SUFFIX_DATABASE_METADATA]) {
-					[ret addObject:[filename stringByDeletingPathExtension]];
-				}
+				[ret addObject:filepath];
 			}
 		}
 	}
 	return [ret copy];
+}
+
++ (BOOL)deleteLocalFile:(NSString *)filename
+{
+	NSLog (@"Delete request for %@", filename);
+	NSString *deletedFilePath = [[self baseFolderPath] stringByAppendingPathComponent:[filename lastPathComponent]];
+	NSLog (@"Deleted item translated to full path %@", deletedFilePath);
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	BOOL ret = NO;
+	NSError *error;
+	if ([fileManager removeItemAtPath:deletedFilePath error:&error]) {
+		if (error) {
+			NSLog (@"Could not delete %@ :: %@", deletedFilePath, [error debugDescription]);
+		}else {
+			ret = YES;
+		}
+	}else {
+		NSLog (@"Could not delete %@", deletedFilePath);
+	}
+	return ret;
+}
+
++ (NSArray *)listLocalDatabaseUids
+{
+	NSMutableArray *ret = nil;
+	NSArray *files = [self listLocalFiles];
+	if (files != nil) {
+		ret = [NSMutableArray array];
+		for (NSString *filepath in files) {
+			NSString *filename = [filepath lastPathComponent];
+			if ([filename hasSuffix:TS_FILE_SUFFIX_DATABASE_METADATA]) {
+				[ret addObject:[filename stringByDeletingPathExtension]];
+			}
+		}
+	}
+	return [ret copy];
+}
+
++ (BOOL)deleteLocalDatabase:(NSString *)databaseUid
+{
+	@throw @"Not implemented";
 }
 
 + (BOOL)saveDatabaseWithMetadata:(TSDatabaseMetadata *)metadata andEncryptedContent:(NSData *)content

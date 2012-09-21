@@ -40,7 +40,7 @@ tags = _tags, fields = _fields, defaultFieldName = _defaultFieldName;
 	}
 	if ([self.tags count] > 0) {
 		[TSXMLUtils writeStringArray:self.tags
-						usingTagName:TS_XML_DB_ITEM_TAG_NAME
+						usingTagName:TS_XML_DB_ITEM_TAG_TAG_NAME
 					  andWrapperNode:TS_XML_DB_ITEM_TAGS_TAG_NAME
 							toWriter:writer];
 	}

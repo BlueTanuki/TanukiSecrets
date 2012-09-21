@@ -50,6 +50,7 @@ BOOL firstTimeSegueTriggered = NO;
 	item.defaultFieldName = field.name;
 	field = [TSDBItemField fieldWithName:@"field2" andValue:@"futatsu no value"];
 	[item addField:field];
+	item.tags = [NSMutableArray arrayWithObjects:@"nabla", @"delta", nil];
 	
 	TSDBGroup *subgroup = [TSDBGroup groupNamed:@"group1"];
 	[subgroup addItem:item];
@@ -69,6 +70,7 @@ BOOL firstTimeSegueTriggered = NO;
 	TSDBItemField *field = [TSDBItemField encryptedFieldWithName:@"encryptedField" andValue:encryptedValue];
 	TSDBItem *item = [TSDBItem itemNamed:itemName];
 	[item addField:field];
+	item.tags = [NSMutableArray arrayWithObjects:@"himitsu", nil];
 	[db.root addItem:item];
 }
 
@@ -187,7 +189,8 @@ BOOL firstTimeSegueTriggered = NO;
 	[super viewWillAppear:animated];
 	self.unlockCodeLabel.textColor = [UIColor blackColor];
 	self.unlockCodeTextField.text = nil;
-	[self.unlockCodeTextField becomeFirstResponder];
+	[self.unlockCodeTextField resignFirstResponder];
+//	[self.unlockCodeTextField becomeFirstResponder];
 //	self.unlockCodeTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
 //	self.unlockCodeTextField.autocorrectionType = UITextAutocorrectionTypeNo;
 //	self.unlockCodeTextField.enablesReturnKeyAutomatically = YES;

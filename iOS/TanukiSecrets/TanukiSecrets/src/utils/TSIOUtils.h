@@ -16,7 +16,11 @@
 + (NSString *)databaseFilePath:(NSString *)databaseUid;
 + (NSString *)metadataFilePath:(NSString *)databaseUid;
 
-+ (NSArray *)listLocalDatabaseIds;//of NSString
++ (NSArray *)listLocalFiles;//of NSString
++ (NSArray *)listLocalDatabaseUids;//of NSString
+
++ (BOOL)deleteLocalFile:(NSString *)filename;
++ (BOOL)deleteLocalDatabase:(NSString *)databaseUid;
 
 ///sets a default value for the lastModified if it is nil, writes database and metadata files to local storage
 + (BOOL)saveDatabaseWithMetadata:(TSDatabaseMetadata *)metadata andEncryptedContent:(NSData *)content;

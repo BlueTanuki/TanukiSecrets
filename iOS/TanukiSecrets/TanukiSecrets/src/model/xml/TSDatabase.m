@@ -18,9 +18,8 @@
 
 - (void)writeTo:(XMLWriter *)writer
 {
-	[writer writeStartDocument];
 	[self.root writeTo:writer usingTagName:TS_XML_DB_ROOT_TAG_NAME];
-	[writer writeEndDocument];
+	[writer writeLinebreak];
 }
 
 + (id<TSXMLSerializable>)readFrom:(SMXMLElement *)element

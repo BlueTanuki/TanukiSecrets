@@ -29,7 +29,6 @@ description= _description, createdBy = _createdBy, lastModifiedBy = _lastModifie
 
 - (void)writeTo:(XMLWriter *)writer
 {
-	[writer writeStartDocument];
 	[writer writeStartElement:TS_XML_DB_META_TAG_NAME];
 	[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_META_UID_TAG_NAME
 				  withStringContent:self.uid toWriter:writer];
@@ -43,7 +42,7 @@ description= _description, createdBy = _createdBy, lastModifiedBy = _lastModifie
 	[self.createdBy writeTo:writer usingTagName:TS_XML_DB_META_CREATED_TAG_NAME];
 	[self.lastModifiedBy writeTo:writer usingTagName:TS_XML_DB_META_MODIFIED_TAG_NAME];
 	[writer writeEndElement];
-	[writer writeEndDocument];
+	[writer writeLinebreak];
 }
 
 + (id<TSXMLSerializable>)readFrom:(SMXMLElement *)element

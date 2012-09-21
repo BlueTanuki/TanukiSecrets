@@ -16,10 +16,11 @@
 #import "JSNotifier.h"
 #import "XMLWriter.h"
 
+#import "TSIOUtils.h"
 #import "TSCryptoUtils.h"
 #import "TSStringUtils.h"
 #import "TSVersion.h"
-
+#import "TSNotifierUtils.h"
 
 @interface TSFilesystemTableViewController () <DBRestClientDelegate> {
 	NSMetadataQuery *iCloudQuery;
@@ -436,25 +437,25 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 	if (section == 1) {
-		NSFileManager *fileManager = [NSFileManager defaultManager];
 		if (!tableContent) {
-			tableContent = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSAllDomainsMask];
+			tableContent = [TSIOUtils listLocalFiles];
+//			tableContent = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSAllDomainsMask];
 			//		tableContent = [fileManager URLsForDirectory:NSAllApplicationsDirectory inDomains:NSAllDomainsMask];
 		}
-		if (tableContent) {
-			for (int i=0; i<[tableContent count]; i++) {
-				NSLog(@"Contents of folder : %@", [tableContent objectAtIndex:i]);
-				NSError *error;
-				NSArray *dirList = [fileManager contentsOfDirectoryAtPath:[[tableContent objectAtIndex:i] path] error:&error];
-				if (error) {
-					NSLog(@"ERROR :: %@", [error debugDescription]);
-				}else {
-					for (int j=0; j<[dirList count]; j++) {
-						NSLog(@"Child : %@", [dirList objectAtIndex:j]);
-					}
-				}
-			}
-		}
+//		if (tableContent) {
+//			for (int i=0; i<[tableContent count]; i++) {
+//				NSLog(@"Contents of folder : %@", [tableContent objectAtIndex:i]);
+//				NSError *error;
+//				NSArray *dirList = [fileManager contentsOfDirectoryAtPath:[[tableContent objectAtIndex:i] path] error:&error];
+//				if (error) {
+//					NSLog(@"ERROR :: %@", [error debugDescription]);
+//				}else {
+//					for (int j=0; j<[dirList count]; j++) {
+//						NSLog(@"Child : %@", [dirList objectAtIndex:j]);
+//					}
+//				}
+//			}
+//		}
 		
 		return [tableContent count];
 	}else if (section == 2) {
@@ -480,10 +481,9 @@
 		static NSString *CellIdentifier = @"FSCell";
 		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 		
-		NSURL *url = [tableContent objectAtIndex:indexPath.row];
-		cell.textLabel.text = [url lastPathComponent];
-		
-		cell.detailTextLabel.text = [url path];
+		NSString *filePath = [tableContent objectAtIndex:indexPath.row];
+		cell.textLabel.text = [filePath lastPathComponent];
+		cell.detailTextLabel.text = filePath;
 		
 		return cell;
 	}else if(indexPath.section == 2) {
@@ -518,10 +518,7 @@
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	if (indexPath.section != 1) {
-		return YES;
-	}
-    return NO;
+	return YES;
 }
 
 // Override to support editing the table view.
@@ -536,6 +533,15 @@
 			DBMetadata *dropboxFileMetadata = [dropboxItems objectAtIndex:indexPath.row];
 			[[self dropboxRestClient] deletePath:[dropboxFileMetadata path]];
 			[self refreshDropbox:nil];
+		}else if (indexPath.section == 1) {
+			NSString *filePath = [tableContent objectAtIndex:indexPath.row];
+			if (![TSIOUtils deleteLocalFile:[filePath lastPathComponent]]) {
+				[TSNotifierUtils error:@"Delete file failed"];
+			}else {
+				[TSNotifierUtils info:@"Local file deleted"];
+			}
+			tableContent = nil;
+			[self.tableView reloadData];
 		}
     }
 }
@@ -561,9 +567,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	if (indexPath.section == 1) {
-		NSURL *url = [tableContent objectAtIndex:indexPath.row];
+		NSString *path = [tableContent objectAtIndex:indexPath.row];
 		UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-		pasteboard.string = [url path];
+		pasteboard.string = path;
 		
 		//	[[NSNotificationCenter defaultCenter] postNotificationName:@"TScopy" 
 		//				object:[NSString stringWithFormat:@"%@ copied to clipboard", [url lastPathComponent]]];
@@ -577,7 +583,7 @@
 		//	notif.applicationIconBadgeNumber = 666;
 		//    [[UIApplication sharedApplication] presentLocalNotificationNow:notif];
 		
-		NSString *notificationMessage = [NSString stringWithFormat:@"%@ copied to clipboard", [url lastPathComponent]];
+		NSString *notificationMessage = [NSString stringWithFormat:@"%@ copied to clipboard", [path lastPathComponent]];
 		JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
 		jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
 		[jsn showFor:2.0];
