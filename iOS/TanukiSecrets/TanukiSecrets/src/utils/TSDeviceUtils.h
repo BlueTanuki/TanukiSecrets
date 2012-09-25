@@ -12,4 +12,6 @@
 
 + (NSString *) deviceName;
 
++ (BOOL) isRunningInSimulator;
+
 @end

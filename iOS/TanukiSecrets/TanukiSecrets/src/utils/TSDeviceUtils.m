@@ -8,11 +8,22 @@
 
 #import "TSDeviceUtils.h"
 
+#import <TargetConditionals.h>
+
 @implementation TSDeviceUtils
 
 + (NSString *) deviceName
 {
 	return [UIDevice currentDevice].name;
+}
+
++ (BOOL) isRunningInSimulator
+{
+#ifdef TARGET_IPHONE_SIMULATOR
+	return YES;
+#else
+	return NO;
+#endif
 }
 
 @end

@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2549" systemVersion="12B19" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4cE-kc-Zx9">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2840" systemVersion="12C54" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4cE-kc-Zx9">
     <dependencies>
-        <deployment defaultVersion="1296" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1498"/>
+        <deployment defaultVersion="1536" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1926"/>
     </dependencies>
     <scenes>
         <!--Filesystem Table View Controller-->
         <scene sceneID="tuU-fR-IhB">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="kWM-KM-2Bc" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="XmC-4j-m8p" customClass="TSFilesystemTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="NbV-5O-Ixk">
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
@@ -63,13 +62,13 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="6vD-x1-GA8"/>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="kWM-KM-2Bc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1486" y="-270"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="uzt-lZ-kYs">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="bEK-oi-6NA" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="9qk-JK-dHl" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Pf6-N7-kYp">
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
@@ -87,13 +86,13 @@
                     </view>
                     <navigationItem key="navigationItem" id="SVi-0K-1As"/>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bEK-oi-6NA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1549" y="-991"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="TZA-qg-ruD">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="nPT-eN-heF" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="Fwk-LF-P5u" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="HzA-aI-8J8">
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
@@ -111,13 +110,13 @@
                     </view>
                     <navigationItem key="navigationItem" id="LSN-lh-don"/>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nPT-eN-heF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1557" y="-1639"/>
         </scene>
         <!--Unlock View Controller-->
         <scene sceneID="I5T-o2-3u8">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dCu-z1-neS" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="Rdo-KC-Vnd" customClass="TSUnlockViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="G6r-Qh-LGl">
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
@@ -183,14 +182,14 @@
                         <segue destination="9qk-JK-dHl" kind="push" identifier="offSegue" id="eo0-UL-xX7"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dCu-z1-neS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="898" y="-984"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="gKS-Pe-LBA">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="4JM-3F-0ot" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <navigationController id="4cE-kc-Zx9" sceneMemberID="viewController">
+                <navigationController id="4cE-kc-Zx9" customClass="TSNavigationController" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="weO-aY-pua">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -201,6 +200,7 @@
                         <segue destination="Rdo-KC-Vnd" kind="relationship" relationship="rootViewController" id="EDu-GQ-WHT"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4JM-3F-0ot" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="372" y="-984"/>
         </scene>
@@ -212,9 +212,13 @@
                 <relationship kind="action" name="addDropboxItem:" candidateClass="UIButton"/>
             </relationships>
         </class>
+        <class className="TSNavigationController" superclassName="UINavigationController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNavigationController.h"/>
+        </class>
         <class className="TSUnlockViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSUnlockViewController.h"/>
             <relationships>
+                <relationship kind="action" name="createTestDatabase:" candidateClass="UIButton"/>
                 <relationship kind="action" name="go:"/>
                 <relationship kind="outlet" name="onOffSwitch" candidateClass="UISwitch"/>
                 <relationship kind="outlet" name="unlockCodeLabel" candidateClass="UILabel"/>

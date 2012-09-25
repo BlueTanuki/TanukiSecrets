@@ -21,6 +21,7 @@
 #import "TSStringUtils.h"
 #import "TSVersion.h"
 #import "TSNotifierUtils.h"
+#import "TSDeviceUtils.h"
 
 @interface TSFilesystemTableViewController () <DBRestClientDelegate> {
 	NSMetadataQuery *iCloudQuery;
@@ -159,6 +160,14 @@
 
 - (void) startCloudQuery
 {
+	if ([TSDeviceUtils isRunningInSimulator]) {
+		//causes DEADLOCK inside simulator version 5.1 (only, 6.0 and 5.0 do not deadlock)
+		static dispatch_once_t onceToken;
+		dispatch_once(&onceToken, ^{
+			[TSNotifierUtils error:@"iCloud query disabled inside simulator"];
+		});
+		return;
+	}
 	if (!iCloudQuery) {
 		iCloudQuery = [[NSMetadataQuery alloc] init];
 		iCloudQuery.searchScopes = [NSArray arrayWithObject:NSMetadataQueryUbiquitousDocumentsScope];
