@@ -89,20 +89,25 @@ BOOL firstTimeSegueTriggered = NO;
 
 #pragma mark - TSDropboxUploadDelegate
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper failedToUploadForDatabase:(NSString *)databaseUid errorString:(NSString *)error
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedUploadingDatabase:(NSString *)databaseUid
+{
+	[TSNotifierUtils info:[NSString stringWithFormat:@"Successfully uploaded %@", databaseUid]];
+}
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
 {
 	[TSNotifierUtils error:[NSString stringWithFormat:@"Failed to upload %@ :: %@", databaseUid, error]];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadedMetadataFileForDatabase:(NSString *)databaseUid
-{
-	[TSNotifierUtils info:[NSString stringWithFormat:@"Successfully uploaded metadata file for %@", databaseUid]];
-}
+//- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadedMetadataFileForDatabase:(NSString *)databaseUid
+//{
+//	[TSNotifierUtils info:[NSString stringWithFormat:@"Successfully uploaded metadata file for %@", databaseUid]];
+//}
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadedMainFileForDatabase:(NSString *)databaseUid
-{
-	[TSNotifierUtils info:[NSString stringWithFormat:@"Successfully uploaded main file for %@", databaseUid]];
-}
+//- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadedMainFileForDatabase:(NSString *)databaseUid
+//{
+//	[TSNotifierUtils info:[NSString stringWithFormat:@"Successfully uploaded main file for %@", databaseUid]];
+//}
 
 #pragma mark - Listeners
 

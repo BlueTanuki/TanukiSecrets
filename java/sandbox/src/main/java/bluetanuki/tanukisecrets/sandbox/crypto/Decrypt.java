@@ -1,7 +1,6 @@
 package bluetanuki.tanukisecrets.sandbox.crypto;
 
 import bluetanuki.tanukisecrets.common.crypto.CryptoUtils;
-import bluetanuki.tanukisecrets.common.crypto.HashFunctions;
 import bluetanuki.tanukisecrets.common.model.xml.Database;
 import bluetanuki.tanukisecrets.common.model.xml.DbMetadata;
 import bluetanuki.tanukisecrets.common.model.xml.Field;
@@ -11,7 +10,6 @@ import bluetanuki.tanukisecrets.common.xml.XMLUtils;
 import java.io.File;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -22,7 +20,7 @@ import org.apache.log4j.Logger;
 public class Decrypt {
 	private static final Logger LOGGER = Logger.getLogger (Decrypt.class);
 	
-	public static void decryptTest1 (String[] args) throws Exception {
+	public static void decryptDummyFileWithFilenameAsSalt (String[] args) throws Exception {
 //		for (Provider provider : Security.getProviders ()) {
 //			System.out.println (provider.getName ());
 //		}
@@ -48,7 +46,7 @@ public class Decrypt {
 		}
 	}
 	
-	public static void decryptTest2 (String[] args) throws Exception {
+	public static void decryptAllTSMs (String[] args) throws Exception {
 		File baseFolder = new File ("/Users/lucian/Dropbox/Apps/Tanuki Secrets");
 		for (File file : baseFolder.listFiles ()) {
 			if (file.getName ().endsWith (".tsm")) {
@@ -94,7 +92,7 @@ public class Decrypt {
 		}
 	}
 
-	public static void main (String[] args) throws Exception {
+	public static void decryptAllEncryptedFields (String[] args) throws Exception {
 		File baseFolder = new File ("/tmp/");
 		for (File file : baseFolder.listFiles ()) {
 			if (file.getName ().endsWith (".ts.decrypted")) {
@@ -103,5 +101,10 @@ public class Decrypt {
 			}
 		}
 	}
+	
+	public static void main (String[] args) throws Exception {
+		decryptAllEncryptedFields (args);
+	}
+	
 }
  

@@ -14,9 +14,12 @@
 
 @protocol TSDropboxUploadDelegate <NSObject>
 
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error;
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedUploadingDatabase:(NSString *)databaseUid;
+
+@optional
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadedMetadataFileForDatabase:(NSString *)databaseUid;
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadedMainFileForDatabase:(NSString *)databaseUid;
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper failedToUploadForDatabase:(NSString *)databaseUid errorString:(NSString *)error;
 
 @end
 

@@ -10,14 +10,13 @@
 
 #import "TSIOUtils.h"
 
-
 @interface TSDropboxWrapper()
 
 @property(nonatomic, strong) DBRestClient *dropboxRestClient;
 
-@property(nonatomic, strong) id<TSDropboxUploadDelegate> uploadDelegate;
+@property(nonatomic, weak) id<TSDropboxUploadDelegate> uploadDelegate;
 
-@property(nonatomic, strong) NSString *databaseUid;
+@property(nonatomic, copy) NSString *databaseUid;
 
 @end
 
@@ -44,8 +43,8 @@ databaseUid = _databaseUid;
 {
 	NSLog (@"Dropbox upload failed :: %@", [error debugDescription]);
 	[self.uploadDelegate dropboxWrapper:self
-			  failedToUploadForDatabase:self.databaseUid
-							errorString:[error description]];
+			  uploadForDatabase:self.databaseUid
+							failedWithError:[error description]];
 	_state = IDLE;
 	self.uploadDelegate = nil;
 }
@@ -54,7 +53,9 @@ databaseUid = _databaseUid;
 {
     NSLog(@"File uploaded successfully to path: %@", destPath);
 	if (self.state == UPLOADING_METADATA) {
-		[self.uploadDelegate dropboxWrapper:self uploadedMetadataFileForDatabase:self.databaseUid];
+		if ([self.uploadDelegate respondsToSelector:@selector(dropboxWrapper:uploadedMetadataFileForDatabase:)]) {
+			[self.uploadDelegate dropboxWrapper:self uploadedMetadataFileForDatabase:self.databaseUid];
+		}
 		NSString *databaseFilePath = [TSIOUtils databaseFilePath:self.databaseUid];
 		[self.dropboxRestClient uploadFile:[databaseFilePath lastPathComponent]
 									toPath:@"/"
@@ -62,8 +63,11 @@ databaseUid = _databaseUid;
 								  fromPath:databaseFilePath];
 		_state = UPLOADING_DATABASE;
 	}else {
-		[self.uploadDelegate dropboxWrapper:self uploadedMainFileForDatabase:self.databaseUid];
+		if ([self.uploadDelegate respondsToSelector:@selector(dropboxWrapper:uploadedMainFileForDatabase:)]) {
+			[self.uploadDelegate dropboxWrapper:self uploadedMainFileForDatabase:self.databaseUid];
+		}
 		_state = IDLE;
+		[self.uploadDelegate dropboxWrapper:self finishedUploadingDatabase:self.databaseUid];
 		self.uploadDelegate = nil;
 	}
 }
