@@ -46,4 +46,8 @@
 					havingMetadata:(TSDatabaseMetadata *)databaseMetadata
 					   usingSecret:(NSString *)secret;
 
++ (TSDatabase *) tanukiDecryptDatabase:(NSData *)encryptedData
+						havingMetadata:(TSDatabaseMetadata *)databaseMetadata
+						   usingSecret:(NSString *)secret;
+
 @end

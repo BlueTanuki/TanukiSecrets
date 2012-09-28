@@ -182,4 +182,12 @@
 	return [self tanukiEncrypt:unencryptedDatabase usingSecret:secret andSalt:salt];
 }
 
++ (TSDatabase *)tanukiDecryptDatabase:(NSData *)encryptedData
+					   havingMetadata:(TSDatabaseMetadata *)databaseMetadata
+						  usingSecret:(NSString *)secret
+{
+	NSData *data = [self tanukiDecrypt:encryptedData usingSecret:secret andSalt:databaseMetadata.salt];
+	return (TSDatabase *)[TSDatabase fromData:data];
+}
+
 @end

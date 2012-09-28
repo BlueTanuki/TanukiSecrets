@@ -8,8 +8,9 @@
 
 #import "TSIOUtils.h"
 
-#import "TSNotifierUtils.h"
 #import "TSConstants.h"
+#import "TSCryptoUtils.h"
+#import "TSBackupUtils.h"
 
 @interface TSIOUtils ()
 
@@ -20,11 +21,11 @@
 + (BOOL)isFolder:(NSString *)path;
 
 + (NSArray *)listFilesForDirectory:(NSString *)baseFolderPath;//of NSString, full paths, regular files only
-+ (NSArray *)listLocalFiles;//of NSString, full paths
++ (NSArray *)listFilesForDirectory:(NSString *)baseFolderPath filenameOnly:(BOOL)filenameOnly;
 
 + (NSArray *)namesOfFilesInDirectory:(NSString *)baseFolderPath
-					 thatEndInSuffix:(NSString *)filenameSuffix
-						removeSuffix:(BOOL)remove;
+					 thatEndInSuffix:(NSString *)fileSuffix
+				 removePathExtension:(BOOL)removePathExtension;
 
 + (BOOL)createDirectory:(NSString *)path;
 
@@ -35,12 +36,8 @@
 
 + (BOOL)deleteFileOrFolder:(NSString *)filePath allowDeletionOfNonLocalFiles:(BOOL)allow;
 + (BOOL)deleteFile:(NSString *)filePath allowDeletionOfNonLocalFiles:(BOOL)allow;
-+ (BOOL)deleteFile:(NSString *)filePath;
 + (BOOL)recursiveDeleteFolder:(NSString *)folderPath allowDeletionOfNonLocalFiles:(BOOL)allow;
 + (BOOL)recursiveDeleteFolder:(NSString *)folderPath;
-
-+ (NSString *)backupsFolderPath:(NSString *)databaseUid;
-+ (NSString *)newBackupId;
 
 @end
 
@@ -60,8 +57,12 @@
 
 + (BOOL)fileAtPath:(NSString*)path hasFileType:(NSString *)fileType
 {
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	if ([fileManager fileExistsAtPath:path] == NO) {
+		return NO;
+	}
 	NSError *error;
-	NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
+	NSDictionary *attributes = [fileManager attributesOfItemAtPath:path error:&error];
 	if (error != nil) {
 		NSLog(@"ERROR :: %@", [error debugDescription]);
 		return NO;
@@ -79,7 +80,7 @@
 	return [self fileAtPath:path hasFileType:NSFileTypeDirectory];
 }
 
-+ (NSArray *)listFilesForDirectory:(NSString *)baseFolderPath
++ (NSArray *)listFilesForDirectory:(NSString *)baseFolderPath filenameOnly:(BOOL)filenameOnly
 {
 	NSMutableArray *ret = nil;
 	if (baseFolderPath != nil) {
@@ -88,15 +89,26 @@
 		if (error != nil) {
 			NSLog(@"ERROR :: %@", [error debugDescription]);
 		}else {
+//			NSLog (@"contentsOfDirectoryAtPath %@ :: %@", baseFolderPath, files);
 			ret = [NSMutableArray array];
-			for (NSString *path in files) {
+			for (NSString *name in files) {
+				NSString *path = [baseFolderPath stringByAppendingPathComponent:name];
 				if ([self isRegularFile:path]) {
-					[ret addObject:path];
+					if (filenameOnly) {
+						[ret addObject:[path lastPathComponent]];
+					}else {
+						[ret addObject:path];
+					}
 				}
 			}
 		}
 	}
 	return [ret copy];
+}
+
++ (NSArray *)listFilesForDirectory:(NSString *)baseFolderPath
+{
+	return [self listFilesForDirectory:baseFolderPath filenameOnly:NO];
 }
 
 + (NSArray *)listLocalFiles
@@ -105,8 +117,8 @@
 }
 
 + (NSArray *)namesOfFilesInDirectory:(NSString *)baseFolderPath
-					 thatEndInSuffix:(NSString *)filenameSuffix
-						removePathExtension:(BOOL)removePathExtension
+					 thatEndInSuffix:(NSString *)fileSuffix
+				 removePathExtension:(BOOL)removePathExtension
 {
 	NSMutableArray *ret = nil;
 	NSArray *files = [self listFilesForDirectory:baseFolderPath];
@@ -114,7 +126,7 @@
 		ret = [NSMutableArray array];
 		for (NSString *filepath in files) {
 			NSString *filename = [filepath lastPathComponent];
-			if ([filename hasSuffix:filenameSuffix]) {
+			if ([filename hasSuffix:fileSuffix]) {
 				if (removePathExtension) {
 					filename = [filename stringByDeletingPathExtension];
 				}
@@ -157,6 +169,7 @@
 	NSError *error;
 	BOOL copied = [[NSFileManager defaultManager] copyItemAtPath:sourcePath toPath:destinationPath error:&error];
 	if (copied) {
+//		NSLog (@"Copied file from %@ to %@", sourcePath, destinationPath);
 		return YES;
 	}
 	NSLog (@"Failed to copy from %@ to %@ :: %@", sourcePath, destinationPath, [error debugDescription]);
@@ -204,8 +217,9 @@
 	return [self deleteFileOrFolder:filePath allowDeletionOfNonLocalFiles:allow];
 }
 
-+ (BOOL)deleteFile:(NSString *)filePath
++ (BOOL)deleteLocalFile:(NSString *)filePath
 {
+	NSLog (@"Delete :: %@", filePath);
 	return [self deleteFile:filePath allowDeletionOfNonLocalFiles:NO];
 }
 
@@ -246,9 +260,9 @@
 + (BOOL)deleteDatabase:(NSString *)databaseUid
 {
 	NSString *databaseFilePath = [self databaseFilePath:databaseUid];
-	if ([self deleteFile:databaseFilePath]) {
+	if ([self deleteLocalFile:databaseFilePath]) {
 		NSString *metadataFilePath = [self metadataFilePath:databaseUid];
-		if ([self deleteFile:metadataFilePath]) {
+		if ([self deleteLocalFile:metadataFilePath]) {
 			NSString *backupsFolder = [self backupsFolderPath:databaseUid];
 			if ([self recursiveDeleteFolder:backupsFolder]) {
 				return YES;
@@ -268,9 +282,11 @@
 	}
 	NSString *databaseFilePath = [self databaseFilePath:metadata.uid];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
-	if ([fileManager createFileAtPath:databaseFilePath contents:content attributes:nil]) {
+	if ([fileManager createFileAtPath:databaseFilePath contents:content attributes:nil] == YES) {
+//		NSLog (@"Wrote file %@", databaseFilePath);
 		NSString *metadataFilePath = [self metadataFilePath:metadata.uid];
-		if ([fileManager createFileAtPath:metadataFilePath contents:[metadata toData] attributes:nil]) {
+		if ([fileManager createFileAtPath:metadataFilePath contents:[metadata toData] attributes:nil] == YES) {
+//			NSLog (@"Wrote file %@", metadataFilePath);
 			return YES;
 		}
 		NSLog(@"Failed to write local file for database metadata");
@@ -284,50 +300,49 @@
 
 + (NSString *)backupsFolderPath:(NSString *)databaseUid
 {
-	return [[self localBaseFolder] stringByAppendingPathComponent:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
+	NSString *backupsFolderName = [TSBackupUtils backupsFolderName:databaseUid];
+	return [[self localBaseFolder] stringByAppendingPathComponent:backupsFolderName];
 }
 
 + (NSArray *)backupIdsForDatabase:(NSString *)databaseUid
 {
-	NSArray *aux = [self namesOfFilesInDirectory:[self backupsFolderPath:databaseUid]
-								 thatEndInSuffix:TS_FILE_SUFFIX_DATABASE_METADATA
-							 removePathExtension:YES];
-	return [aux sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+//	NSLog (@"Listing backups for %@", databaseUid);
+	NSString *backupsFolder = [self backupsFolderPath:databaseUid];
+//	NSLog (@"Backup folder is %@", backupsFolder);
+	NSArray *fileNames = [self listFilesForDirectory:backupsFolder filenameOnly:YES];
+//	NSLog (@"Found %d files : %@", [fileNames count], fileNames);
+	return [TSBackupUtils backupIds:fileNames];
 }
 
 + (NSString *)databaseFilePath:(NSString *)databaseUid forBackup:(NSString *)backupId
 {
-	return [[[self backupsFolderPath:databaseUid] stringByAppendingPathComponent:backupId]
-			stringByAppendingString:TS_FILE_SUFFIX_DATABASE];
+	NSString *backupsFolder = [self backupsFolderPath:databaseUid];
+	NSString *databaseBackupFilename = [TSBackupUtils databaseBackupFileName:backupId];
+	return [backupsFolder stringByAppendingPathComponent:databaseBackupFilename];
 }
 
 + (NSString *)metadataFilePath:(NSString *)databaseUid forBackup:(NSString *)backupId
 {
-	return [[[self backupsFolderPath:databaseUid] stringByAppendingPathComponent:backupId]
-			stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA];
-}
-
-static NSDateFormatter *backupIdDateFormat = nil;
-+ (NSString *)newBackupId
-{
-	if (backupIdDateFormat == nil) {
-		backupIdDateFormat = [[NSDateFormatter alloc] init];
-		[backupIdDateFormat setDateFormat:@"yyyyMMdd_HHmmss"];
-	}
-	return [backupIdDateFormat stringFromDate:[NSDate date]];
+	NSString *backupsFolder = [self backupsFolderPath:databaseUid];
+	NSString *metadataBackupFilename = [TSBackupUtils metadataBackupFileName:backupId];
+	return [backupsFolder stringByAppendingPathComponent:metadataBackupFilename];
 }
 
 + (BOOL)createBackupFor:(NSString *)databaseUid
 {
-	NSString *backupId = [self newBackupId];
+	NSString *backupId = [TSBackupUtils newBackupId];
 	NSString *backupsFolder = [self backupsFolderPath:databaseUid];
+	if ([self createDirectory:backupsFolder] == NO) {
+		NSLog (@"Backup folder cannot be used or could not be created. Aborting backup.");
+		return NO;
+	}
 	
 	NSString *databaseFilePath = [self databaseFilePath:databaseUid];
-	NSString *databaseBackupName = [backupId stringByAppendingPathExtension:TS_FILE_SUFFIX_DATABASE];
-	if ([self copyFileFromPath:databaseFilePath toFolder:backupsFolder andRenameTo:databaseBackupName]) {
+	NSString *databaseBackupFilename = [TSBackupUtils databaseBackupFileName:backupId];
+	if ([self copyFileFromPath:databaseFilePath toFolder:backupsFolder andRenameTo:databaseBackupFilename]) {
 		NSString *metadataFilePath = [self metadataFilePath:databaseUid];
-		NSString *metadataBackupName = [backupId stringByAppendingPathExtension:TS_FILE_SUFFIX_DATABASE_METADATA];
-		if ([self copyFileFromPath:metadataFilePath toFolder:backupsFolder andRenameTo:metadataBackupName]) {
+		NSString *metadataBackupFilename = [TSBackupUtils metadataBackupFileName:backupId];
+		if ([self copyFileFromPath:metadataFilePath toFolder:backupsFolder andRenameTo:metadataBackupFilename]) {
 			return YES;
 		}
 		NSLog(@"Failed to create backup %@ for metadata file of database %@", backupId, databaseUid);
@@ -337,14 +352,69 @@ static NSDateFormatter *backupIdDateFormat = nil;
 	return NO;
 }
 
-+ (void)deleteOldBackupsFor:(NSString *)databaseUid
++ (BOOL)deleteOldBackupsFor:(NSString *)databaseUid
 {
+//	NSLog (@"Delete old backups called for database %@", databaseUid);
 	NSString *backupsFolder = [self backupsFolderPath:databaseUid];
-	NSArray *backupIds = [self backupIdsForDatabase:databaseUid];
-	if ([backupIds count] > TS_NUMBER_OF_BACKUPS) {
-		keep only the most recent backups,
-		check for and delete inconsistent backups (that have either meta or data file but not both)
+	NSArray *fileNames = [self listFilesForDirectory:backupsFolder filenameOnly:YES];
+//	NSLog (@"Before cleanup : %@", fileNames);
+	
+	NSArray *retainedFiles = [TSBackupUtils retainOnlyNeededBackups:fileNames];
+//	NSLog (@"Retained files : %@", retainedFiles);
+	for (NSString *filename in fileNames) {
+		if ([retainedFiles containsObject:filename] == NO) {
+//			NSLog (@"Delete %@", filename);
+			if ([self deleteLocalFile:[backupsFolder stringByAppendingPathComponent:filename]] == NO) {
+				NSLog (@"Delete %@/%@ failed...", backupsFolder, filename);
+				return NO;
+			}
+		}
 	}
+	return YES;
 }
+
+#pragma mark - complex operations
+
++ (BOOL)saveDatabase:(TSDatabase *)database havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret
+{
+	NSData *encryptedContent = [TSCryptoUtils tanukiEncryptDatabase:database
+													 havingMetadata:metadata
+														usingSecret:secret];
+	NSString *databaseFilePath = [self databaseFilePath:metadata.uid];
+	if ([self isRegularFile:databaseFilePath]) {
+//		NSLog (@"Database already exists, will try to create a backup.");
+		if ([self createBackupFor:metadata.uid] == NO) {
+			NSLog (@"Failed to create backup, aborting save.");
+			return NO;
+		}
+	}else {
+//		NSLog (@"Database does not exists, no backup needed.");
+	}
+	if (metadata.createdBy == nil) {
+		metadata.createdBy = [TSAuthor authorFromCurrentDevice];
+	}
+	return [self saveDatabaseWithMetadata:metadata andEncryptedContent:encryptedContent];
+}
+
++ (TSDatabaseMetadata *)loadDatabaseMetadataFromFile:(NSString *)filePath
+{
+	NSData *data = [NSData dataWithContentsOfFile:filePath];
+	if (data != nil) {
+		return (TSDatabaseMetadata *)[TSDatabaseMetadata fromData:data];
+	}
+	NSLog (@"Failed to read content of file %@", filePath);
+	return nil;
+}
+
++ (TSDatabase *)loadDatabaseFromFile:(NSString *)encryptedFilePath havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret
+{
+	NSData *encryptedData = [NSData dataWithContentsOfFile:encryptedFilePath];
+	if (encryptedData == nil) {
+		NSLog (@"Failed to read content of file %@", encryptedFilePath);
+		return nil;
+	}
+	return [TSCryptoUtils tanukiDecryptDatabase:encryptedData havingMetadata:metadata usingSecret:secret];
+}
+
 
 @end

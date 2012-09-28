@@ -19,6 +19,7 @@
 		9F1463DB1600D49400EA03D6 /* TSLocalMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463DA1600D49400EA03D6 /* TSLocalMetadata.m */; };
 		9F1463E11600DF7A00EA03D6 /* TSAuthor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463E01600DF7A00EA03D6 /* TSAuthor.m */; };
 		9F57C2031611E3590085703E /* TSNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57C2021611E3590085703E /* TSNavigationController.m */; };
+		9F57C20A16146E420085703E /* TSBackupUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57C20916146E420085703E /* TSBackupUtils.m */; };
 		9F8ED46615B98C6A00391EF8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46515B98C6A00391EF8 /* UIKit.framework */; };
 		9F8ED46815B98C6A00391EF8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46715B98C6A00391EF8 /* Foundation.framework */; };
 		9F8ED46A15B98C6A00391EF8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46915B98C6A00391EF8 /* CoreGraphics.framework */; };
@@ -95,6 +96,8 @@
 		9F1463E01600DF7A00EA03D6 /* TSAuthor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSAuthor.m; sourceTree = "<group>"; };
 		9F57C2011611E3590085703E /* TSNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNavigationController.h; sourceTree = "<group>"; };
 		9F57C2021611E3590085703E /* TSNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSNavigationController.m; sourceTree = "<group>"; };
+		9F57C20816146E420085703E /* TSBackupUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSBackupUtils.h; sourceTree = "<group>"; };
+		9F57C20916146E420085703E /* TSBackupUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSBackupUtils.m; sourceTree = "<group>"; };
 		9F8ED46115B98C6A00391EF8 /* TanukiSecrets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TanukiSecrets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F8ED46515B98C6A00391EF8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		9F8ED46715B98C6A00391EF8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -221,6 +224,8 @@
 		9F1463E41600E69A00EA03D6 /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				9F57C20816146E420085703E /* TSBackupUtils.h */,
+				9F57C20916146E420085703E /* TSBackupUtils.m */,
 				9F98D40C15F0CAB9001A2C82 /* TSCryptoUtils.h */,
 				9F98D40D15F0CAB9001A2C82 /* TSCryptoUtils.m */,
 				9F1463CD15FF7BEC00EA03D6 /* TSDateUtils.h */,
@@ -572,6 +577,7 @@
 				9FF76E84160A160A00613DA1 /* TSNotifierUtils.m in Sources */,
 				9FF76E87160A5AC000613DA1 /* TSDropboxWrapper.m in Sources */,
 				9F57C2031611E3590085703E /* TSNavigationController.m in Sources */,
+				9F57C20A16146E420085703E /* TSBackupUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

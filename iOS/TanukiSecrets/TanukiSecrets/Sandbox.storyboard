@@ -180,6 +180,9 @@
                                 <state key="highlighted">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="manyUpdatesWithBackups:" destination="Rdo-KC-Vnd" eventType="touchUpInside" id="9he-lI-kR4"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -230,6 +233,8 @@
         <class className="TSUnlockViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSUnlockViewController.h"/>
             <relationships>
+                <relationship kind="action" name="createTestDatabase:" candidateClass="UIButton"/>
+                <relationship kind="action" name="go:"/>
                 <relationship kind="outlet" name="onOffSwitch" candidateClass="UISwitch"/>
                 <relationship kind="outlet" name="unlockCodeLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="unlockCodeTextField" candidateClass="UITextField"/>
