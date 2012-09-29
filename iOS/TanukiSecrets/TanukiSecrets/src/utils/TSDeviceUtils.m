@@ -20,7 +20,7 @@
 + (BOOL) isRunningInSimulator
 {
 #ifdef TARGET_IPHONE_SIMULATOR
-	return YES;
+	return TARGET_IPHONE_SIMULATOR == 1;
 #else
 	return NO;
 #endif

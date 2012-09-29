@@ -89,9 +89,8 @@ BOOL firstTimeSegueTriggered = NO;
 
 #pragma mark - test updates and backups
 
-- (NSString *)createLocalDatabaseAndUpdateItManyTimes:(NSInteger)noUpdates
+- (NSString *)createLocalDatabaseAndUpdateItManyTimes:(NSInteger)noUpdates usingSecret:(NSString *)secret
 {
-	NSString *secret = @"TheTanukiSais...NI-PAH~!";
 	TSDatabase *database = [TSDatabase databaseWithRoot:[TSDBGroup groupNamed:@"rootGroup"]];
 	TSDatabaseMetadata *metadata = [TSDatabaseMetadata newDatabaseNamed:@"testUpdatesDatabase"];
 	metadata.createdBy = [TSAuthor authorFromCurrentDevice];
@@ -270,7 +269,8 @@ BOOL firstTimeSegueTriggered = NO;
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 		BOOL ok = YES;
 		NSLog (@"**************** CREATE");
-		NSString *databaseUid = [self createLocalDatabaseAndUpdateItManyTimes:50];
+		NSString *secret = @"TheTanukiSais...NI-PAH~!";
+		NSString *databaseUid = [self createLocalDatabaseAndUpdateItManyTimes:5 usingSecret:secret];
 		if (databaseUid != nil) {
 			NSLog (@"**************** PRINT");
 			ok = [self logStatusOfBackups:databaseUid] && ok;
@@ -280,6 +280,7 @@ BOOL firstTimeSegueTriggered = NO;
 			[self logStatusOfBackups:databaseUid];
 			NSLog (@"**************** CLEANUP");
 			ok = [TSIOUtils deleteOldBackupsFor:databaseUid] && ok;
+			ok = [TSIOUtils deleteCorruptBackupsFor:databaseUid usingSecret:secret];
 			NSLog (@"**************** PRINT");
 			[self logStatusOfBackups:databaseUid];
 		}else {

@@ -39,6 +39,8 @@
 + (BOOL)recursiveDeleteFolder:(NSString *)folderPath allowDeletionOfNonLocalFiles:(BOOL)allow;
 + (BOOL)recursiveDeleteFolder:(NSString *)folderPath;
 
++ (BOOL)testMetadataFile:(NSString *)metadataPath andDatabaseFile:(NSString *)databasePath usingSecret:(NSString *)secret;
+
 @end
 
 @implementation TSIOUtils
@@ -219,7 +221,7 @@
 
 + (BOOL)deleteLocalFile:(NSString *)filePath
 {
-	NSLog (@"Delete :: %@", filePath);
+//	NSLog (@"Delete :: %@", filePath);
 	return [self deleteFile:filePath allowDeletionOfNonLocalFiles:NO];
 }
 
@@ -292,6 +294,18 @@
 		NSLog(@"Failed to write local file for database metadata");
 	}else {
 		NSLog(@"Failed to write local file for encrypted database");
+	}
+	return NO;
+}
+
++ (BOOL)testMetadataFile:(NSString *)metadataPath andDatabaseFile:(NSString *)databasePath usingSecret:(NSString *)secret
+{
+	TSDatabaseMetadata *metadata = [self loadDatabaseMetadataFromFile:metadataPath];
+	if (metadata != nil) {
+		TSDatabase *database = [self loadDatabaseFromFile:databasePath havingMetadata:metadata usingSecret:secret];
+		if (database != nil) {
+			return YES;
+		}
 	}
 	return NO;
 }
@@ -373,6 +387,33 @@
 	return YES;
 }
 
++ (BOOL)deleteCorruptBackupsFor:(NSString *)databaseUid usingSecret:(NSString *)secret
+{
+	NSArray *backupIds = [self backupIdsForDatabase:databaseUid];
+	NSLog (@"Found %d backups for database %@", [backupIds count], databaseUid);
+	for (NSString *backupId in backupIds) {
+		NSString *metadataPath = [self metadataFilePath:databaseUid forBackup:backupId];
+		NSString *databasePath = [self databaseFilePath:databaseUid forBackup:backupId];
+		if ([self isRegularFile:metadataPath] && [self isRegularFile:databasePath]) {
+			if ([self testMetadataFile:metadataPath andDatabaseFile:databasePath usingSecret:secret] == NO) {
+				NSLog (@"Will delete corrupt backup %@ for database %@", backupId, databaseUid);
+				if ([self deleteLocalFile:metadataPath]) {
+					if ([self deleteLocalFile:databasePath]) {
+						//ok
+					}else {
+						NSLog (@"Delete database file failed, cleanup aborted.");
+						return NO;
+					}
+				}else {
+					NSLog (@"Delete metadata file failed, cleanup aborted.");
+					return NO;
+				}
+			}
+		}
+	}
+	return YES;
+}
+
 #pragma mark - complex operations
 
 + (BOOL)saveDatabase:(TSDatabase *)database havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret
@@ -416,5 +457,20 @@
 	return [TSCryptoUtils tanukiDecryptDatabase:encryptedData havingMetadata:metadata usingSecret:secret];
 }
 
++ (BOOL)testDatabase:(NSString *)databaseUid usingSecret:(NSString *)secret
+{
+	NSString *metadataPath = [self metadataFilePath:databaseUid];
+	NSString *databasePath = [self databaseFilePath:databaseUid];
+	return [self isRegularFile:metadataPath] && [self isRegularFile:databasePath] &&
+	[self testMetadataFile:metadataPath andDatabaseFile:databasePath usingSecret:secret];
+}
+
++ (BOOL)testBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid usingSecret:(NSString *)secret
+{
+	NSString *metadataPath = [self metadataFilePath:databaseUid forBackup:backupId];
+	NSString *databasePath = [self databaseFilePath:databaseUid forBackup:backupId];
+	return [self isRegularFile:metadataPath] && [self isRegularFile:databasePath] &&
+	[self testMetadataFile:metadataPath andDatabaseFile:databasePath usingSecret:secret];
+}
 
 @end

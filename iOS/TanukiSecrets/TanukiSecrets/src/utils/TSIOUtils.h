@@ -33,7 +33,10 @@
 + (NSString *)metadataFilePath:(NSString *)databaseUid forBackup:(NSString *)backupId;
 
 + (BOOL)createBackupFor:(NSString *)databaseUid;
+//cleanup outdated and incomplete backups
 + (BOOL)deleteOldBackupsFor:(NSString *)databaseUid;
+//cleanup apparently complete but corrupt backups (i.e. files exist but cannot be read)
++ (BOOL)deleteCorruptBackupsFor:(NSString *)databaseUid usingSecret:(NSString *)secret;
 
 /**
  1. encrypts the database
@@ -44,5 +47,8 @@
 
 + (TSDatabaseMetadata *)loadDatabaseMetadataFromFile:(NSString *)filePath;
 + (TSDatabase *)loadDatabaseFromFile:(NSString *)encryptedFilePath havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret;
+
++ (BOOL)testDatabase:(NSString *)databaseUid usingSecret:(NSString *)secret;
++ (BOOL)testBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid usingSecret:(NSString *)secret;
 
 @end
