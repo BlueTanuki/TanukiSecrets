@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "TSXMLSerializable.h"
+#import "TSBinarySerializable.h"
 #import "TSAuthor.h"
 
 /*
@@ -18,7 +19,7 @@
  
  This object is saved to the database.tsl file (remote only).
  */
-@interface TSDatabaseLock : NSObject<TSXMLSerializable>
+@interface TSDatabaseLock : NSObject<TSXMLSerializable, TSBinarySerializable>
 
 //optimistic lock - when the database is changed by one client
 //	-> advisory, should still allow different clients to push changes, but warn them before continuing

@@ -25,8 +25,20 @@
 
 typedef enum {
 	IDLE,
-	UPLOADING_METADATA,
-	UPLOADING_DATABASE
+	WAITING,
+	
+	UPLOAD_READ_LOCKFILE = 100,
+	UPLOAD_WRITE_LOCKFILE,
+	UPLOAD_CHECK_LOCKFILE,
+	UPLOAD_RECHECK_LOCKFILE,
+	UPLOAD_CHECK_BACKUP_FOLDER_EXISTS,
+	UPLOAD_CREATE_BACKUP_FOLDER,
+	UPLOAD_MOVE_DATABASE_TO_BACKUP,
+	UPLOAD_MOVE_METADATA_TO_BACKUP,
+	UPLOAD_METADATA,
+	UPLOAD_DATABASE,
+	UPLOAD_DELETE_LOCKFILE
+	
 } DropboxWrapperState;
 
 /**
@@ -37,7 +49,7 @@ typedef enum {
 @property(nonatomic, assign) BOOL busy;
 @property(nonatomic, readonly) DropboxWrapperState state;
 
-///start the upload process for the metadata file and the database file [INCOMPLETE!!!]
+///start the upload process for the metadata file and the database file
 ///return YES if the command was successfully started (cannot start process if already busy)
 - (BOOL)uploadDatabaseWithId:(NSString *)databaseUid andReportToDelegate:(id<TSDropboxUploadDelegate>)delegate;
 

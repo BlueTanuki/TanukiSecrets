@@ -51,7 +51,17 @@
 {
 	NSArray *aux = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
 	if ([aux count] != 1) {
-		NSLog(@"ERROR : wrong number of URLs in array : %d", [aux count]);
+		NSLog(@"ERROR : wrong number of URLs in array : %d :: %@", [aux count], aux);
+		return nil;
+	}
+	return [[aux objectAtIndex:0] path];
+}
+
++ (NSString *)localCachesFolder
+{
+	NSArray *aux = [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask];
+	if ([aux count] != 1) {
+		NSLog(@"ERROR : wrong number of URLs in array : %d :: %@", [aux count], aux);
 		return nil;
 	}
 	return [[aux objectAtIndex:0] path];
@@ -197,7 +207,8 @@
 + (BOOL)deleteFileOrFolder:(NSString *)filePath allowDeletionOfNonLocalFiles:(BOOL)allow
 {
 	NSString *localFilesPrefix = [self localBaseFolder];
-	BOOL isLocal = [filePath hasPrefix:localFilesPrefix];
+	NSString *localCachesPrefix = [self localCachesFolder];
+	BOOL isLocal = [filePath hasPrefix:localFilesPrefix] || [filePath hasPrefix:localCachesPrefix];
 	if ((isLocal == NO) && (allow == NO)) {
 		NSLog (@"Aborting delete request for non-local file %@", filePath);
 		return NO;

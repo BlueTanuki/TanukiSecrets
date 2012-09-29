@@ -13,6 +13,10 @@
 
 @interface TSIOUtils : NSObject
 
++ (NSString *)localCachesFolder;
+//returns the full path of a temporary file with the given name (caller responsible with deletion)
++ (NSString *)temporaryFileNamed:(NSString *)fileName;
+
 + (NSArray *)listDatabaseUids;//of NSString
 
 + (NSString *)databaseFilePath:(NSString *)databaseUid;
@@ -36,6 +40,7 @@
 //cleanup outdated and incomplete backups
 + (BOOL)deleteOldBackupsFor:(NSString *)databaseUid;
 //cleanup apparently complete but corrupt backups (i.e. files exist but cannot be read)
+//WARNING: this method is dangerous, it may delete perfectly good backups if the secret is not the same for all backups
 + (BOOL)deleteCorruptBackupsFor:(NSString *)databaseUid usingSecret:(NSString *)secret;
 
 /**

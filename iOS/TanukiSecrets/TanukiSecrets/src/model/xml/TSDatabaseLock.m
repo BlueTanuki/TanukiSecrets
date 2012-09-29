@@ -57,4 +57,25 @@
 	return [self readFrom:element usingTagName:TS_XML_DB_LOCK_TAG_NAME];
 }
 
+#pragma mark - TSBinarySerializable
+
+- (NSData *)toData
+{
+	XMLWriter *writer = [[XMLWriter alloc] init];
+	[self writeTo:writer];
+	return [writer toData];
+}
+
++ (id<TSBinarySerializable>)fromData:(NSData *)data
+{
+	TSDatabaseLock *ret = nil;
+	NSError *error;
+	SMXMLDocument *document = [SMXMLDocument documentWithData:data error:&error];
+	if (error == nil) {
+		ret = (TSDatabaseLock *)[self readFrom:[document root]];
+	}
+	return ret;
+}
+
+
 @end
