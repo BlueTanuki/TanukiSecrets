@@ -23,5 +23,6 @@
 @property(nonatomic, strong) TSDBGroup *root;
 
 + (TSDatabase *)databaseWithRoot:(TSDBGroup *)root;
++ (TSDatabase *)emptyDatabase;
 
 @end

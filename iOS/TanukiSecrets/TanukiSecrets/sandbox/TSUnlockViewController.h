@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TSUnlockViewController : UIViewController
+@interface TSUnlockViewController : UIViewController<UIAlertViewDelegate>
 
 @end

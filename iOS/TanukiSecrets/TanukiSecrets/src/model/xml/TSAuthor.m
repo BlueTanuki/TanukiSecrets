@@ -95,8 +95,7 @@
 
 + (TSAuthor *)authorFromCurrentDevice
 {
-	TSSharedState *sharedState = [TSSharedState sharedState];
-	return [self authorWithId:[sharedState instanceUID] andName:[TSDeviceUtils deviceName]];
+	return [self authorWithId:[TSSharedState instanceUID] andName:[TSDeviceUtils deviceName]];
 }
 
 @end

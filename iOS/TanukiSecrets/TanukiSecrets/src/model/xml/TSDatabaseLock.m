@@ -77,5 +77,22 @@
 	return ret;
 }
 
+#pragma mark - factory
+
++ (TSDatabaseLock *)optimisticLock
+{
+	TSAuthor *author = [TSAuthor authorFromCurrentDevice];
+	TSDatabaseLock *ret = [[TSDatabaseLock alloc] init];
+	ret.optimisticLock = author;
+	return ret;
+}
+
++(TSDatabaseLock *)writeLock
+{
+	TSAuthor *author = [TSAuthor authorFromCurrentDevice];
+	TSDatabaseLock *ret = [[TSDatabaseLock alloc] init];
+	ret.writeLock = author;
+	return ret;
+}
 
 @end

@@ -10,6 +10,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -47,6 +48,11 @@ public class XMLUtils {
 
 	public static Database loadDatabase (File file) throws IOException {
 		Database ret = (Database) xStream ().fromXML (file);
+		return ret;
+	}
+	
+	public static Database loadDatabase (InputStream is) throws IOException {
+		Database ret = (Database) xStream ().fromXML (is);
 		return ret;
 	}
 	

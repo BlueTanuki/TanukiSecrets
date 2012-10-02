@@ -13,7 +13,7 @@
 
 @implementation TSSharedState
 
-@synthesize instanceUID = _instanceUID, dropboxWrapper = _dropboxWrapper;
+@synthesize instanceUID = _instanceUID;
 
 #pragma mark - singleton creation
 
@@ -27,6 +27,11 @@
 
 #pragma mark - read-only properties
 
++ (NSString *)instanceUID
+{
+	return [self sharedState].instanceUID;
+}
+
 - (NSString *)instanceUID
 {
 	if (_instanceUID == nil) {
@@ -34,14 +39,6 @@
 		_instanceUID = [TSUserDefaults stringForKey:TS_INSTANCE_UID_KEY usingDefaultValue:defaultUid];
 	}
 	return _instanceUID;
-}
-
-- (TSDropboxWrapper *)dropboxWrapper
-{
-	if (_dropboxWrapper == nil) {
-		_dropboxWrapper = [[TSDropboxWrapper alloc] init];
-	}
-	return _dropboxWrapper;
 }
 
 @end

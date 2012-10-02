@@ -58,4 +58,11 @@
 	return ret;
 }
 
++ (TSDatabase *)emptyDatabase
+{
+	TSDatabase * ret = [[TSDatabase alloc] init];
+	ret.root = [TSDBGroup groupNamed:@"ROOT"];
+	return ret;
+}
+
 @end

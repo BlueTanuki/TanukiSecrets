@@ -184,6 +184,21 @@
                                     <action selector="manyUpdatesWithBackups:" destination="Rdo-KC-Vnd" eventType="touchUpInside" id="9he-lI-kR4"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Rib-QP-X9A">
+                                <rect key="frame" x="165" y="150" width="137" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="DropboxUpdate">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="dropboxUpdateTest:" destination="Rdo-KC-Vnd" eventType="touchUpInside" id="gur-iT-eid"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -235,6 +250,7 @@
             <relationships>
                 <relationship kind="action" name="createTestDatabase:" candidateClass="UIButton"/>
                 <relationship kind="action" name="go:"/>
+                <relationship kind="action" name="manyUpdatesWithBackups:" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="onOffSwitch" candidateClass="UISwitch"/>
                 <relationship kind="outlet" name="unlockCodeLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="unlockCodeTextField" candidateClass="UITextField"/>

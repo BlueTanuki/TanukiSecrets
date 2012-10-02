@@ -10,22 +10,84 @@
 
 #import "TSConstants.h"
 #import "TSIOUtils.h"
+#import "TSUtils.h"
+#import "TSSharedState.h"
+#import "TSBackupUtils.h"
 
 @interface TSDropboxWrapper()
 
 @property(nonatomic, strong) DBRestClient *dropboxRestClient;
 
-@property(nonatomic, weak) id<TSDropboxUploadDelegate> uploadDelegate;
+
 
 @property(nonatomic, copy) NSString *databaseUid;
+
+@property(nonatomic, copy) NSString *remoteLockfileRevision;
+@property(nonatomic, copy) NSString *remoteBackupId;
+
+- (void)setState:(DropboxWrapperState)newState;
 
 @end
 
 @implementation TSDropboxWrapper
 
-@synthesize busy = _busy, state = _state,
-dropboxRestClient = _dropboxRestClient, uploadDelegate = _uploadDelegate,
-databaseUid = _databaseUid;
+@synthesize state = _state,
+dropboxRestClient = _dropboxRestClient, delegate = _delegate,
+databaseUid = _databaseUid, remoteLockfileRevision = _remoteLockfileRevision,
+remoteBackupId = _remoteBackupId;
+
+#pragma mark - state machine helpers
+
++ (NSString *)stateString:(DropboxWrapperState)state
+{
+	switch (state) {
+		case IDLE:
+			return @"IDLE";
+		case WAITING:
+			return @"WAITING";
+		case UPLOAD_READ_LOCKFILE:
+			return @"UPLOAD_READ_LOCKFILE";
+		case UPLOAD_STALLED_OPTIMISTIC_LOCK:
+			return @"UPLOAD_STALLED_OPTIMISTIC_LOCK";
+		case UPLOAD_WRITE_LOCKFILE:
+			return @"UPLOAD_WRITE_LOCKFILE";
+		case UPLOAD_CHECK_LOCKFILE:
+			return @"UPLOAD_CHECK_LOCKFILE";
+		case UPLOAD_RECHECK_LOCKFILE:
+			return @"UPLOAD_RECHECK_LOCKFILE";
+		case UPLOAD_CHECK_BACKUP_FOLDER_EXISTS:
+			return @"UPLOAD_CHECK_BACKUP_FOLDER_EXISTS";
+		case UPLOAD_CREATE_BACKUP_FOLDER:
+			return @"UPLOAD_CREATE_BACKUP_FOLDER";
+		case UPLOAD_CHECK_DATABASE_EXISTS:
+			return @"UPLOAD_CHECK_DATABASE_EXISTS";
+		case UPLOAD_MOVE_DATABASE_TO_BACKUP:
+			return @"UPLOAD_MOVE_DATABASE_TO_BACKUP";
+		case UPLOAD_CHECK_METADATA_EXISTS:
+			return @"UPLOAD_CHECK_METADATA_EXISTS";
+		case UPLOAD_MOVE_METADATA_TO_BACKUP:
+			return @"UPLOAD_MOVE_METADATA_TO_BACKUP";
+		case UPLOAD_METADATA:
+			return @"UPLOAD_METADATA";
+		case UPLOAD_DATABASE:
+			return @"UPLOAD_DATABASE";
+		case UPLOAD_DELETE_LOCKFILE:
+			return @"UPLOAD_DELETE_LOCKFILE";
+		default:
+			return @"UNKNOWN";
+	}
+}
+
+- (NSString *)stateString
+{
+	return [TSDropboxWrapper stateString:self.state];
+}
+
+- (void)setState:(DropboxWrapperState)newState
+{
+	NSLog (@"*** STATE TRANSITION :: %@(%d) -> %@(%d)", [self stateString], self.state, [TSDropboxWrapper stateString:newState], newState);
+	_state = newState;
+}
 
 #pragma mark - getter/setter override
 
@@ -38,49 +100,174 @@ databaseUid = _databaseUid;
 	return _dropboxRestClient;
 }
 
+#pragma mark - reused operations
+
+- (void) stateTransitionError:(NSString *)eventDescription
+{
+	NSLog (@"*** INTERNAL STATE MACHINE ERROR *** Event '%@' occurred in unknown state %@ (%d). Switching back to IDLE...", eventDescription, [self stateString], self.state);
+	[self setState:IDLE];
+}
+
+- (void)reportFatalErrorToWrapperDelegate:(NSString *)errorText
+{
+	[self.delegate dropboxWrapper:self uploadForDatabase:self.databaseUid failedWithError:errorText];
+	[self setState:IDLE];
+}
+
+- (void)uploadWriteLock:(NSString *)overwrittenRevision
+{
+	if ([self.delegate respondsToSelector:@selector(dropboxWrapper:attemptingToLockDatabase:)]) {
+		[self.delegate dropboxWrapper:self attemptingToLockDatabase:self.databaseUid];
+	}
+	TSDatabaseLock *databaseLock = [TSDatabaseLock writeLock];
+	NSData *content = [databaseLock toData];
+	NSString *lockfileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_LOCK];
+	NSString *lockfileLocalPath = [TSIOUtils temporaryFileNamed:lockfileName];
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	if ([fileManager createFileAtPath:lockfileLocalPath contents:content attributes:nil] == YES) {
+		[self.dropboxRestClient uploadFile:[lockfileLocalPath lastPathComponent]
+									toPath:@"/"
+							 withParentRev:overwrittenRevision
+								  fromPath:lockfileLocalPath];
+		[self setState:UPLOAD_WRITE_LOCKFILE];
+	}else {
+		NSLog (@"Failed to create local file at %@", lockfileLocalPath);
+		[self reportFatalErrorToWrapperDelegate:@"Internal error (lockfile write local)"];
+	}
+}
+
+- (void)downloadWriteLock
+{
+	NSString *lockfileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_LOCK];
+	NSString *lockfileLocalPath = [TSIOUtils temporaryFileNamed:lockfileName];
+	NSString *lockfileRemotePath = [@"/" stringByAppendingString:lockfileName];
+	[self.dropboxRestClient loadFile:lockfileRemotePath intoPath:lockfileLocalPath];
+}
+
+- (void)deleteLockFile
+{
+	NSString *lockfileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_LOCK];
+	NSString *lockfileRemotePath = [@"/" stringByAppendingString:lockfileName];
+	[self.dropboxRestClient deletePath:lockfileRemotePath];
+}
+
+- (void)checkBackupsFolderExists
+{
+	NSString *backupsFolderName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
+	NSString *backupsFolderRemotePath = [@"/" stringByAppendingString:backupsFolderName];
+	[self.dropboxRestClient loadMetadata:backupsFolderRemotePath];
+	[self setState:UPLOAD_CHECK_BACKUP_FOLDER_EXISTS];
+}
+
+- (void)createBackupsFolder
+{
+	NSString *backupsFolderName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
+	NSString *backupsFolderRemotePath = [@"/" stringByAppendingString:backupsFolderName];
+	[self.dropboxRestClient createFolder:backupsFolderRemotePath];
+	[self setState:UPLOAD_CREATE_BACKUP_FOLDER];
+}
+
+- (void)checkDatabaseExists
+{
+	NSString *databaseFileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE];
+	NSString *databaseRemotePath = [@"/" stringByAppendingString:databaseFileName];
+	[self.dropboxRestClient loadMetadata:databaseRemotePath];
+	[self setState:UPLOAD_CHECK_DATABASE_EXISTS];
+}
+
+//first operation of 2-step backup
+- (void)moveDatabaseToBackup
+{
+	NSString *databaseFileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE];
+	NSString *databaseRemotePathOld = [@"/" stringByAppendingString:databaseFileName];
+	NSString *backupsFolderName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
+	self.remoteBackupId = [TSBackupUtils newBackupId];
+	NSString *databaseBackupName = [self.remoteBackupId stringByAppendingString:TS_FILE_SUFFIX_DATABASE];
+	NSString *databaseRemotePathNew = [[@"/" stringByAppendingString:backupsFolderName] stringByAppendingPathComponent:databaseBackupName];
+	[self.dropboxRestClient moveFrom:databaseRemotePathOld toPath:databaseRemotePathNew];
+	[self setState:UPLOAD_MOVE_DATABASE_TO_BACKUP];
+}
+
+- (void)checkMetadataExists
+{
+	NSString *metadataFileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA];
+	NSString *metadataRemotePath = [@"/" stringByAppendingString:metadataFileName];
+	[self.dropboxRestClient loadMetadata:metadataRemotePath];
+	[self setState:UPLOAD_CHECK_METADATA_EXISTS];
+}
+
+//second operation of 2-step backup
+- (void)moveMetadataToBackup
+{
+	NSString *metadataFileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA];
+	NSString *metadataRemotePathOld = [@"/" stringByAppendingString:metadataFileName];
+	NSString *backupsFolderName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
+	NSString *metadataBackupName = [self.remoteBackupId stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA];
+	NSString *metadataRemotePathNew = [[@"/" stringByAppendingString:backupsFolderName] stringByAppendingPathComponent:metadataBackupName];
+	[self.dropboxRestClient moveFrom:metadataRemotePathOld toPath:metadataRemotePathNew];
+	[self setState:UPLOAD_MOVE_METADATA_TO_BACKUP];
+}
+
+- (void)uploadMetadata
+{
+	NSString *metadataFilePath = [TSIOUtils metadataFilePath:self.databaseUid];
+	[self.dropboxRestClient uploadFile:[metadataFilePath lastPathComponent]
+								toPath:@"/"
+						 withParentRev:nil
+							  fromPath:metadataFilePath];
+	[self setState:UPLOAD_METADATA];
+}
+
+- (void)uploadDatabase
+{
+	NSString *databaseFilePath = [TSIOUtils databaseFilePath:self.databaseUid];
+	[self.dropboxRestClient uploadFile:[databaseFilePath lastPathComponent]
+								toPath:@"/"
+						 withParentRev:nil
+							  fromPath:databaseFilePath];
+	[self setState:UPLOAD_DATABASE];
+}
+
 #pragma mark - DBRestClientDelegate
 
 - (void)restClient:(DBRestClient *)client uploadFileFailedWithError:(NSError *)error
 {
-	NSLog (@"File upload failed :: %@", [error debugDescription]);
-	[self.uploadDelegate dropboxWrapper:self
-			  uploadForDatabase:self.databaseUid
-							failedWithError:[error description]];
-	_state = IDLE;
-	self.uploadDelegate = nil;
+	NSLog (@"File upload failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
+	[self reportFatalErrorToWrapperDelegate:[error description]];
 }
 
 - (void)restClient:(DBRestClient *)client uploadedFile:(NSString *)destPath from:(NSString *)srcPath
 {
     NSLog(@"File uploaded successfully to path: %@", destPath);
 	switch (self.state) {
+		case UPLOAD_WRITE_LOCKFILE: {
+			NSLog (@"Lockfile uploaded successfully, waiting 2 seconds before checking the lockfile");
+			[self setState:WAITING];
+			[NSThread sleepForTimeInterval:2];
+			[self downloadWriteLock];
+			[self setState:UPLOAD_CHECK_LOCKFILE];
+		}
+		break;
+			
 		case UPLOAD_METADATA: {
-			if ([self.uploadDelegate respondsToSelector:@selector(dropboxWrapper:uploadedMetadataFileForDatabase:)]) {
-				[self.uploadDelegate dropboxWrapper:self uploadedMetadataFileForDatabase:self.databaseUid];
+			if ([self.delegate respondsToSelector:@selector(dropboxWrapper:uploadedMetadataFileForDatabase:)]) {
+				[self.delegate dropboxWrapper:self uploadedMetadataFileForDatabase:self.databaseUid];
 			}
-			NSString *databaseFilePath = [TSIOUtils databaseFilePath:self.databaseUid];
-			[self.dropboxRestClient uploadFile:[databaseFilePath lastPathComponent]
-										toPath:@"/"
-								 withParentRev:nil
-									  fromPath:databaseFilePath];
-			_state = UPLOAD_DATABASE;
+			[self uploadDatabase];
 		}
 		break;
 			
 		case UPLOAD_DATABASE: {
-			if ([self.uploadDelegate respondsToSelector:@selector(dropboxWrapper:uploadedMainFileForDatabase:)]) {
-				[self.uploadDelegate dropboxWrapper:self uploadedMainFileForDatabase:self.databaseUid];
+			if ([self.delegate respondsToSelector:@selector(dropboxWrapper:uploadedMainFileForDatabase:)]) {
+				[self.delegate dropboxWrapper:self uploadedMainFileForDatabase:self.databaseUid];
 			}
-			this is wrong!!!
-			_state = IDLE;
-			[self.uploadDelegate dropboxWrapper:self finishedUploadingDatabase:self.databaseUid];
-			self.uploadDelegate = nil;
+			[self deleteLockFile];
+			[self setState:UPLOAD_DELETE_LOCKFILE];
 		}
 		break;
 			
 		default: {
-			NSLog (@"*** INTERNAL STATE MACHINE ERROR *** Received successful file upload callback in unknown state (%d). Switching back to IDLE...", self.state);
-			_state = IDLE;
+			[self stateTransitionError:@"successful file upload"];
 		}
 	}
 }
@@ -89,34 +276,263 @@ databaseUid = _databaseUid;
 {
 	NSLog(@"File download failed :: %@", [error debugDescription]);
 	switch (self.state) {
-		case UPLOAD_CHECK_LOCKFILE: {
-			this is probably a normal thing (TODO: can we test the error code or something???),
-			the lock file should not exist and the download should fail,
-			invocation of next step goes here
+		case UPLOAD_READ_LOCKFILE: {
+			if ([error code] == 404) {
+				[self uploadWriteLock:nil];
+			}else {
+				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+				[self reportFatalErrorToWrapperDelegate:@"Checking lockfile failed."];
+			}
+		}
+		break;
+			
+		case UPLOAD_CHECK_LOCKFILE:
+		case UPLOAD_RECHECK_LOCKFILE:
+		{
+			NSLog (@"!!!REMOTE FILES MAY BE INCONSISTENT!!! Lockfile download failed :: %@", [error debugDescription]);
+			[self reportFatalErrorToWrapperDelegate:@"Failed to check the recently uploaded lockfile!"];
 		}
 		break;
 			
 		default: {
-			NSLog (@"*** INTERNAL STATE MACHINE ERROR *** Received failed file download callback in unknown state (%d). Switching back to IDLE...", self.state);
-			_state = IDLE;
+			[self stateTransitionError:@"failed file download"];
 		}
 	}
 }
 
-- (void)restClient:(DBRestClient *)client loadedFile:(NSString *)destPath
+- (void)restClient:(DBRestClient *)client loadedFile:(NSString *)destPath contentType:(NSString *)contentType metadata:(DBMetadata *)metadata
 {
 	NSLog(@"File downloaded successfully to path %@", destPath);
 	switch (self.state) {
-		case UPLOAD_CHECK_LOCKFILE: {
-			this can be a bad thing, we read the lock file and communicate failure
-			if there is a lock held by somebody else
-				Note : this is not necessarily a fatal error, since optimistic locks are advisory and can be overwritten
+		case UPLOAD_READ_LOCKFILE: {
+			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:destPath];
+			if (databaseLock != nil) {
+				if (databaseLock.writeLock != nil) {
+					[self.delegate dropboxWrapper:self uploadForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					[self setState:IDLE];
+				}else if ((databaseLock.optimisticLock != nil) && ([databaseLock.optimisticLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
+					[self.delegate dropboxWrapper:self uploadForDatabase:self.databaseUid isStalledBecauseOfOptimisticLock:databaseLock];
+					[self setState:UPLOAD_STALLED_OPTIMISTIC_LOCK];
+					self.remoteLockfileRevision = metadata.rev;
+				}else {
+					[self uploadWriteLock:metadata.rev];
+				}
+			}else {
+				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
+				[self reportFatalErrorToWrapperDelegate:@"Internal error (lockfile read)"];
+			}
+		}
+		break;
+			
+		case UPLOAD_CHECK_LOCKFILE:
+		case UPLOAD_RECHECK_LOCKFILE:
+		{
+			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:destPath];
+			if (databaseLock != nil) {
+				if ((databaseLock.writeLock == nil) || ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
+					NSLog (@"Lockfile check failed, the lock is not held by the current device");
+					[self.delegate dropboxWrapper:self uploadForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					[self setState:IDLE];
+				}else {
+					if (self.state == UPLOAD_CHECK_LOCKFILE) {
+						NSLog (@"Lockfile check ok, waiting a little more then performing a recheck");
+						[self setState:WAITING];
+						[NSThread sleepForTimeInterval:[TSUtils randomDoubleBetween:1.5 and:4]];
+						[self downloadWriteLock];
+						[self setState:UPLOAD_RECHECK_LOCKFILE];
+					}else {
+						NSLog (@"Lockfile re-check ok, proceeding with backup");
+						if ([self.delegate respondsToSelector:@selector(dropboxWrapper:successfullyLockedDatabase:)]) {
+							[self.delegate dropboxWrapper:self successfullyLockedDatabase:self.databaseUid];
+						}
+						[self checkBackupsFolderExists];
+					}
+				}
+			}else {
+				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
+				[self reportFatalErrorToWrapperDelegate:@"Internal error (lockfile read)"];
+			}
 		}
 		break;
 			
 		default: {
-			NSLog (@"*** INTERNAL STATE MACHINE ERROR *** Received successful file download callback in unknown state (%d). Switching back to IDLE...", self.state);
-			_state = IDLE;
+			[self stateTransitionError:@"successful file download"];
+		}
+	}
+}
+
+- (void)restClient:(DBRestClient *)client loadMetadataFailedWithError:(NSError *)error
+{
+	switch (self.state) {
+		case UPLOAD_CHECK_BACKUP_FOLDER_EXISTS: {
+			if ([error code] == 404) {
+				[self createBackupsFolder];
+			}else {
+				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+				[self reportFatalErrorToWrapperDelegate:@"Checking existence of backup folder failed."];
+			}
+		}
+		break;
+			
+		case UPLOAD_CHECK_DATABASE_EXISTS: {
+			if ([error code] == 404) {
+				[self checkMetadataExists];
+			}else {
+				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+				[self reportFatalErrorToWrapperDelegate:@"Checking existence of database file failed."];
+			}
+		}
+		break;
+			
+		case UPLOAD_CHECK_METADATA_EXISTS: {
+			if ([error code] == 404) {
+				[self uploadMetadata];
+			}else {
+				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+				[self reportFatalErrorToWrapperDelegate:@"Checking existence of database metadata failed."];
+			}
+		}
+		break;
+			
+		default: {
+			NSLog (@"Load metadata failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
+			[self reportFatalErrorToWrapperDelegate:[error description]];
+		}
+	}
+}
+
+- (void)restClient:(DBRestClient *)client loadedMetadata:(DBMetadata *)metadata
+{
+	switch (self.state) {
+		case UPLOAD_CHECK_BACKUP_FOLDER_EXISTS: {
+			if (([metadata isDirectory] == YES) && ([metadata isDeleted] == NO)) {
+				[self checkDatabaseExists];
+			}else {
+				NSLog (@"ERROR : the entity at path %@ is not a directory.", [metadata path]);
+				[self reportFatalErrorToWrapperDelegate:@"Remote backups folder corrupt???"];
+			}
+		}
+		break;
+			
+		case UPLOAD_CHECK_DATABASE_EXISTS: {
+			if (([metadata isDirectory] == NO) && ([metadata isDeleted] == NO)) {
+				[self moveDatabaseToBackup];
+			}else {
+				NSLog (@"ERROR : the entity at path %@ is not a file.", [metadata path]);
+				[self reportFatalErrorToWrapperDelegate:@"Remote database file corrupt???"];
+			}
+		}
+		break;
+			
+		case UPLOAD_CHECK_METADATA_EXISTS: {
+			if (([metadata isDirectory] == NO) && ([metadata isDeleted] == NO)) {
+				[self moveMetadataToBackup];
+			}else {
+				NSLog (@"ERROR : the entity at path %@ is not a file.", [metadata path]);
+				[self reportFatalErrorToWrapperDelegate:@"Remote metadata file corrupt???"];
+			}
+		}
+			break;
+			
+		default: {
+			[self stateTransitionError:@"loaded metadata"];
+		}
+	}
+}
+
+- (void)restClient:(DBRestClient *)client metadataUnchangedAtPath:(NSString *)path
+{
+	switch (self.state) {
+		case UPLOAD_CHECK_BACKUP_FOLDER_EXISTS: {
+			NSLog (@"Strange but probably correct : received metadata unchanged callback for %@ while checking if the backups folder exists...", path);
+			[self checkDatabaseExists];
+		}
+		break;
+			
+		case UPLOAD_CHECK_DATABASE_EXISTS: {
+			NSLog (@"Strange but probably correct : received metadata unchanged callback for %@ while checking if the database file exists...", path);
+			[self moveDatabaseToBackup];
+		}
+		break;
+			
+		case UPLOAD_CHECK_METADATA_EXISTS: {
+			NSLog (@"Strange but probably correct : received metadata unchanged callback for %@ while checking if the metadata file exists...", path);
+			[self moveMetadataToBackup];
+		}
+		break;
+			
+		default: {
+			[self stateTransitionError:[NSString stringWithFormat:@"metadata unchanged at path %@", path]];
+		}
+	}
+}
+
+- (void)restClient:(DBRestClient *)client createFolderFailedWithError:(NSError *)error
+{
+	NSLog (@"Create folder failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
+	[self reportFatalErrorToWrapperDelegate:[error description]];
+}
+
+- (void)restClient:(DBRestClient *)client createdFolder:(DBMetadata *)folder
+{
+	NSLog (@"Created backups remote folder.");
+	[self checkDatabaseExists];
+}
+
+- (void)restClient:(DBRestClient *)client movePathFailedWithError:(NSError *)error
+{
+	NSLog (@"Move operation failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
+	[self reportFatalErrorToWrapperDelegate:[error description]];
+}
+
+- (void)restClient:(DBRestClient *)client movedPath:(NSString *)from_path to:(DBMetadata *)result
+{
+	NSLog (@"Moved %@ to %@", from_path, [result path]);
+	switch (self.state) {
+		case UPLOAD_MOVE_DATABASE_TO_BACKUP: {
+			[self checkMetadataExists];
+		}
+		break;
+			
+		case UPLOAD_MOVE_METADATA_TO_BACKUP: {
+			NSLog (@"Finished creating backup %@ for database %@", self.remoteBackupId, self.databaseUid);
+			if ([self.delegate respondsToSelector:@selector(dropboxWrapper:createdBackup:forDatabase::)]) {
+				[self.delegate dropboxWrapper:self createdBackup:self.remoteBackupId forDatabase:self.databaseUid];
+			}
+			[self uploadMetadata];
+		}
+		break;
+			
+		default: {
+			[self stateTransitionError:[NSString stringWithFormat:@"moved from %@ to %@", from_path, [result path]]];
+		}
+	}
+}
+
+- (void)restClient:(DBRestClient*)client deletePathFailedWithError:(NSError*)error
+{
+	NSLog (@"Delete failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
+	[self reportFatalErrorToWrapperDelegate:[error description]];
+}
+
+- (void)restClient:(DBRestClient*)client deletedPath:(NSString *)path
+{
+	switch (self.state) {
+		case UPLOAD_DELETE_LOCKFILE: {
+			if ([self.delegate respondsToSelector:@selector(dropboxWrapper:successfullyUnockedDatabase:)]) {
+				[self.delegate dropboxWrapper:self successfullyUnockedDatabase:self.databaseUid];
+			}
+			[self setState:IDLE];
+			[self.delegate dropboxWrapper:self finishedUploadingDatabase:self.databaseUid];
+		}
+		break;
+			
+		default: {
+			[self stateTransitionError:[NSString stringWithFormat:@"deleted path %@", path]];
 		}
 	}
 }
@@ -128,25 +544,44 @@ databaseUid = _databaseUid;
 	return (self.state != IDLE);
 }
 
-NSString *metadataFilePath = [TSIOUtils metadataFilePath:databaseUid];
-[self.dropboxRestClient uploadFile:[metadataFilePath lastPathComponent]
-							toPath:@"/"
-					 withParentRev:nil
-						  fromPath:metadataFilePath];
-
-
-- (BOOL)uploadDatabaseWithId:(NSString *)databaseUid andReportToDelegate:(id<TSDropboxUploadDelegate>)delegate
+- (BOOL)uploadStalledOptimisticLock
 {
-	NSLog (@"WARNING : incorrect implementation, does not handle updates correctly");
+	return (self.state == UPLOAD_STALLED_OPTIMISTIC_LOCK);
+}
+
+- (BOOL)continueUploadAndOverwriteOptimisticLock
+{
+	switch (self.state) {
+		case UPLOAD_STALLED_OPTIMISTIC_LOCK:
+			[self uploadWriteLock:self.remoteLockfileRevision];
+			return YES;
+		default:
+			NSLog (@"Received continue upload and overwrite optimistic lock permission but the current state %@ (%d) is not the correct one %@ (%d)", [self stateString], self.state, [TSDropboxWrapper stateString:UPLOAD_STALLED_OPTIMISTIC_LOCK], UPLOAD_STALLED_OPTIMISTIC_LOCK);
+			return NO;
+	}
+}
+
+- (BOOL)cancelUpload
+{
+	switch (self.state) {
+		case UPLOAD_STALLED_OPTIMISTIC_LOCK:
+//		case BLA_BLA:
+			[self setState:IDLE];
+			return YES;
+		default:
+			NSLog (@"Received cancel upload request but the current state %@ (%d) is not among the states that support this operation", [self stateString], self.state);
+			return NO;
+	}
+}
+
+- (BOOL)uploadDatabaseWithId:(NSString *)databaseUid
+{
+	NSLog (@"database uid : %@", databaseUid);
 	BOOL ret = NO;
 	if (self.state == IDLE) {
-		NSString *lockfileName = [databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_LOCK];
-		NSString *lockfileLocalPath = [TSIOUtils temporaryFileNamed:lockfileName];
-		NSString *lockfileRemotePath = [@"/" stringByAppendingString:lockfileName];
-		[self.dropboxRestClient loadFile:lockfileRemotePath intoPath:lockfileLocalPath];
 		self.databaseUid = databaseUid;
-		self.uploadDelegate = delegate;
-		_state = UPLOAD_READ_LOCKFILE;
+		[self downloadWriteLock];
+		[self setState:UPLOAD_READ_LOCKFILE];
 		ret = YES;
 	}
 	return ret;

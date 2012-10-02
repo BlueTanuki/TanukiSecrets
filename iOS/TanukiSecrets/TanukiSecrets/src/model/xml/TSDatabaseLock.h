@@ -38,4 +38,8 @@
 //	6. client releases the write lock and the optimistic lock as well.
 @property(nonatomic, strong) TSAuthor *writeLock;
 
+//simple factory methods that use [TSAuthor authorFromCurrentDevice] to populate one of the locks 
++ (TSDatabaseLock *)optimisticLock;
++ (TSDatabaseLock *)writeLock;
+
 @end

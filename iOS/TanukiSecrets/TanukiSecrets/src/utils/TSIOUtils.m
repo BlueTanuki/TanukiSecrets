@@ -67,6 +67,11 @@
 	return [[aux objectAtIndex:0] path];
 }
 
++ (NSString *)temporaryFileNamed:(NSString *)fileName
+{
+	return [[self localCachesFolder] stringByAppendingPathComponent:fileName];
+}
+
 + (BOOL)fileAtPath:(NSString*)path hasFileType:(NSString *)fileType
 {
 	NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -466,6 +471,16 @@
 		return nil;
 	}
 	return [TSCryptoUtils tanukiDecryptDatabase:encryptedData havingMetadata:metadata usingSecret:secret];
+}
+
++ (TSDatabaseLock *)loadDatabaseLockFromFile:(NSString *)filePath
+{
+	NSData *data = [NSData dataWithContentsOfFile:filePath];
+	if (data != nil) {
+		return (TSDatabaseLock *)[TSDatabaseLock fromData:data];
+	}
+	NSLog (@"Failed to read content of file %@", filePath);
+	return nil;
 }
 
 + (BOOL)testDatabase:(NSString *)databaseUid usingSecret:(NSString *)secret

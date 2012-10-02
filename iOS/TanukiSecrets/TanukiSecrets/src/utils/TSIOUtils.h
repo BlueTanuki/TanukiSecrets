@@ -10,6 +10,7 @@
 
 #import "TSDatabase.h"
 #import "TSDatabaseMetadata.h"
+#import "TSDatabaseLock.h"
 
 @interface TSIOUtils : NSObject
 
@@ -52,6 +53,7 @@
 
 + (TSDatabaseMetadata *)loadDatabaseMetadataFromFile:(NSString *)filePath;
 + (TSDatabase *)loadDatabaseFromFile:(NSString *)encryptedFilePath havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret;
++ (TSDatabaseLock *)loadDatabaseLockFromFile:(NSString *)filePath;
 
 + (BOOL)testDatabase:(NSString *)databaseUid usingSecret:(NSString *)secret;
 + (BOOL)testBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid usingSecret:(NSString *)secret;

@@ -23,7 +23,9 @@
 
 + (TSSharedState*)sharedState;
 
+//convenience method (if the caller does not need an instance for anything else)
++ (NSString *)instanceUID;
+
 @property(nonatomic, readonly) NSString *instanceUID;
-@property(nonatomic, readonly) TSDropboxWrapper *dropboxWrapper;
 
 @end
