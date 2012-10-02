@@ -25,6 +25,8 @@
 @property(nonatomic, copy) NSString *remoteLockfileRevision;
 @property(nonatomic, copy) NSString *remoteBackupId;
 
+@property(nonatomic, copy) NSString *optimisticLockComment;
+
 - (void)setState:(DropboxWrapperState)newState;
 
 @end
@@ -34,7 +36,8 @@
 @synthesize state = _state,
 dropboxRestClient = _dropboxRestClient, delegate = _delegate,
 databaseUid = _databaseUid, remoteLockfileRevision = _remoteLockfileRevision,
-remoteBackupId = _remoteBackupId;
+remoteBackupId = _remoteBackupId,
+optimisticLockComment = _optimisticLockComment;
 
 #pragma mark - state machine helpers
 
@@ -73,6 +76,14 @@ remoteBackupId = _remoteBackupId;
 			return @"UPLOAD_DATABASE";
 		case UPLOAD_DELETE_LOCKFILE:
 			return @"UPLOAD_DELETE_LOCKFILE";
+		case OPTIMISTIC_LOCK_ADD_READ_LOCKFILE:
+			return @"OPTIMISTIC_LOCK_ADD_READ_LOCKFILE";
+		case OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE:
+			return @"OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE";
+		case OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE:
+			return @"OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE";
+		case OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE:
+			return @"OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE";
 		default:
 			return @"UNKNOWN";
 	}
@@ -108,35 +119,25 @@ remoteBackupId = _remoteBackupId;
 	[self setState:IDLE];
 }
 
-- (void)reportFatalErrorToWrapperDelegate:(NSString *)errorText
+- (void)reportDatabaseUploadErrorToDelegate:(NSString *)errorText
 {
 	[self.delegate dropboxWrapper:self uploadForDatabase:self.databaseUid failedWithError:errorText];
 	[self setState:IDLE];
 }
 
-- (void)uploadWriteLock:(NSString *)overwrittenRevision
+- (void)reportAddOptimisticLockErrorToDelegate:(NSString *)errorText
 {
-	if ([self.delegate respondsToSelector:@selector(dropboxWrapper:attemptingToLockDatabase:)]) {
-		[self.delegate dropboxWrapper:self attemptingToLockDatabase:self.databaseUid];
-	}
-	TSDatabaseLock *databaseLock = [TSDatabaseLock writeLock];
-	NSData *content = [databaseLock toData];
-	NSString *lockfileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_LOCK];
-	NSString *lockfileLocalPath = [TSIOUtils temporaryFileNamed:lockfileName];
-	NSFileManager *fileManager = [NSFileManager defaultManager];
-	if ([fileManager createFileAtPath:lockfileLocalPath contents:content attributes:nil] == YES) {
-		[self.dropboxRestClient uploadFile:[lockfileLocalPath lastPathComponent]
-									toPath:@"/"
-							 withParentRev:overwrittenRevision
-								  fromPath:lockfileLocalPath];
-		[self setState:UPLOAD_WRITE_LOCKFILE];
-	}else {
-		NSLog (@"Failed to create local file at %@", lockfileLocalPath);
-		[self reportFatalErrorToWrapperDelegate:@"Internal error (lockfile write local)"];
-	}
+	[self.delegate dropboxWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
+	[self setState:IDLE];
 }
 
-- (void)downloadWriteLock
+- (void)reportRemoveOptimisticLockErrorToDelegate:(NSString *)errorText
+{
+	[self.delegate dropboxWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
+	[self setState:IDLE];
+}
+
+- (void)downloadLockFile
 {
 	NSString *lockfileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_LOCK];
 	NSString *lockfileLocalPath = [TSIOUtils temporaryFileNamed:lockfileName];
@@ -149,6 +150,48 @@ remoteBackupId = _remoteBackupId;
 	NSString *lockfileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_LOCK];
 	NSString *lockfileRemotePath = [@"/" stringByAppendingString:lockfileName];
 	[self.dropboxRestClient deletePath:lockfileRemotePath];
+}
+
+- (BOOL)uploadLockFile:(TSDatabaseLock *)databaseLock overwritingRevision:(NSString *)overwrittenRevision
+{
+	NSData *content = [databaseLock toData];
+	NSString *lockfileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_LOCK];
+	NSString *lockfileLocalPath = [TSIOUtils temporaryFileNamed:lockfileName];
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	if ([fileManager createFileAtPath:lockfileLocalPath contents:content attributes:nil] == YES) {
+		[self.dropboxRestClient uploadFile:[lockfileLocalPath lastPathComponent]
+									toPath:@"/"
+							 withParentRev:overwrittenRevision
+								  fromPath:lockfileLocalPath];
+		return YES;
+	}else {
+		NSLog (@"Failed to create local file at %@", lockfileLocalPath);
+		return NO;
+	}
+}
+
+- (void)uploadWriteLock:(NSString *)overwrittenRevision
+{
+	if ([self.delegate respondsToSelector:@selector(dropboxWrapper:attemptingToLockDatabase:)]) {
+		[self.delegate dropboxWrapper:self attemptingToLockDatabase:self.databaseUid];
+	}
+	TSDatabaseLock *databaseLock = [TSDatabaseLock writeLock];
+	if ([self uploadLockFile:databaseLock overwritingRevision:overwrittenRevision] == YES) {
+		[self setState:UPLOAD_WRITE_LOCKFILE];
+	}else {
+		[self reportDatabaseUploadErrorToDelegate:@"Internal error (lockfile write local)"];
+	}
+}
+
+- (void)uploadOptimisticLock:(NSString *)overwrittenRevision
+{
+	TSDatabaseLock *databaseLock = [TSDatabaseLock optimisticLock];
+	databaseLock.optimisticLock.comment = self.optimisticLockComment;
+	if ([self uploadLockFile:databaseLock overwritingRevision:overwrittenRevision] == YES) {
+		[self setState:OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE];
+	}else {
+		[self reportAddOptimisticLockErrorToDelegate:@"Internal error (lockfile write local)"];
+	}
 }
 
 - (void)checkBackupsFolderExists
@@ -233,7 +276,15 @@ remoteBackupId = _remoteBackupId;
 - (void)restClient:(DBRestClient *)client uploadFileFailedWithError:(NSError *)error
 {
 	NSLog (@"File upload failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
-	[self reportFatalErrorToWrapperDelegate:[error description]];
+	switch (self.state) {
+		case OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE:
+			[self reportAddOptimisticLockErrorToDelegate:[error description]];
+			break;
+			
+		default:
+			[self reportDatabaseUploadErrorToDelegate:[error description]];
+			break;
+	}
 }
 
 - (void)restClient:(DBRestClient *)client uploadedFile:(NSString *)destPath from:(NSString *)srcPath
@@ -244,7 +295,7 @@ remoteBackupId = _remoteBackupId;
 			NSLog (@"Lockfile uploaded successfully, waiting 2 seconds before checking the lockfile");
 			[self setState:WAITING];
 			[NSThread sleepForTimeInterval:2];
-			[self downloadWriteLock];
+			[self downloadLockFile];
 			[self setState:UPLOAD_CHECK_LOCKFILE];
 		}
 		break;
@@ -266,6 +317,12 @@ remoteBackupId = _remoteBackupId;
 		}
 		break;
 			
+		case OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE: {
+			[self.delegate dropboxWrapper:self finishedAddingOptimisticLockForDatabase:self.databaseUid];
+			[self setState:IDLE];
+		}
+		break;
+			
 		default: {
 			[self stateTransitionError:@"successful file upload"];
 		}
@@ -282,7 +339,31 @@ remoteBackupId = _remoteBackupId;
 			}else {
 				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
-				[self reportFatalErrorToWrapperDelegate:@"Checking lockfile failed."];
+				[self reportDatabaseUploadErrorToDelegate:@"Checking lockfile failed."];
+			}
+		}
+		break;
+			
+		case OPTIMISTIC_LOCK_ADD_READ_LOCKFILE: {
+			if ([error code] == 404) {
+				[self uploadOptimisticLock:nil];
+			}else {
+				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+				[self reportAddOptimisticLockErrorToDelegate:@"Checking lockfile failed."];
+			}
+		}
+		break;
+			
+		case OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE: {
+			if ([error code] == 404) {
+				NSLog (@"Removal of optimistic lock is actually not needed...");
+				[self.delegate dropboxWrapper:self finishedRemovingOptimisticLockForDatabase:self.databaseUid];
+				[self setState:IDLE];
+			}else {
+				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+				[self reportRemoveOptimisticLockErrorToDelegate:@"Checking lockfile failed."];
 			}
 		}
 		break;
@@ -291,7 +372,7 @@ remoteBackupId = _remoteBackupId;
 		case UPLOAD_RECHECK_LOCKFILE:
 		{
 			NSLog (@"!!!REMOTE FILES MAY BE INCONSISTENT!!! Lockfile download failed :: %@", [error debugDescription]);
-			[self reportFatalErrorToWrapperDelegate:@"Failed to check the recently uploaded lockfile!"];
+			[self reportDatabaseUploadErrorToDelegate:@"Failed to check the recently uploaded lockfile!"];
 		}
 		break;
 			
@@ -320,11 +401,54 @@ remoteBackupId = _remoteBackupId;
 				}
 			}else {
 				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
-				[self reportFatalErrorToWrapperDelegate:@"Internal error (lockfile read)"];
+				[self reportDatabaseUploadErrorToDelegate:@"Internal error (lockfile read)"];
 			}
 		}
 		break;
 			
+		case OPTIMISTIC_LOCK_ADD_READ_LOCKFILE: {
+			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:destPath];
+			if (databaseLock != nil) {
+				if ((databaseLock.optimisticLock == nil) || ([databaseLock.optimisticLock.uid isEqualToString:[TSSharedState instanceUID]] == YES)) {
+					if (databaseLock.writeLock == nil) {
+						[self uploadOptimisticLock:metadata.rev];
+					}else {
+						[self.delegate dropboxWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+						[self setState:IDLE];
+					}
+				}else {
+					[self.delegate dropboxWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					[self setState:IDLE];
+				}
+			}else {
+				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
+				[self reportAddOptimisticLockErrorToDelegate:@"Internal error (lockfile read)"];
+			}
+		}
+		break;
+		
+		case OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE: {
+			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:destPath];
+			if (databaseLock != nil) {
+				if ((databaseLock.optimisticLock != nil) && ([databaseLock.optimisticLock.uid isEqualToString:[TSSharedState instanceUID]] == YES)) {
+					if (databaseLock.writeLock == nil) {
+						[self deleteLockFile];
+						[self setState:OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE];
+					}else {
+						[self.delegate dropboxWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+						[self setState:IDLE];
+					}
+				}else {
+					[self.delegate dropboxWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					[self setState:IDLE];
+				}
+			}else {
+				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
+				[self reportRemoveOptimisticLockErrorToDelegate:@"Internal error (lockfile read)"];
+			}
+		}
+		break;
+						
 		case UPLOAD_CHECK_LOCKFILE:
 		case UPLOAD_RECHECK_LOCKFILE:
 		{
@@ -339,7 +463,7 @@ remoteBackupId = _remoteBackupId;
 						NSLog (@"Lockfile check ok, waiting a little more then performing a recheck");
 						[self setState:WAITING];
 						[NSThread sleepForTimeInterval:[TSUtils randomDoubleBetween:1.5 and:4]];
-						[self downloadWriteLock];
+						[self downloadLockFile];
 						[self setState:UPLOAD_RECHECK_LOCKFILE];
 					}else {
 						NSLog (@"Lockfile re-check ok, proceeding with backup");
@@ -351,7 +475,7 @@ remoteBackupId = _remoteBackupId;
 				}
 			}else {
 				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
-				[self reportFatalErrorToWrapperDelegate:@"Internal error (lockfile read)"];
+				[self reportDatabaseUploadErrorToDelegate:@"Internal error (lockfile read)"];
 			}
 		}
 		break;
@@ -371,7 +495,7 @@ remoteBackupId = _remoteBackupId;
 			}else {
 				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
-				[self reportFatalErrorToWrapperDelegate:@"Checking existence of backup folder failed."];
+				[self reportDatabaseUploadErrorToDelegate:@"Checking existence of backup folder failed."];
 			}
 		}
 		break;
@@ -382,7 +506,7 @@ remoteBackupId = _remoteBackupId;
 			}else {
 				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
-				[self reportFatalErrorToWrapperDelegate:@"Checking existence of database file failed."];
+				[self reportDatabaseUploadErrorToDelegate:@"Checking existence of database file failed."];
 			}
 		}
 		break;
@@ -393,14 +517,14 @@ remoteBackupId = _remoteBackupId;
 			}else {
 				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
-				[self reportFatalErrorToWrapperDelegate:@"Checking existence of database metadata failed."];
+				[self reportDatabaseUploadErrorToDelegate:@"Checking existence of database metadata failed."];
 			}
 		}
 		break;
 			
 		default: {
 			NSLog (@"Load metadata failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
-			[self reportFatalErrorToWrapperDelegate:[error description]];
+			[self reportDatabaseUploadErrorToDelegate:[error description]];
 		}
 	}
 }
@@ -413,7 +537,7 @@ remoteBackupId = _remoteBackupId;
 				[self checkDatabaseExists];
 			}else {
 				NSLog (@"ERROR : the entity at path %@ is not a directory.", [metadata path]);
-				[self reportFatalErrorToWrapperDelegate:@"Remote backups folder corrupt???"];
+				[self reportDatabaseUploadErrorToDelegate:@"Remote backups folder corrupt???"];
 			}
 		}
 		break;
@@ -423,7 +547,7 @@ remoteBackupId = _remoteBackupId;
 				[self moveDatabaseToBackup];
 			}else {
 				NSLog (@"ERROR : the entity at path %@ is not a file.", [metadata path]);
-				[self reportFatalErrorToWrapperDelegate:@"Remote database file corrupt???"];
+				[self reportDatabaseUploadErrorToDelegate:@"Remote database file corrupt???"];
 			}
 		}
 		break;
@@ -433,7 +557,7 @@ remoteBackupId = _remoteBackupId;
 				[self moveMetadataToBackup];
 			}else {
 				NSLog (@"ERROR : the entity at path %@ is not a file.", [metadata path]);
-				[self reportFatalErrorToWrapperDelegate:@"Remote metadata file corrupt???"];
+				[self reportDatabaseUploadErrorToDelegate:@"Remote metadata file corrupt???"];
 			}
 		}
 			break;
@@ -474,7 +598,7 @@ remoteBackupId = _remoteBackupId;
 - (void)restClient:(DBRestClient *)client createFolderFailedWithError:(NSError *)error
 {
 	NSLog (@"Create folder failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
-	[self reportFatalErrorToWrapperDelegate:[error description]];
+	[self reportDatabaseUploadErrorToDelegate:[error description]];
 }
 
 - (void)restClient:(DBRestClient *)client createdFolder:(DBMetadata *)folder
@@ -486,7 +610,7 @@ remoteBackupId = _remoteBackupId;
 - (void)restClient:(DBRestClient *)client movePathFailedWithError:(NSError *)error
 {
 	NSLog (@"Move operation failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
-	[self reportFatalErrorToWrapperDelegate:[error description]];
+	[self reportDatabaseUploadErrorToDelegate:[error description]];
 }
 
 - (void)restClient:(DBRestClient *)client movedPath:(NSString *)from_path to:(DBMetadata *)result
@@ -515,8 +639,22 @@ remoteBackupId = _remoteBackupId;
 
 - (void)restClient:(DBRestClient*)client deletePathFailedWithError:(NSError*)error
 {
-	NSLog (@"Delete failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
-	[self reportFatalErrorToWrapperDelegate:[error description]];
+	switch (self.state) {
+		case UPLOAD_DELETE_LOCKFILE: {
+			NSLog (@"Delete failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
+			[self reportDatabaseUploadErrorToDelegate:[error description]];
+		}
+		break;
+			
+		case OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE: {
+			NSLog (@"Delete failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
+			[self reportRemoveOptimisticLockErrorToDelegate:[error description]];
+		}
+			
+		default: {
+			[self stateTransitionError:[NSString stringWithFormat:@"delete failed :: %@", [error debugDescription]]];
+		}
+	}
 }
 
 - (void)restClient:(DBRestClient*)client deletedPath:(NSString *)path
@@ -528,6 +666,12 @@ remoteBackupId = _remoteBackupId;
 			}
 			[self setState:IDLE];
 			[self.delegate dropboxWrapper:self finishedUploadingDatabase:self.databaseUid];
+		}
+		break;
+			
+		case OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE: {
+			[self setState:IDLE];
+			[self.delegate dropboxWrapper:self finishedRemovingOptimisticLockForDatabase:self.databaseUid];
 		}
 		break;
 			
@@ -576,12 +720,37 @@ remoteBackupId = _remoteBackupId;
 
 - (BOOL)uploadDatabaseWithId:(NSString *)databaseUid
 {
-	NSLog (@"database uid : %@", databaseUid);
+//	NSLog (@"database uid : %@", databaseUid);
 	BOOL ret = NO;
 	if (self.state == IDLE) {
 		self.databaseUid = databaseUid;
-		[self downloadWriteLock];
+		[self downloadLockFile];
 		[self setState:UPLOAD_READ_LOCKFILE];
+		ret = YES;
+	}
+	return ret;
+}
+
+- (BOOL)addOptimisticLockForDatabase:(NSString *)databaseUid comment:(NSString *)comment
+{
+	BOOL ret = NO;
+	if (self.state == IDLE) {
+		self.databaseUid = databaseUid;
+		self.optimisticLockComment = comment;
+		[self downloadLockFile];
+		[self setState:OPTIMISTIC_LOCK_ADD_READ_LOCKFILE];
+		ret = YES;
+	}
+	return ret;
+}
+
+- (BOOL)removeOptimisticLockForDatabase:(NSString *)databaseUid
+{
+	BOOL ret = NO;
+	if (self.state == IDLE) {
+		self.databaseUid = databaseUid;
+		[self downloadLockFile];
+		[self setState:OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE];
 		ret = YES;
 	}
 	return ret;

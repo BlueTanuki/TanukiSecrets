@@ -31,6 +31,13 @@ isStalledBecauseOfOptimisticLock:(TSDatabaseLock *)databaseLock;
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadForDatabase:(NSString *)databaseUid
 failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock;
 
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedAddingOptimisticLockForDatabase:(NSString *)databaseUid;
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper addingOptimisticLockForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error;
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper addingOptimisticLockForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock;
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedRemovingOptimisticLockForDatabase:(NSString *)databaseUid;
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper removingOptimisticLockForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error;
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper removingOptimisticLockForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock;
+
 @optional
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper attemptingToLockDatabase:(NSString *)databaseUid;
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper successfullyLockedDatabase:(NSString *)databaseUid;
@@ -58,7 +65,13 @@ typedef enum {
 	UPLOAD_MOVE_METADATA_TO_BACKUP,
 	UPLOAD_METADATA,
 	UPLOAD_DATABASE,
-	UPLOAD_DELETE_LOCKFILE
+	UPLOAD_DELETE_LOCKFILE,
+	
+	OPTIMISTIC_LOCK_ADD_READ_LOCKFILE = 200,
+	OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE,
+	
+	OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE = 250,
+	OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE
 	
 } DropboxWrapperState;
 
@@ -84,6 +97,9 @@ typedef enum {
 - (BOOL)continueUploadAndOverwriteOptimisticLock;
 //cancel the stalled upload and return to IDLE (only valid in special states)
 - (BOOL)cancelUpload;
+
+- (BOOL)addOptimisticLockForDatabase:(NSString *)databaseUid comment:(NSString *)comment;
+- (BOOL)removeOptimisticLockForDatabase:(NSString *)databaseUid;
 
 ///TODO :: clean old backups method needed
 

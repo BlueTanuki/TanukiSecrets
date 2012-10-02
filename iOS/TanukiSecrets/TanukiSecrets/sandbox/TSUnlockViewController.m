@@ -62,7 +62,10 @@ BOOL firstTimeSegueTriggered = NO;
 - (TSDatabaseMetadata *)reusedDatabaseMetadata
 {
 	if (_reusedDatabaseMetadata == nil) {
-		_reusedDatabaseMetadata = [TSDatabaseMetadata newDatabaseNamed:@"reusedDatabase"];
+		_reusedDatabaseMetadata = [[TSDatabaseMetadata alloc] init];
+		_reusedDatabaseMetadata.uid = @"fixed-uid-for-cross-device-testing";
+		_reusedDatabaseMetadata.name = @"reusedDatabase";
+		_reusedDatabaseMetadata.version = [TSVersion newVersion];
 		_reusedDatabaseMetadata.createdBy = [TSAuthor authorFromCurrentDevice];
 	}
 	return _reusedDatabaseMetadata;
@@ -305,6 +308,76 @@ BOOL firstTimeSegueTriggered = NO;
 	[TSNotifierUtils info:[NSString stringWithFormat:@"Successfully uploaded %@", databaseUid]];
 }
 
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedAddingOptimisticLockForDatabase:(NSString *)databaseUid
+{
+	[TSNotifierUtils info:@"Optimistic lock was set."];
+}
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper addingOptimisticLockForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
+{
+	[TSNotifierUtils error:@"Optimistic lock adding FAILED"];
+}
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper addingOptimisticLockForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
+{
+	dispatch_async(dispatch_get_main_queue(), ^{
+		if (databaseLock.writeLock == nil) {
+			NSString *errorText = [NSString stringWithFormat:@"The database with id %@ already has an optimistic lock set by %@ (%@) at %@ [comment: %@]",
+								   databaseUid, databaseLock.optimisticLock.name, databaseLock.optimisticLock.uid, databaseLock.optimisticLock.date, databaseLock.optimisticLock.comment];
+			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Optimistic lock already exists."
+															message:errorText
+														   delegate:nil
+												  cancelButtonTitle:@"OK"
+												  otherButtonTitles:nil];
+			[alert show];
+		}else {
+			NSString *errorText = [NSString stringWithFormat:@"The database with id %@ was locked for writing by %@ (%@) at %@ [comment: %@]",
+								   databaseUid, databaseLock.writeLock.name, databaseLock.writeLock.uid, databaseLock.writeLock.date, databaseLock.writeLock.comment];
+			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Locked for writing!!!"
+															message:errorText
+														   delegate:nil
+												  cancelButtonTitle:@"OK"
+												  otherButtonTitles:nil];
+			[alert show];
+		}
+	});
+}
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedRemovingOptimisticLockForDatabase:(NSString *)databaseUid
+{
+	[TSNotifierUtils info:@"Optimistic lock was removed."];
+}
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper removingOptimisticLockForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
+{
+	[TSNotifierUtils error:@"Optimistic lock removing FAILED"];
+}
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper removingOptimisticLockForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
+{
+	dispatch_async(dispatch_get_main_queue(), ^{
+		if (databaseLock.writeLock == nil) {
+			NSString *errorText = [NSString stringWithFormat:@"The database with id %@ already has an optimistic lock set by %@ (%@) at %@ [comment: %@]",
+								   databaseUid, databaseLock.optimisticLock.name, databaseLock.optimisticLock.uid, databaseLock.optimisticLock.date, databaseLock.optimisticLock.comment];
+			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Optimistic lock held by another."
+															message:errorText
+														   delegate:nil
+												  cancelButtonTitle:@"OK"
+												  otherButtonTitles:nil];
+			[alert show];
+		}else {
+			NSString *errorText = [NSString stringWithFormat:@"The database with id %@ was locked for writing by %@ (%@) at %@ [comment: %@]",
+								   databaseUid, databaseLock.writeLock.name, databaseLock.writeLock.uid, databaseLock.writeLock.date, databaseLock.writeLock.comment];
+			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Locked for writing!!!"
+															message:errorText
+														   delegate:nil
+												  cancelButtonTitle:@"OK"
+												  otherButtonTitles:nil];
+			[alert show];
+		}
+	});
+}
+
 #pragma mark - Listeners
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -408,6 +481,14 @@ BOOL firstTimeSegueTriggered = NO;
 	}
 }
 
+- (IBAction)addOptimisticLock:(UIButton *)sender {
+	[self.dropboxWrapper addOptimisticLockForDatabase:self.reusedDatabaseMetadata.uid comment:@"The glass is half full!"];
+}
+
+- (IBAction)removeOptimisticLock:(UIButton *)sender {
+	[self.dropboxWrapper removeOptimisticLockForDatabase:self.reusedDatabaseMetadata.uid];
+}
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
 	NSString *buttonText = [alertView buttonTitleAtIndex:buttonIndex];
@@ -472,9 +553,24 @@ BOOL firstTimeSegueTriggered = NO;
 	}
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (NSUInteger)supportedInterfaceOrientations
 {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+	return UIInterfaceOrientationMaskAll;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
+{
+	return UIInterfaceOrientationPortrait;
+}
+
+- (BOOL)shouldAutorotate
+{
+	return YES;
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+	return YES;
 }
 
 @end

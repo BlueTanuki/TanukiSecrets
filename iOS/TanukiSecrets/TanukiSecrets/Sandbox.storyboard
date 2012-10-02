@@ -199,6 +199,36 @@
                                     <action selector="dropboxUpdateTest:" destination="Rdo-KC-Vnd" eventType="touchUpInside" id="gur-iT-eid"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="NeW-UT-7Dr">
+                                <rect key="frame" x="20" y="201" width="94" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="Opti-Lock">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="addOptimisticLock:" destination="Rdo-KC-Vnd" eventType="touchUpInside" id="hF5-b0-5gC"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="SHI-Ob-j08">
+                                <rect key="frame" x="193" y="201" width="109" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="Opti-Unlock">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="removeOptimisticLock:" destination="Rdo-KC-Vnd" eventType="touchUpInside" id="XG7-Gk-c0D"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -249,6 +279,7 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSUnlockViewController.h"/>
             <relationships>
                 <relationship kind="action" name="createTestDatabase:" candidateClass="UIButton"/>
+                <relationship kind="action" name="dropboxUpdateTest:" candidateClass="UIButton"/>
                 <relationship kind="action" name="go:"/>
                 <relationship kind="action" name="manyUpdatesWithBackups:" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="onOffSwitch" candidateClass="UISwitch"/>
