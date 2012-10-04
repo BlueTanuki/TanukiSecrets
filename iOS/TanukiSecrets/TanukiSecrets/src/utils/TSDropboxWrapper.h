@@ -16,6 +16,9 @@
 
 @protocol TSDropboxWrapperDelegate <NSObject>
 
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedListDatabaseUids:(NSArray *)databaseUids;
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper listDatabaseUidsFailedWithError:(NSString *)error;
+
 //upload database call finished successfully
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedUploadingDatabase:(NSString *)databaseUid;
 //generic failure (most likely communication failure with dropbox servers)
@@ -38,6 +41,11 @@ failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock;
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper removingOptimisticLockForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error;
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper removingOptimisticLockForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock;
 
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedCleanupForDatabase:(NSString *)databaseUid;
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper cleanupForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error;
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper cleanupForDatabase:(NSString *)databaseUid
+failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock;
+
 @optional
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper attemptingToLockDatabase:(NSString *)databaseUid;
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper successfullyLockedDatabase:(NSString *)databaseUid;
@@ -45,12 +53,15 @@ failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock;
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadedMetadataFileForDatabase:(NSString *)databaseUid;
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadedMainFileForDatabase:(NSString *)databaseUid;
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper successfullyUnockedDatabase:(NSString *)databaseUid;
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper cleanupDeletedFile:(NSString *)path;
 
 @end
 
 typedef enum {
 	IDLE,
 	WAITING,
+	
+	LIST_DATABASE_UIDS = 50,
 	
 	UPLOAD_READ_LOCKFILE = 100,
 	UPLOAD_STALLED_OPTIMISTIC_LOCK,
@@ -71,7 +82,16 @@ typedef enum {
 	OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE,
 	
 	OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE = 250,
-	OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE
+	OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE,
+	
+	CLEANUP_READ_LOCKFILE = 300,
+	CLEANUP_WRITE_LOCKFILE,
+	CLEANUP_CHECK_LOCKFILE,
+	CLEANUP_LIST_LOCKFILES,
+	CLEANUP_DELETE_REDUNDANT_LOCKFILE,
+	CLEANUP_CHECK_BACKUP_FOLDER_EXISTS,
+	CLEANUP_DELETE_OLD_BACKUP,
+	CLEANUP_DELETE_LOCKFILE
 	
 } DropboxWrapperState;
 
@@ -90,6 +110,8 @@ typedef enum {
 - (BOOL)busy;
 - (BOOL)uploadStalledOptimisticLock;
 
+- (BOOL)listDatabaseUids;
+
 ///start the upload process for the metadata file and the database file
 ///return YES if the command was successfully started (cannot start process if already busy)
 - (BOOL)uploadDatabaseWithId:(NSString *)databaseUid;
@@ -101,7 +123,9 @@ typedef enum {
 - (BOOL)addOptimisticLockForDatabase:(NSString *)databaseUid comment:(NSString *)comment;
 - (BOOL)removeOptimisticLockForDatabase:(NSString *)databaseUid;
 
-///TODO :: clean old backups method needed
+
+//deletes old backups, removes any extra lock files that may have been created during concurrent locking attempts
+- (BOOL)cleanupDatabase:(NSString *)databaseUid;
 
 @end
 

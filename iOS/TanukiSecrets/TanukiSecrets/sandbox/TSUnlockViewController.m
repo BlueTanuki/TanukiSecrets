@@ -31,6 +31,10 @@
 @property(nonatomic, strong) TSDatabase *reusedDatabase;
 @property(nonatomic, strong) TSDatabaseMetadata *reusedDatabaseMetadata;
 
+@property(nonatomic, strong) NSArray *toBeCleanedUp;
+@property(nonatomic, assign) NSInteger toBeCleanedUpIndex;
+
+
 @property (weak, nonatomic) IBOutlet UITextField *unlockCodeTextField;
 @property (weak, nonatomic) IBOutlet UILabel *unlockCodeLabel;
 @property (weak, nonatomic) IBOutlet UISwitch *onOffSwitch;
@@ -40,7 +44,8 @@
 @implementation TSUnlockViewController
 
 @synthesize dropboxWrapper = _dropboxWrapper,
-reusedDatabase = _reusedDatabase, reusedDatabaseMetadata = _reusedDatabaseMetadata;
+reusedDatabase = _reusedDatabase, reusedDatabaseMetadata = _reusedDatabaseMetadata,
+toBeCleanedUp = _toBeCleanedUp, toBeCleanedUpIndex = _toBeCleanedUpIndex;
 
 @synthesize unlockCodeTextField;
 @synthesize unlockCodeLabel;
@@ -240,6 +245,24 @@ BOOL firstTimeSegueTriggered = NO;
 
 #pragma mark - TSDropboxWrapperDelegate
 
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper listDatabaseUidsFailedWithError:(NSString *)error
+{
+	[TSNotifierUtils error:@"List database UIDs failed"];
+}
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedListDatabaseUids:(NSArray *)databaseUids
+{
+	self.toBeCleanedUp = databaseUids;
+	self.toBeCleanedUpIndex = 0;
+	[TSNotifierUtils info:[NSString stringWithFormat:@"Beginning cleanup of %d databases", [self.toBeCleanedUp count]]];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[NSThread sleepForTimeInterval:0.5];
+		NSString *databaseuid = [self.toBeCleanedUp objectAtIndex:self.toBeCleanedUpIndex];
+		[self.dropboxWrapper cleanupDatabase:databaseuid];
+		NSLog (@"Invoked cleanup of %@", databaseuid);
+	});
+}
+
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper attemptingToLockDatabase:(NSString *)databaseUid
 {
 	[TSNotifierUtils info:[NSString stringWithFormat:@"Attempting to lock %@", databaseUid]];
@@ -268,6 +291,11 @@ BOOL firstTimeSegueTriggered = NO;
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper successfullyUnockedDatabase:(NSString *)databaseUid
 {
 	[TSNotifierUtils info:[NSString stringWithFormat:@"UNLOCKED %@", databaseUid]];
+}
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper cleanupDeletedFile:(NSString *)path
+{
+	[TSNotifierUtils info:[NSString stringWithFormat:@"Cleanup DELETED %@", [path lastPathComponent]]];
 }
 
 - (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
@@ -378,6 +406,30 @@ BOOL firstTimeSegueTriggered = NO;
 	});
 }
 
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedCleanupForDatabase:(NSString *)databaseUid
+{
+	self.toBeCleanedUpIndex = self.toBeCleanedUpIndex + 1;
+	[TSNotifierUtils info:[NSString stringWithFormat:@"Cleanup progress %d of %d", self.toBeCleanedUpIndex, [self.toBeCleanedUp count]]];
+	if (self.toBeCleanedUpIndex < [self.toBeCleanedUp count]) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[NSThread sleepForTimeInterval:0.5];
+			NSString *databaseuid = [self.toBeCleanedUp objectAtIndex:self.toBeCleanedUpIndex];
+			[self.dropboxWrapper cleanupDatabase:databaseuid];
+			NSLog (@"Invoked cleanup of %@", databaseuid);
+		});
+	}
+}
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper cleanupForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
+{
+	[TSNotifierUtils error:[NSString stringWithFormat:@"Could not lock %@", databaseUid]];
+}
+
+- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper cleanupForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
+{
+	[TSNotifierUtils error:[NSString stringWithFormat:@"Cleanup FAILED for %@", databaseUid]];
+}
+
 #pragma mark - Listeners
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -446,7 +498,7 @@ BOOL firstTimeSegueTriggered = NO;
 			[self logStatusOfBackups:databaseUid];
 			NSLog (@"**************** CLEANUP");
 			ok = [TSIOUtils deleteOldBackupsFor:databaseUid] && ok;
-			ok = [TSIOUtils deleteCorruptBackupsFor:databaseUid usingSecret:secret];
+			ok = [TSIOUtils deleteCorruptBackupsFor:databaseUid usingSecret:secret] && ok;
 			NSLog (@"**************** PRINT");
 			[self logStatusOfBackups:databaseUid];
 		}else {
@@ -482,11 +534,25 @@ BOOL firstTimeSegueTriggered = NO;
 }
 
 - (IBAction)addOptimisticLock:(UIButton *)sender {
-	[self.dropboxWrapper addOptimisticLockForDatabase:self.reusedDatabaseMetadata.uid comment:@"The glass is half full!"];
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		[NSThread sleepForTimeInterval:2.5];
+//		dispatch_async(dispatch_get_main_queue(), ^{
+			[TSNotifierUtils info:@"Before potential deadlock"];
+			[self.dropboxWrapper addOptimisticLockForDatabase:self.reusedDatabaseMetadata.uid comment:@"The glass is half full!"];
+			[NSThread sleepForTimeInterval:2.5];
+			[TSNotifierUtils info:@"After potential deadlock"];
+//		});
+	});
+	[TSNotifierUtils info:@"Potential deadlocking code scheduled"];
+
 }
 
 - (IBAction)removeOptimisticLock:(UIButton *)sender {
 	[self.dropboxWrapper removeOptimisticLockForDatabase:self.reusedDatabaseMetadata.uid];
+}
+
+- (IBAction)cleanup:(id)sender {
+	[self.dropboxWrapper listDatabaseUids];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

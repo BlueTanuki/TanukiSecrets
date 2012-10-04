@@ -45,7 +45,7 @@
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 				self.date, @"date",
 				self.string, @"string",
-				self.integer, @"int",
+				[NSString stringWithFormat:@"%d", self.integer], @"int",
 			nil];
 }
 

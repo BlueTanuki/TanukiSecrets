@@ -13,7 +13,6 @@
 #import "TSItem.h"
 #import "TSListOfItems.h"
 
-#import "JSNotifier.h"
 #import "XMLWriter.h"
 
 #import "TSIOUtils.h"
@@ -298,8 +297,7 @@
 	if (uid) {
 		NSLog(@"UID retrieved from NSUserDefaults : %@", uid);
 	}else {
-		CFUUIDRef uuidref = CFUUIDCreate(CFAllocatorGetDefault());
-		uid = (__bridge NSString *)(CFUUIDCreateString(CFAllocatorGetDefault(), uuidref));
+		uid = [TSStringUtils generateUid];
 		NSLog(@"UID generated via CFUUIDCreate : %@", uid);
 		[defaults setObject:uid forKey:@"TS_SIMPLE_PASWORD_SALT"];
 		[defaults synchronize];
@@ -593,9 +591,7 @@
 		//    [[UIApplication sharedApplication] presentLocalNotificationNow:notif];
 		
 		NSString *notificationMessage = [NSString stringWithFormat:@"%@ copied to clipboard", [path lastPathComponent]];
-		JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
-		jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
-		[jsn showFor:2.0];
+		[TSNotifierUtils info:notificationMessage];
 	}else if(indexPath.section == 2) {
 		if (iCloudDocuments) {
 			NSURL *url = [iCloudDocuments objectAtIndex:indexPath.row];
@@ -604,14 +600,10 @@
 			pasteboard.string = text;
 			
 			NSString *notificationMessage = [NSString stringWithFormat:@"%@ copied to clipboard", text];
-			JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
-			jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
-			[jsn showFor:2.0];
+			[TSNotifierUtils info:notificationMessage];
 		}else {
 			NSString *notificationMessage = @"Not loaded yet...";
-			JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
-			jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyX.png"]];
-			[jsn showFor:2.0];
+			[TSNotifierUtils error:notificationMessage];
 		}
 	}else {
 		if (dropboxItems) {
@@ -621,14 +613,10 @@
 			pasteboard.string = text;
 			
 			NSString *notificationMessage = [NSString stringWithFormat:@"%@ copied to clipboard", text];
-			JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
-			jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
-			[jsn showFor:2.0];
+			[TSNotifierUtils info:notificationMessage];
 		}else {
 			NSString *notificationMessage = @"Not loaded yet...";
-			JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:notificationMessage];
-			jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyX.png"]];
-			[jsn showFor:2.0];
+			[TSNotifierUtils error:notificationMessage];
 		}
 	}
 	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];

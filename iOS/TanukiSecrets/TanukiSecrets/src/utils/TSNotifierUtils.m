@@ -14,16 +14,22 @@
 
 + (void)info:(NSString *)text
 {
-	JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:text];
-	jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
-	[jsn showFor:2.0];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:text];
+		jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
+		[jsn showFor:2.0];
+	});
+	NSLog (@"[INFO] %@ [TSNotifierUtils]", text);
 }
 
 + (void)error:(NSString *)text
 {
-	JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:text];
-	jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyX.png"]];
-	[jsn showFor:2.0];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:text];
+		jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyX.png"]];
+		[jsn showFor:2.0];
+	});
+	NSLog (@"[ERROR] %@ [TSNotifierUtils]", text);
 }
 
 @end

@@ -18,14 +18,15 @@
 
 @property(nonatomic, strong) DBRestClient *dropboxRestClient;
 
-
-
 @property(nonatomic, copy) NSString *databaseUid;
 
 @property(nonatomic, copy) NSString *remoteLockfileRevision;
 @property(nonatomic, copy) NSString *remoteBackupId;
 
 @property(nonatomic, copy) NSString *optimisticLockComment;
+
+@property(nonatomic, strong) NSArray *toBeDeleted;
+@property(nonatomic, assign) NSInteger toBeDeletedIndex;
 
 - (void)setState:(DropboxWrapperState)newState;
 
@@ -37,7 +38,8 @@
 dropboxRestClient = _dropboxRestClient, delegate = _delegate,
 databaseUid = _databaseUid, remoteLockfileRevision = _remoteLockfileRevision,
 remoteBackupId = _remoteBackupId,
-optimisticLockComment = _optimisticLockComment;
+optimisticLockComment = _optimisticLockComment,
+toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 #pragma mark - state machine helpers
 
@@ -48,6 +50,8 @@ optimisticLockComment = _optimisticLockComment;
 			return @"IDLE";
 		case WAITING:
 			return @"WAITING";
+		case LIST_DATABASE_UIDS:
+			return @"LIST_DATABASE_UIDS";
 		case UPLOAD_READ_LOCKFILE:
 			return @"UPLOAD_READ_LOCKFILE";
 		case UPLOAD_STALLED_OPTIMISTIC_LOCK:
@@ -84,6 +88,24 @@ optimisticLockComment = _optimisticLockComment;
 			return @"OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE";
 		case OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE:
 			return @"OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE";
+		case CLEANUP_READ_LOCKFILE:
+			return @"CLEANUP_READ_LOCKFILE";
+		case CLEANUP_WRITE_LOCKFILE:
+			return @"CLEANUP_WRITE_LOCKFILE";
+		case CLEANUP_CHECK_LOCKFILE:
+			return @"CLEANUP_CHECK_LOCKFILE";
+		case CLEANUP_LIST_LOCKFILES:
+			return @"CLEANUP_LIST_LOCKFILES";
+		case CLEANUP_DELETE_REDUNDANT_LOCKFILE:
+			return @"CLEANUP_DELETE_REDUNDANT_LOCKFILE";
+		case CLEANUP_CHECK_BACKUP_FOLDER_EXISTS:
+			return @"CLEANUP_CHECK_BACKUP_FOLDER_EXISTS";
+		case CLEANUP_DELETE_OLD_BACKUP:
+			return @"CLEANUP_DELETE_OLD_BACKUP";
+		case CLEANUP_DELETE_LOCKFILE:
+			return @"CLEANUP_DELETE_LOCKFILE";
+//		case XXX:
+//			return @"XXX";
 		default:
 			return @"UNKNOWN";
 	}
@@ -111,11 +133,43 @@ optimisticLockComment = _optimisticLockComment;
 	return _dropboxRestClient;
 }
 
+#pragma mark - misc helper methods
+
+- (NSArray *)filenameListFromMetadata:(DBMetadata *)metadata
+{
+	if (([metadata isDirectory] == YES) && ([metadata isDeleted] == NO)) {
+		NSMutableArray *aux = [NSMutableArray array];
+		if ([metadata contents] != nil) {
+			for (id item in [metadata contents]) {
+				if ([item isKindOfClass:[DBMetadata class]]) {
+					DBMetadata *itemMetadata = (DBMetadata *)item;
+					NSString *itemFilename = [itemMetadata filename];
+					[aux addObject:itemFilename];
+				}else {
+					NSLog (@"Strange : item in contents listing is not of type DBMetadata (class is %@).", [item class]);
+				}
+			}
+		}else {
+			NSLog (@"Strange : remote folder contents is not set.");
+		}
+		return aux;
+	}else {
+		NSLog (@"ERROR : the entity at path %@ is not a directory.", [metadata path]);
+		return nil;
+	}
+}
+
 #pragma mark - reused operations
 
 - (void) stateTransitionError:(NSString *)eventDescription
 {
 	NSLog (@"*** INTERNAL STATE MACHINE ERROR *** Event '%@' occurred in unknown state %@ (%d). Switching back to IDLE...", eventDescription, [self stateString], self.state);
+	[self setState:IDLE];
+}
+
+- (void)reportListDatabaseUidsErrorToDelegate:(NSString *)errorText
+{
+	[self.delegate dropboxWrapper:self listDatabaseUidsFailedWithError:errorText];
 	[self setState:IDLE];
 }
 
@@ -134,6 +188,12 @@ optimisticLockComment = _optimisticLockComment;
 - (void)reportRemoveOptimisticLockErrorToDelegate:(NSString *)errorText
 {
 	[self.delegate dropboxWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
+	[self setState:IDLE];
+}
+
+- (void)reportCleanupErrorToDelegate:(NSString *)errorText
+{
+	[self.delegate dropboxWrapper:self cleanupForDatabase:self.databaseUid failedWithError:errorText];
 	[self setState:IDLE];
 }
 
@@ -194,12 +254,25 @@ optimisticLockComment = _optimisticLockComment;
 	}
 }
 
-- (void)checkBackupsFolderExists
+- (void)uploadCleanupLock
+{
+	if ([self.delegate respondsToSelector:@selector(dropboxWrapper:attemptingToLockDatabase:)]) {
+		[self.delegate dropboxWrapper:self attemptingToLockDatabase:self.databaseUid];
+	}
+	TSDatabaseLock *databaseLock = [TSDatabaseLock writeLock];
+	databaseLock.writeLock.comment = @"Cleaning up...";
+	if ([self uploadLockFile:databaseLock overwritingRevision:nil] == YES) {
+		[self setState:CLEANUP_WRITE_LOCKFILE];
+	}else {
+		[self reportCleanupErrorToDelegate:@"Internal error (lockfile write local)"];
+	}
+}
+
+- (void)loadBackupsFolderMetadata
 {
 	NSString *backupsFolderName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
 	NSString *backupsFolderRemotePath = [@"/" stringByAppendingString:backupsFolderName];
 	[self.dropboxRestClient loadMetadata:backupsFolderRemotePath];
-	[self setState:UPLOAD_CHECK_BACKUP_FOLDER_EXISTS];
 }
 
 - (void)createBackupsFolder
@@ -281,6 +354,10 @@ optimisticLockComment = _optimisticLockComment;
 			[self reportAddOptimisticLockErrorToDelegate:[error description]];
 			break;
 			
+		case CLEANUP_WRITE_LOCKFILE:
+			[self reportCleanupErrorToDelegate:[error description]];
+			break;
+			
 		default:
 			[self reportDatabaseUploadErrorToDelegate:[error description]];
 			break;
@@ -320,6 +397,15 @@ optimisticLockComment = _optimisticLockComment;
 		case OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE: {
 			[self.delegate dropboxWrapper:self finishedAddingOptimisticLockForDatabase:self.databaseUid];
 			[self setState:IDLE];
+		}
+		break;
+			
+		case CLEANUP_WRITE_LOCKFILE: {
+			NSLog (@"Lockfile uploaded successfully, waiting 2 seconds before checking the lockfile");
+			[self setState:WAITING];
+			[NSThread sleepForTimeInterval:2];
+			[self downloadLockFile];
+			[self setState:CLEANUP_CHECK_LOCKFILE];
 		}
 		break;
 			
@@ -373,6 +459,24 @@ optimisticLockComment = _optimisticLockComment;
 		{
 			NSLog (@"!!!REMOTE FILES MAY BE INCONSISTENT!!! Lockfile download failed :: %@", [error debugDescription]);
 			[self reportDatabaseUploadErrorToDelegate:@"Failed to check the recently uploaded lockfile!"];
+		}
+		break;
+			
+		case CLEANUP_READ_LOCKFILE: {
+			if ([error code] == 404) {
+				[self uploadCleanupLock];
+			}else {
+				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+				[self reportCleanupErrorToDelegate:@"Checking lockfile failed."];
+			}
+		}
+		break;
+			
+		case CLEANUP_CHECK_LOCKFILE:
+		{
+			NSLog (@"Lockfile download failed :: %@", [error debugDescription]);
+			[self reportCleanupErrorToDelegate:@"Failed to check the recently uploaded lockfile!"];
 		}
 		break;
 			
@@ -470,8 +574,40 @@ optimisticLockComment = _optimisticLockComment;
 						if ([self.delegate respondsToSelector:@selector(dropboxWrapper:successfullyLockedDatabase:)]) {
 							[self.delegate dropboxWrapper:self successfullyLockedDatabase:self.databaseUid];
 						}
-						[self checkBackupsFolderExists];
+						[self loadBackupsFolderMetadata];
+						[self setState:UPLOAD_CHECK_BACKUP_FOLDER_EXISTS];
 					}
+				}
+			}else {
+				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
+				[self reportDatabaseUploadErrorToDelegate:@"Internal error (lockfile read)"];
+			}
+		}
+		break;
+			
+		case CLEANUP_READ_LOCKFILE: {
+			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:destPath];
+			if (databaseLock != nil) {
+				[self.delegate dropboxWrapper:self cleanupForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+				[self setState:IDLE];
+			}else {
+				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
+				[self reportCleanupErrorToDelegate:@"Internal error (lockfile read)"];
+			}
+		}
+		break;
+
+		case CLEANUP_CHECK_LOCKFILE:
+		{
+			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:destPath];
+			if (databaseLock != nil) {
+				if ((databaseLock.writeLock == nil) || ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
+					NSLog (@"Lockfile check failed, the lock is not held by the current device");
+					[self.delegate dropboxWrapper:self cleanupForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					[self setState:IDLE];
+				}else {
+					[self.dropboxRestClient loadMetadata:@"/"];
+					[self setState:CLEANUP_LIST_LOCKFILES];
 				}
 			}else {
 				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
@@ -522,6 +658,32 @@ optimisticLockComment = _optimisticLockComment;
 		}
 		break;
 			
+		case LIST_DATABASE_UIDS: {
+			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+			[self reportListDatabaseUidsErrorToDelegate:[error description]];
+		}
+		break;
+			
+		case CLEANUP_LIST_LOCKFILES: {
+			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+			[self reportCleanupErrorToDelegate:[error description]];
+		}
+		break;
+			
+		case CLEANUP_CHECK_BACKUP_FOLDER_EXISTS: {
+			if ([error code] == 404) {
+				[self deleteLockFile];
+				[self setState:CLEANUP_DELETE_LOCKFILE];
+			}else {
+				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+				[self reportCleanupErrorToDelegate:@"Checking existence of backup folder failed."];
+			}
+		}
+		break;
+			
 		default: {
 			NSLog (@"Load metadata failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
 			[self reportDatabaseUploadErrorToDelegate:[error description]];
@@ -560,7 +722,84 @@ optimisticLockComment = _optimisticLockComment;
 				[self reportDatabaseUploadErrorToDelegate:@"Remote metadata file corrupt???"];
 			}
 		}
-			break;
+		break;
+			
+		case LIST_DATABASE_UIDS: {
+			NSArray *filenames = [self filenameListFromMetadata:metadata];
+			if (filenames != nil) {
+				NSMutableArray *databaseUids = [NSMutableArray array];
+				for (NSString *filename in filenames) {
+					if ([filename hasSuffix:TS_FILE_SUFFIX_DATABASE_METADATA]) {
+						[databaseUids addObject:[filename stringByDeletingPathExtension]];
+					}
+				}
+				[self.delegate dropboxWrapper:self finishedListDatabaseUids:databaseUids];
+				[self setState:IDLE];
+			}else {
+				NSLog (@"ERROR : the entity at path %@ is not a directory.", [metadata path]);
+				[self reportListDatabaseUidsErrorToDelegate:@"Remote root folder corrupt???"];
+			}
+		}
+		break;
+			
+		case CLEANUP_LIST_LOCKFILES: {
+			NSArray *filenames = [self filenameListFromMetadata:metadata];
+			if (filenames != nil) {
+				NSMutableArray *deletedPaths = [NSMutableArray array];
+				NSString *realLockfile = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_LOCK];
+				for (NSString *filename in filenames) {
+					if (([realLockfile isEqualToString:filename] == NO)
+							&& ([filename hasPrefix:self.databaseUid])
+							&& ([filename hasSuffix:TS_FILE_SUFFIX_DATABASE_LOCK])) {
+						NSString *path = [@"/" stringByAppendingPathComponent:filename];
+						[deletedPaths addObject:path];
+					}
+				}
+				if ([deletedPaths count] > 0) {
+					self.toBeDeleted = [deletedPaths copy];
+					self.toBeDeletedIndex = 0;
+					[self.dropboxRestClient deletePath:[self.toBeDeleted objectAtIndex:self.toBeDeletedIndex]];
+					[self setState:CLEANUP_DELETE_REDUNDANT_LOCKFILE];
+				}else {
+					[self loadBackupsFolderMetadata];
+					[self setState:CLEANUP_CHECK_BACKUP_FOLDER_EXISTS];
+				}
+			}else {
+				NSLog (@"ERROR : the entity at path %@ is not a directory.", [metadata path]);
+				[self reportListDatabaseUidsErrorToDelegate:@"Remote root folder corrupt???"];
+			}
+		}
+		break;
+			
+		case CLEANUP_CHECK_BACKUP_FOLDER_EXISTS: {
+			NSArray *filenames = [self filenameListFromMetadata:metadata];
+			if (filenames != nil) {
+				NSMutableArray *deletedPaths = [NSMutableArray array];
+				NSString *backupsFolderName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
+				NSString *backupsFolderRemotePath = [@"/" stringByAppendingString:backupsFolderName];
+				
+				NSArray *retainedFiles = [TSBackupUtils retainOnlyNeededBackups:filenames];
+				for (NSString *filename in filenames) {
+					if ([retainedFiles containsObject:filename] == NO) {
+						NSString *path = [backupsFolderRemotePath stringByAppendingPathComponent:filename];
+						[deletedPaths addObject:path];
+					}
+				}
+				if ([deletedPaths count] > 0) {
+					self.toBeDeleted = [deletedPaths copy];
+					self.toBeDeletedIndex = 0;
+					[self.dropboxRestClient deletePath:[self.toBeDeleted objectAtIndex:self.toBeDeletedIndex]];
+					[self setState:CLEANUP_DELETE_OLD_BACKUP];
+				}else {
+					[self deleteLockFile];
+					[self setState:CLEANUP_DELETE_LOCKFILE];
+				}
+			}else {
+				NSLog (@"ERROR : the entity at path %@ is not a directory.", [metadata path]);
+				[self reportCleanupErrorToDelegate:@"Remote backups folder corrupt???"];
+			}
+		}
+		break;
 			
 		default: {
 			[self stateTransitionError:@"loaded metadata"];
@@ -586,6 +825,13 @@ optimisticLockComment = _optimisticLockComment;
 		case UPLOAD_CHECK_METADATA_EXISTS: {
 			NSLog (@"Strange but probably correct : received metadata unchanged callback for %@ while checking if the metadata file exists...", path);
 			[self moveMetadataToBackup];
+		}
+		break;
+			
+		case CLEANUP_CHECK_BACKUP_FOLDER_EXISTS: {
+			NSLog (@"Strange and incorrect for cleanup needs : received metadata unchanged callback for %@ while checking if the backups folder exists...", path);
+			[self deleteLockFile];
+			[self setState:CLEANUP_DELETE_LOCKFILE];
 		}
 		break;
 			
@@ -650,6 +896,15 @@ optimisticLockComment = _optimisticLockComment;
 			NSLog (@"Delete failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
 			[self reportRemoveOptimisticLockErrorToDelegate:[error description]];
 		}
+		break;
+			
+		case CLEANUP_DELETE_REDUNDANT_LOCKFILE:
+		case CLEANUP_DELETE_OLD_BACKUP:
+		case CLEANUP_DELETE_LOCKFILE: {
+			NSLog (@"Delete failed in state %@ (%d) :: %@", [self stateString], self.state, [error debugDescription]);
+			[self reportCleanupErrorToDelegate:[error description]];
+		}
+		break;
 			
 		default: {
 			[self stateTransitionError:[NSString stringWithFormat:@"delete failed :: %@", [error debugDescription]]];
@@ -675,13 +930,39 @@ optimisticLockComment = _optimisticLockComment;
 		}
 		break;
 			
+		case CLEANUP_DELETE_REDUNDANT_LOCKFILE:
+		case CLEANUP_DELETE_OLD_BACKUP: {
+			if ([self.delegate respondsToSelector:@selector(dropboxWrapper:cleanupDeletedFile:)]) {
+				[self.delegate dropboxWrapper:self cleanupDeletedFile:path];
+			}
+			self.toBeDeletedIndex = self.toBeDeletedIndex + 1;
+			if (self.toBeDeletedIndex < [self.toBeDeleted count]) {
+				[self.dropboxRestClient deletePath:[self.toBeDeleted objectAtIndex:self.toBeDeletedIndex]];
+			}else {
+				if (self.state == CLEANUP_DELETE_REDUNDANT_LOCKFILE) {
+					[self loadBackupsFolderMetadata];
+					[self setState:CLEANUP_CHECK_BACKUP_FOLDER_EXISTS];
+				}else {
+					[self deleteLockFile];
+					[self setState:CLEANUP_DELETE_LOCKFILE];
+				}
+			}
+		}
+		break;
+			
+		case CLEANUP_DELETE_LOCKFILE: {
+			[self setState:IDLE];
+			[self.delegate dropboxWrapper:self finishedCleanupForDatabase:self.databaseUid];
+		}
+		break;
+			
 		default: {
 			[self stateTransitionError:[NSString stringWithFormat:@"deleted path %@", path]];
 		}
 	}
 }
 
-#pragma mark - wrapper methods
+#pragma mark - public API
 
 - (BOOL)busy
 {
@@ -693,12 +974,48 @@ optimisticLockComment = _optimisticLockComment;
 	return (self.state == UPLOAD_STALLED_OPTIMISTIC_LOCK);
 }
 
+- (BOOL)listDatabaseUids
+{
+	BOOL ret = NO;
+	/*
+	 NOTE on dispatch_async :: for some obscure reason, something deadlocks if the
+	 call to the dropbox lib is not done from the main thread (looks like NSUrl_something),
+	 so as a precaution, the first invocation of a rest client method is re-scheduled
+	 for the main thread to protect against outside world calling this wrapper from other threads.
+	 */
+	if (self.state == IDLE) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self.dropboxRestClient loadMetadata:@"/"];
+		});
+		[self setState:LIST_DATABASE_UIDS];
+	}
+	return ret;
+}
+
+- (BOOL)uploadDatabaseWithId:(NSString *)databaseUid
+{
+	//	NSLog (@"database uid : %@", databaseUid);
+	BOOL ret = NO;
+	if (self.state == IDLE) {
+		self.databaseUid = databaseUid;
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self downloadLockFile];
+		});
+		[self setState:UPLOAD_READ_LOCKFILE];
+		ret = YES;
+	}
+	return ret;
+}
+
 - (BOOL)continueUploadAndOverwriteOptimisticLock
 {
 	switch (self.state) {
-		case UPLOAD_STALLED_OPTIMISTIC_LOCK:
-			[self uploadWriteLock:self.remoteLockfileRevision];
+		case UPLOAD_STALLED_OPTIMISTIC_LOCK: {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[self uploadWriteLock:self.remoteLockfileRevision];
+			});
 			return YES;
+		}
 		default:
 			NSLog (@"Received continue upload and overwrite optimistic lock permission but the current state %@ (%d) is not the correct one %@ (%d)", [self stateString], self.state, [TSDropboxWrapper stateString:UPLOAD_STALLED_OPTIMISTIC_LOCK], UPLOAD_STALLED_OPTIMISTIC_LOCK);
 			return NO;
@@ -718,26 +1035,15 @@ optimisticLockComment = _optimisticLockComment;
 	}
 }
 
-- (BOOL)uploadDatabaseWithId:(NSString *)databaseUid
-{
-//	NSLog (@"database uid : %@", databaseUid);
-	BOOL ret = NO;
-	if (self.state == IDLE) {
-		self.databaseUid = databaseUid;
-		[self downloadLockFile];
-		[self setState:UPLOAD_READ_LOCKFILE];
-		ret = YES;
-	}
-	return ret;
-}
-
 - (BOOL)addOptimisticLockForDatabase:(NSString *)databaseUid comment:(NSString *)comment
 {
 	BOOL ret = NO;
 	if (self.state == IDLE) {
 		self.databaseUid = databaseUid;
 		self.optimisticLockComment = comment;
-		[self downloadLockFile];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self downloadLockFile];
+		});
 		[self setState:OPTIMISTIC_LOCK_ADD_READ_LOCKFILE];
 		ret = YES;
 	}
@@ -749,8 +1055,24 @@ optimisticLockComment = _optimisticLockComment;
 	BOOL ret = NO;
 	if (self.state == IDLE) {
 		self.databaseUid = databaseUid;
-		[self downloadLockFile];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self downloadLockFile];
+		});
 		[self setState:OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE];
+		ret = YES;
+	}
+	return ret;
+}
+
+- (BOOL)cleanupDatabase:(NSString *)databaseUid
+{
+	BOOL ret = NO;
+	if (self.state == IDLE) {
+		self.databaseUid = databaseUid;
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self downloadLockFile];
+		});
+		[self setState:CLEANUP_READ_LOCKFILE];
 		ret = YES;
 	}
 	return ret;

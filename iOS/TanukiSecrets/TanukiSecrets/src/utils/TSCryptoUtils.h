@@ -48,6 +48,11 @@
 
 + (TSDatabase *) tanukiDecryptDatabase:(NSData *)encryptedData
 						havingMetadata:(TSDatabaseMetadata *)databaseMetadata
+						   usingSecret:(NSString *)secret
+						ignoreChecksum:(BOOL)ignoreChecksum;
+
++ (TSDatabase *) tanukiDecryptDatabase:(NSData *)encryptedData
+						havingMetadata:(TSDatabaseMetadata *)databaseMetadata
 						   usingSecret:(NSString *)secret;
 
 @end

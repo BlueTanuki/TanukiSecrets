@@ -83,7 +83,9 @@
 + (NSString *)generateUid
 {
 	CFUUIDRef uuidref = CFUUIDCreate(CFAllocatorGetDefault());
-	return (__bridge NSString *)(CFUUIDCreateString(CFAllocatorGetDefault(), uuidref));
+	NSString *ret = (__bridge_transfer NSString *)(CFUUIDCreateString(CFAllocatorGetDefault(), uuidref));
+	CFRelease(uuidref);
+	return ret;
 }
 
 @end

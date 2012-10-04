@@ -6,7 +6,6 @@ import bluetanuki.tanukisecrets.common.model.xml.Database;
 import bluetanuki.tanukisecrets.common.model.xml.DbMetadata;
 import bluetanuki.tanukisecrets.common.xml.XMLUtils;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;

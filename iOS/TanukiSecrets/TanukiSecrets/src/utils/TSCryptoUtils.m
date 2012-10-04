@@ -185,9 +185,25 @@
 + (TSDatabase *)tanukiDecryptDatabase:(NSData *)encryptedData
 					   havingMetadata:(TSDatabaseMetadata *)databaseMetadata
 						  usingSecret:(NSString *)secret
+					   ignoreChecksum:(BOOL)ignoreChecksum
 {
 	NSData *data = [self tanukiDecrypt:encryptedData usingSecret:secret andSalt:databaseMetadata.salt];
+	if (ignoreChecksum == NO) {
+		NSString *checksum = [TSStringUtils hexStringFromData:[self sha512:data]];
+		if ([checksum isEqualToString:databaseMetadata.version.checksum] == NO) {
+			NSLog (@"CHECKSUM ERROR : database with id %@ was correctly decrypted but the checsum (%@) did not match the expected checksum taken from the metadata file (%@)",
+				   databaseMetadata.uid, checksum, databaseMetadata.version.checksum);
+			return nil;
+		}
+	}
 	return (TSDatabase *)[TSDatabase fromData:data];
+}
+
++ (TSDatabase *)tanukiDecryptDatabase:(NSData *)encryptedData
+					   havingMetadata:(TSDatabaseMetadata *)databaseMetadata
+						  usingSecret:(NSString *)secret
+{
+	return [self tanukiDecryptDatabase:encryptedData havingMetadata:databaseMetadata usingSecret:secret ignoreChecksum:NO];
 }
 
 @end
