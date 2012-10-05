@@ -21,4 +21,6 @@
 
 + (NSString *)generateUid;
 
++ (NSError *)simpleError:(NSString *)errorText;
+
 @end

@@ -22,11 +22,12 @@
 #import "TSCryptoUtils.h"
 #import "TSNotifierUtils.h"
 #import "TSIOUtils.h"
-#import "TSDropboxWrapper.h"
+#import "TSDatabaseWrapper.h"
+#import "TSDeviceUtils.h"
 
-@interface TSUnlockViewController () <UITextFieldDelegate, TSDropboxWrapperDelegate>
+@interface TSUnlockViewController () <UITextFieldDelegate, TSDatabaseWrapperDelegate>
 
-@property(nonatomic, strong) TSDropboxWrapper *dropboxWrapper;
+@property(nonatomic, strong) TSDatabaseWrapper *dropboxWrapper;
 
 @property(nonatomic, strong) TSDatabase *reusedDatabase;
 @property(nonatomic, strong) TSDatabaseMetadata *reusedDatabaseMetadata;
@@ -55,11 +56,10 @@ BOOL firstTimeSegueTriggered = NO;
 
 #pragma mark - override getters/setters
 
-- (TSDropboxWrapper *)dropboxWrapper
+- (TSDatabaseWrapper *)dropboxWrapper
 {
 	if (_dropboxWrapper == nil) {
-		_dropboxWrapper = [[TSDropboxWrapper alloc] init];
-		_dropboxWrapper.delegate = self;
+		_dropboxWrapper = [TSSharedState dropboxWrapperForDelegate:self];
 	}
 	return _dropboxWrapper;
 }
@@ -243,14 +243,14 @@ BOOL firstTimeSegueTriggered = NO;
 	return allOK;
 }
 
-#pragma mark - TSDropboxWrapperDelegate
+#pragma mark - TSDatabaseWrapperDelegate
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper listDatabaseUidsFailedWithError:(NSString *)error
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper listDatabaseUidsFailedWithError:(NSString *)error
 {
 	[TSNotifierUtils error:@"List database UIDs failed"];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedListDatabaseUids:(NSArray *)databaseUids
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper finishedListDatabaseUids:(NSArray *)databaseUids
 {
 	self.toBeCleanedUp = databaseUids;
 	self.toBeCleanedUpIndex = 0;
@@ -263,47 +263,47 @@ BOOL firstTimeSegueTriggered = NO;
 	});
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper attemptingToLockDatabase:(NSString *)databaseUid
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper attemptingToLockDatabase:(NSString *)databaseUid
 {
 	[TSNotifierUtils info:[NSString stringWithFormat:@"Attempting to lock %@", databaseUid]];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper successfullyLockedDatabase:(NSString *)databaseUid
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper successfullyLockedDatabase:(NSString *)databaseUid
 {
 	[TSNotifierUtils info:[NSString stringWithFormat:@"LOCKED %@", databaseUid]];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper createdBackup:(NSString *)backupId forDatabase:(NSString *)databaseUid
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper createdBackup:(NSString *)backupId forDatabase:(NSString *)databaseUid
 {
 	[TSNotifierUtils info:[NSString stringWithFormat:@"Created backup %@", backupId]];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadedMetadataFileForDatabase:(NSString *)databaseUid
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper uploadedMetadataFileForDatabase:(NSString *)databaseUid
 {
 	[TSNotifierUtils info:@"Uploaded metadata file"];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadedMainFileForDatabase:(NSString *)databaseUid
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper uploadedMainFileForDatabase:(NSString *)databaseUid
 {
 	[TSNotifierUtils info:@"Uploaded database file"];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper successfullyUnockedDatabase:(NSString *)databaseUid
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper successfullyUnlockedDatabase:(NSString *)databaseUid
 {
 	[TSNotifierUtils info:[NSString stringWithFormat:@"UNLOCKED %@", databaseUid]];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper cleanupDeletedFile:(NSString *)path
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper cleanupDeletedFile:(NSString *)path
 {
 	[TSNotifierUtils info:[NSString stringWithFormat:@"Cleanup DELETED %@", [path lastPathComponent]]];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper uploadForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
 {
 	[TSNotifierUtils error:[NSString stringWithFormat:@"Failed to upload %@ :: %@", databaseUid, error]];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper uploadForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		NSString *errorText = [NSString stringWithFormat:@"The database with id %@ was locked for writing by %@ (%@) at %@ [comment: %@]",
@@ -317,7 +317,7 @@ BOOL firstTimeSegueTriggered = NO;
 	});
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper uploadForDatabase:(NSString *)databaseUid isStalledBecauseOfOptimisticLock:(TSDatabaseLock *)databaseLock
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper uploadForDatabase:(NSString *)databaseUid isStalledBecauseOfOptimisticLock:(TSDatabaseLock *)databaseLock
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		NSString *warning = [NSString stringWithFormat:@"The database with id %@ has an optimistic lock written by %@ (%@) at %@ [comment: %@]. The optimistic lock is advisory and can be overriden. Proceed with upload and overwrite this optimistic lock?",
@@ -331,22 +331,22 @@ BOOL firstTimeSegueTriggered = NO;
 	});
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedUploadingDatabase:(NSString *)databaseUid
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper finishedUploadingDatabase:(NSString *)databaseUid
 {
 	[TSNotifierUtils info:[NSString stringWithFormat:@"Successfully uploaded %@", databaseUid]];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedAddingOptimisticLockForDatabase:(NSString *)databaseUid
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper finishedAddingOptimisticLockForDatabase:(NSString *)databaseUid
 {
 	[TSNotifierUtils info:@"Optimistic lock was set."];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper addingOptimisticLockForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper addingOptimisticLockForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
 {
 	[TSNotifierUtils error:@"Optimistic lock adding FAILED"];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper addingOptimisticLockForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper addingOptimisticLockForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		if (databaseLock.writeLock == nil) {
@@ -371,17 +371,17 @@ BOOL firstTimeSegueTriggered = NO;
 	});
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedRemovingOptimisticLockForDatabase:(NSString *)databaseUid
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper finishedRemovingOptimisticLockForDatabase:(NSString *)databaseUid
 {
 	[TSNotifierUtils info:@"Optimistic lock was removed."];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper removingOptimisticLockForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper removingOptimisticLockForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
 {
 	[TSNotifierUtils error:@"Optimistic lock removing FAILED"];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper removingOptimisticLockForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper removingOptimisticLockForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		if (databaseLock.writeLock == nil) {
@@ -406,7 +406,7 @@ BOOL firstTimeSegueTriggered = NO;
 	});
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper finishedCleanupForDatabase:(NSString *)databaseUid
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper finishedCleanupForDatabase:(NSString *)databaseUid
 {
 	self.toBeCleanedUpIndex = self.toBeCleanedUpIndex + 1;
 	[TSNotifierUtils info:[NSString stringWithFormat:@"Cleanup progress %d of %d", self.toBeCleanedUpIndex, [self.toBeCleanedUp count]]];
@@ -420,12 +420,12 @@ BOOL firstTimeSegueTriggered = NO;
 	}
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper cleanupForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper cleanupForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
 {
 	[TSNotifierUtils error:[NSString stringWithFormat:@"Could not lock %@", databaseUid]];
 }
 
-- (void)dropboxWrapper:(TSDropboxWrapper *)dropboxWrapper cleanupForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
+- (void)databaseWrapper:(TSDatabaseWrapper *)dropboxWrapper cleanupForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
 {
 	[TSNotifierUtils error:[NSString stringWithFormat:@"Cleanup FAILED for %@", databaseUid]];
 }
@@ -476,7 +476,7 @@ BOOL firstTimeSegueTriggered = NO;
 														usingSecret:secret];
 	if ([TSIOUtils saveDatabaseWithMetadata:metadata andEncryptedContent:encryptedContent]) {
 		[TSNotifierUtils info:@"Uploading database to Dropbox"];
-		[self.dropboxWrapper uploadDatabaseWithId:metadata.uid];
+		[self.dropboxWrapper uploadDatabaseWithUid:metadata.uid];
 	}else {
 		[TSNotifierUtils error:@"Local database writing failed"];
 	}
@@ -523,7 +523,7 @@ BOOL firstTimeSegueTriggered = NO;
 	[self.reusedDatabase.root addItem:[TSDBItem itemNamed:@"deja-vu"]];
 	if ([TSIOUtils saveDatabase:self.reusedDatabase	havingMetadata:self.reusedDatabaseMetadata usingSecret:secret] == YES) {
 		if (self.dropboxWrapper.busy == NO) {
-			[self.dropboxWrapper uploadDatabaseWithId:self.reusedDatabaseMetadata.uid];
+			[self.dropboxWrapper uploadDatabaseWithUid:self.reusedDatabaseMetadata.uid];
 			[TSNotifierUtils info:@"Dropbox upload starting..."];
 		}else {
 			[TSNotifierUtils error:@"Dropbox wraper is busy, cannot upload at the moment..."];
@@ -553,6 +553,38 @@ BOOL firstTimeSegueTriggered = NO;
 
 - (IBAction)cleanup:(id)sender {
 	[self.dropboxWrapper listDatabaseUids];
+}
+
+- (IBAction)iUpdate:(id)sender {
+	if ([TSDeviceUtils isRunningInSimulator]) {
+		[TSNotifierUtils error:@"iCloud is disabled in simulator"];
+		return;
+	}
+	[TSNotifierUtils error:@"not implemented yet"];
+}
+
+- (IBAction)iLock:(id)sender {
+	if ([TSDeviceUtils isRunningInSimulator]) {
+		[TSNotifierUtils error:@"iCloud is disabled in simulator"];
+		return;
+	}
+	[TSNotifierUtils error:@"not implemented yet"];
+}
+
+- (IBAction)iUnlock:(id)sender {
+	if ([TSDeviceUtils isRunningInSimulator]) {
+		[TSNotifierUtils error:@"iCloud is disabled in simulator"];
+		return;
+	}
+	[TSNotifierUtils error:@"not implemented yet"];
+}
+
+- (IBAction)iClean:(id)sender {
+	if ([TSDeviceUtils isRunningInSimulator]) {
+		[TSNotifierUtils error:@"iCloud is disabled in simulator"];
+		return;
+	}
+	[TSNotifierUtils error:@"not implemented yet"];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

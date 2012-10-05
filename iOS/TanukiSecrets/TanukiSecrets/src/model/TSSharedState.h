@@ -10,6 +10,7 @@
 
 #import "TSConstants.h"
 
+#import "TSDatabaseWrapper.h"
 #import "TSDropboxWrapper.h"
 
 
@@ -25,6 +26,9 @@
 
 //convenience method (if the caller does not need an instance for anything else)
 + (NSString *)instanceUID;
+
++ (TSDatabaseWrapper *)dropboxWrapperForDelegate:(id<TSDatabaseWrapperDelegate>)delegate;
+- (TSDatabaseWrapper *)dropboxWrapperForDelegate:(id<TSDatabaseWrapperDelegate>)delegate;
 
 @property(nonatomic, readonly) NSString *instanceUID;
 

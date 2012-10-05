@@ -42,6 +42,7 @@
 		9F98D41715F7B137001A2C82 /* iPadSandbox.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F98D41615F7B137001A2C82 /* iPadSandbox.storyboard */; };
 		9F9D868E15CBFDF60066BC04 /* SMXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */; };
 		9F9D869115CC14CA0066BC04 /* Sandbox.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */; };
+		9FC16205161F081700094E43 /* TSDatabaseWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC16204161F081700094E43 /* TSDatabaseWrapper.m */; };
 		9FEC4DCF15C29894008B18D5 /* JSNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4DCE15C29894008B18D5 /* JSNotifier.m */; };
 		9FEC4DD415C298E7008B18D5 /* NotifyCheck.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FEC4DD015C298E7008B18D5 /* NotifyCheck.png */; };
 		9FEC4DD515C298E7008B18D5 /* NotifyCheck@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FEC4DD115C298E7008B18D5 /* NotifyCheck@2x.png */; };
@@ -133,6 +134,9 @@
 		9F9D868C15CBFDF60066BC04 /* SMXMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXMLDocument.h; sourceTree = "<group>"; };
 		9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXMLDocument.m; sourceTree = "<group>"; };
 		9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Sandbox.storyboard; sourceTree = "<group>"; };
+		9FC16203161F081700094E43 /* TSDatabaseWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDatabaseWrapper.h; sourceTree = "<group>"; };
+		9FC16204161F081700094E43 /* TSDatabaseWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDatabaseWrapper.m; sourceTree = "<group>"; };
+		9FC16206161F243300094E43 /* TSRemoteStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSRemoteStorage.h; sourceTree = "<group>"; };
 		9FEC4DC515C18107008B18D5 /* TanukiSecrets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TanukiSecrets.entitlements; sourceTree = "<group>"; };
 		9FEC4DCD15C29894008B18D5 /* JSNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotifier.h; sourceTree = "<group>"; };
 		9FEC4DCE15C29894008B18D5 /* JSNotifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSNotifier.m; sourceTree = "<group>"; };
@@ -235,8 +239,6 @@
 				9F1463CE15FF7BEC00EA03D6 /* TSDateUtils.m */,
 				9F1463D015FF820400EA03D6 /* TSDeviceUtils.h */,
 				9F1463D115FF820400EA03D6 /* TSDeviceUtils.m */,
-				9FF76E85160A5ABA00613DA1 /* TSDropboxWrapper.h */,
-				9FF76E86160A5ABD00613DA1 /* TSDropboxWrapper.m */,
 				9FF76E781608CD3C00613DA1 /* TSIOUtils.h */,
 				9FF76E791608CD3E00613DA1 /* TSIOUtils.m */,
 				9FF76E82160A160300613DA1 /* TSNotifierUtils.h */,
@@ -256,10 +258,11 @@
 		9F1463E61600EB0800EA03D6 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				9F1463BF15FE441F00EA03D6 /* TSConstants.h */,
 				9F9D868F15CC10530066BC04 /* controller */,
 				9FEC4E3B15CAA349008B18D5 /* model */,
+				9F1463BF15FE441F00EA03D6 /* TSConstants.h */,
 				9F1463E41600E69A00EA03D6 /* utils */,
+				9FC16201161F073200094E43 /* worker */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -389,6 +392,18 @@
 				9F8ED48115B98C6A00391EF8 /* TSDetailViewController.m */,
 			);
 			path = controller;
+			sourceTree = "<group>";
+		};
+		9FC16201161F073200094E43 /* worker */ = {
+			isa = PBXGroup;
+			children = (
+				9FC16203161F081700094E43 /* TSDatabaseWrapper.h */,
+				9FC16204161F081700094E43 /* TSDatabaseWrapper.m */,
+				9FF76E85160A5ABA00613DA1 /* TSDropboxWrapper.h */,
+				9FF76E86160A5ABD00613DA1 /* TSDropboxWrapper.m */,
+				9FC16206161F243300094E43 /* TSRemoteStorage.h */,
+			);
+			path = worker;
 			sourceTree = "<group>";
 		};
 		9FEC4DCB15C29847008B18D5 /* lib */ = {
@@ -584,6 +599,7 @@
 				9F57C2031611E3590085703E /* TSNavigationController.m in Sources */,
 				9F57C20A16146E420085703E /* TSBackupUtils.m in Sources */,
 				9F57C20E161734400085703E /* TSUtils.m in Sources */,
+				9FC16205161F081700094E43 /* TSDatabaseWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
