@@ -21,6 +21,7 @@
 #import "TSVersion.h"
 #import "TSNotifierUtils.h"
 #import "TSDeviceUtils.h"
+#import "TSDateUtils.h"
 
 @interface TSFilesystemTableViewController () <DBRestClientDelegate> {
 	NSMetadataQuery *iCloudQuery;
@@ -131,9 +132,12 @@
 
 - (void) createCloudDocumentNamed:(NSString *)name withData:(NSData *)data
 {
-	NSURL *url = [[self iCloudDocumentsURL] URLByAppendingPathComponent:name];
+	NSString *folderName = [name substringToIndex:6];
+	NSURL *folderUrl = [[self iCloudDocumentsURL] URLByAppendingPathComponent:folderName];
+	[[NSFileManager defaultManager] createDirectoryAtURL:folderUrl withIntermediateDirectories:YES attributes:nil error:nil];
+	NSURL *url = [folderUrl URLByAppendingPathComponent:name];
 	NSError *error;
-	BOOL ok = [data writeToURL:url atomically:YES];
+	BOOL ok = [data writeToURL:url options:NSDataWritingAtomic error:&error];
 	if (!ok) {
 		NSLog(@"iWrite fail : %@", [error debugDescription]);
 	}
@@ -411,9 +415,26 @@
 	[self logCloudNotification:notification];
 	NSMutableArray *documents = [NSMutableArray array];
 	int resultCount = [iCloudQuery resultCount];
+	NSLog (@"iCloud query returned %d rows", resultCount);
 	for (int i=0; i<resultCount; i++) {
 		NSMetadataItem *item = [iCloudQuery resultAtIndex:i];
+		NSLog (@"iItem %d :: %@", i, [item attributes]);
+		NSLog (@"%@ = %@", NSMetadataItemDisplayNameKey, [item valueForAttribute:NSMetadataItemDisplayNameKey]);
+		NSLog (@"%@ = %@", NSMetadataItemFSContentChangeDateKey, [item valueForAttribute:NSMetadataItemFSContentChangeDateKey]);
+		NSLog (@"%@ = %@", NSMetadataItemFSCreationDateKey, [item valueForAttribute:NSMetadataItemFSCreationDateKey]);
+		NSLog (@"%@ = %@", NSMetadataItemFSNameKey, [item valueForAttribute:NSMetadataItemFSNameKey]);
+		NSLog (@"%@ = %@", NSMetadataItemFSSizeKey, [item valueForAttribute:NSMetadataItemFSSizeKey]);
+		NSLog (@"%@ = %@", NSMetadataItemIsUbiquitousKey, [item valueForAttribute:NSMetadataItemIsUbiquitousKey]);
+		NSLog (@"%@ = %@", NSMetadataItemPathKey, [item valueForAttribute:NSMetadataItemPathKey]);
+		NSLog (@"%@ = %@", NSMetadataItemURLKey, [item valueForAttribute:NSMetadataItemURLKey]);
 		NSURL *url = [item valueForAttribute:NSMetadataItemURLKey];
+		NSString *path = [url path];
+		BOOL isDirectory;
+		bool exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory];
+		NSLog (@"file at path %@ exists %d and is directory %d", path, exists, isDirectory);
+		path = [[self filePackageUrlForCloudURL:url] path];
+		exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory];
+		NSLog (@"file at path %@ exists %d and is directory %d", path, exists, isDirectory);
 		url = [self filePackageUrlForCloudURL:url];
 		[documents addObject:url];
 	}

@@ -52,11 +52,16 @@
 	return [NSString stringWithFormat:@"%d", value];
 }
 
++(NSError *)simpleError:(NSString *)errorText withCode:(NSInteger)code
+{
+	NSDictionary *errorInfo = [NSDictionary dictionaryWithObject:errorText
+														  forKey:NSLocalizedDescriptionKey];
+	return [NSError errorWithDomain:@"TanukiError" code:code userInfo:errorInfo];
+}
+
 + (NSError *)simpleError:(NSString *)errorText
 {
-	NSDictionary *errorInfo = [NSDictionary dictionaryWithObject:@"File doesn’t exist."
-														  forKey:NSLocalizedDescriptionKey];
-	return [NSError errorWithDomain:@"TanukiError" code:13 userInfo:errorInfo];
+	return [self simpleError:errorText withCode:13];
 }
 
 #pragma mark - transform

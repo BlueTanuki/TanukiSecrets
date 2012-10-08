@@ -158,32 +158,32 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (void)reportListDatabaseUidsErrorToDelegate:(NSString *)errorText
 {
-	[self.delegate databaseWrapper:self listDatabaseUidsFailedWithError:errorText];
 	[self setState:IDLE];
+	[self.delegate databaseWrapper:self listDatabaseUidsFailedWithError:errorText];
 }
 
 - (void)reportDatabaseUploadErrorToDelegate:(NSString *)errorText
 {
-	[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedWithError:errorText];
 	[self setState:IDLE];
+	[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedWithError:errorText];
 }
 
 - (void)reportAddOptimisticLockErrorToDelegate:(NSString *)errorText
 {
-	[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
 	[self setState:IDLE];
+	[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
 }
 
 - (void)reportRemoveOptimisticLockErrorToDelegate:(NSString *)errorText
 {
-	[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
 	[self setState:IDLE];
+	[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
 }
 
 - (void)reportCleanupErrorToDelegate:(NSString *)errorText
 {
-	[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedWithError:errorText];
 	[self setState:IDLE];
+	[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedWithError:errorText];
 }
 
 - (void)downloadLockFile
@@ -343,8 +343,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	NSLog (@"List files in folder %@ successful, folder contains %d items", folderPath, [filenames count]);
 	switch (self.state) {
 		case LIST_DATABASE_UIDS: {
-			[self.delegate databaseWrapper:self finishedListDatabaseUids:[self namesOfMetadataFilesFromFileList:filenames]];
 			[self setState:IDLE];
+			[self.delegate databaseWrapper:self finishedListDatabaseUids:[self namesOfMetadataFilesFromFileList:filenames]];
 		}
 			break;
 			
@@ -579,12 +579,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:fileLocalPath];
 			if (databaseLock != nil) {
 				if (databaseLock.writeLock != nil) {
-					[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					[self setState:IDLE];
+					[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 				}else if ((databaseLock.optimisticLock != nil) && ([databaseLock.optimisticLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
-					[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid isStalledBecauseOfOptimisticLock:databaseLock];
 					[self setState:UPLOAD_STALLED_OPTIMISTIC_LOCK];
 					self.remoteFileRevision = revision;
+					[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid isStalledBecauseOfOptimisticLock:databaseLock];
 				}else {
 					[self uploadWriteLock:revision];
 				}
@@ -602,12 +602,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 					if (databaseLock.writeLock == nil) {
 						[self uploadOptimisticLock:revision];
 					}else {
-						[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 						[self setState:IDLE];
+						[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					}
 				}else {
-					[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					[self setState:IDLE];
+					[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 				}
 			}else {
 				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
@@ -624,12 +624,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 						[self deleteLockFile];
 						[self setState:OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE];
 					}else {
-						[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 						[self setState:IDLE];
+						[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					}
 				}else {
-					[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					[self setState:IDLE];
+					[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 				}
 			}else {
 				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
@@ -645,8 +645,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			if (databaseLock != nil) {
 				if ((databaseLock.writeLock == nil) || ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
 					NSLog (@"Lockfile check failed, the lock is not held by the current device");
-					[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					[self setState:IDLE];
+					[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 				}else {
 					if (self.state == UPLOAD_CHECK_LOCKFILE) {
 						NSLog (@"Lockfile check ok, waiting a little more then performing a recheck");
@@ -673,8 +673,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		case CLEANUP_READ_LOCKFILE: {
 			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:fileLocalPath];
 			if (databaseLock != nil) {
-				[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 				[self setState:IDLE];
+				[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 			}else {
 				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
 				[self reportCleanupErrorToDelegate:@"Internal error (lockfile read)"];
@@ -688,8 +688,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			if (databaseLock != nil) {
 				if ((databaseLock.writeLock == nil) || ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
 					NSLog (@"Lockfile check failed, the lock is not held by the current device");
-					[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					[self setState:IDLE];
+					[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 				}else {
 					[self.worker listFilesInFolder:[self.worker rootFolderPath]];
 					[self setState:CLEANUP_LIST_LOCKFILES];
@@ -741,8 +741,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		case OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE: {
 			if ([error code] == 404) {
 				NSLog (@"Removal of optimistic lock is actually not needed...");
-				[self.delegate databaseWrapper:self finishedRemovingOptimisticLockForDatabase:self.databaseUid];
 				[self setState:IDLE];
+				[self.delegate databaseWrapper:self finishedRemovingOptimisticLockForDatabase:self.databaseUid];
 			}else {
 				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
@@ -814,8 +814,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			break;
 			
 		case OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE: {
-			[self.delegate databaseWrapper:self finishedAddingOptimisticLockForDatabase:self.databaseUid];
 			[self setState:IDLE];
+			[self.delegate databaseWrapper:self finishedAddingOptimisticLockForDatabase:self.databaseUid];
 		}
 			break;
 			
@@ -985,47 +985,36 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (BOOL)listDatabaseUids
 {
-	BOOL ret = NO;
 	if (self.state == IDLE) {
-		/*
-		 NOTE on dispatch_async :: for some obscure reason, something deadlocks if the
-		 call to the dropbox lib is not done from the main thread (looks like NSUrl_something).
-		 This is very likely to happen for other network operations as well.
-		 As a precaution, the first invocation of a remote method is re-scheduled
-		 for the main thread to protect against outside world calling this wrapper from other threads.
-		 */
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self.worker listFilesInFolder:[self.worker rootFolderPath]];
-		});		
+		[self.worker listFilesInFolder:[self.worker rootFolderPath]];
 		[self setState:LIST_DATABASE_UIDS];
+		return YES;
 	}
-	return ret;
+	NSLog (@"Rejected listDatabaseUids request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
+	return NO;
 }
 
 - (BOOL)uploadDatabaseWithUid:(NSString *)databaseUid
 {
 //	NSLog (@"uploadDatabaseWithUid uid : %@", databaseUid);
-	BOOL ret = NO;
 	if (self.state == IDLE) {
 		self.databaseUid = databaseUid;
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self downloadLockFile];
-		});
+		[self downloadLockFile];
 		[self setState:UPLOAD_READ_LOCKFILE];
-		ret = YES;
+		return YES;
 	}
-	return ret;
+	NSLog (@"Rejected uploadDatabaseWithUid request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
+	return NO;
 }
 
 - (BOOL)continueUploadAndOverwriteOptimisticLock
 {
 	switch (self.state) {
 		case UPLOAD_STALLED_OPTIMISTIC_LOCK: {
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[self uploadWriteLock:self.remoteFileRevision];
-			});
+			[self uploadWriteLock:self.remoteFileRevision];
 			return YES;
 		}
+			
 		default:
 			NSLog (@"Received continue upload and overwrite optimistic lock permission but the current state %@ (%d) is not the correct one %@ (%d)", [self stateString], self.state, [TSDatabaseWrapper stateString:UPLOAD_STALLED_OPTIMISTIC_LOCK], UPLOAD_STALLED_OPTIMISTIC_LOCK);
 			return NO;
@@ -1039,6 +1028,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			//		case BLA_BLA:
 			[self setState:IDLE];
 			return YES;
+			
 		default:
 			NSLog (@"Received cancel upload request but the current state %@ (%d) is not among the states that support this operation", [self stateString], self.state);
 			return NO;
@@ -1047,45 +1037,39 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (BOOL)addOptimisticLockForDatabase:(NSString *)databaseUid comment:(NSString *)comment
 {
-	BOOL ret = NO;
 	if (self.state == IDLE) {
 		self.databaseUid = databaseUid;
 		self.optimisticLockComment = comment;
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self downloadLockFile];
-		});
+		[self downloadLockFile];
 		[self setState:OPTIMISTIC_LOCK_ADD_READ_LOCKFILE];
-		ret = YES;
+		return YES;
 	}
-	return ret;
+	NSLog (@"Rejected addOptimisticLockForDatabase request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
+	return NO;
 }
 
 - (BOOL)removeOptimisticLockForDatabase:(NSString *)databaseUid
 {
-	BOOL ret = NO;
 	if (self.state == IDLE) {
 		self.databaseUid = databaseUid;
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self downloadLockFile];
-		});
+		[self downloadLockFile];
 		[self setState:OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE];
-		ret = YES;
+		return YES;
 	}
-	return ret;
+	NSLog (@"Rejected removeOptimisticLockForDatabase request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
+	return NO;
 }
 
 - (BOOL)cleanupDatabase:(NSString *)databaseUid
 {
-	BOOL ret = NO;
 	if (self.state == IDLE) {
 		self.databaseUid = databaseUid;
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self downloadLockFile];
-		});
+		[self downloadLockFile];
 		[self setState:CLEANUP_READ_LOCKFILE];
-		ret = YES;
+		return YES;
 	}
-	return ret;
+	NSLog (@"Rejected cleanupDatabase request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
+	return NO;
 }
 
 

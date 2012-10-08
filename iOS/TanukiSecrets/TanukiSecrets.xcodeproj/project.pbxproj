@@ -37,6 +37,8 @@
 		9F8ED49415B98C6A00391EF8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F8ED49215B98C6A00391EF8 /* InfoPlist.strings */; };
 		9F8ED49715B98C6A00391EF8 /* TanukiSecretsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED49615B98C6A00391EF8 /* TanukiSecretsTests.m */; };
 		9F8ED4B415B9A0EB00391EF8 /* TSFilesystemTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED4B315B9A0EB00391EF8 /* TSFilesystemTableViewController.m */; };
+		9F967746162055AE00C9182D /* TSiCloudWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F967745162055AE00C9182D /* TSiCloudWrapper.m */; };
+		9F96775E162096C700C9182D /* TSUIDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F96775D162096C700C9182D /* TSUIDocument.m */; };
 		9F98D40E15F0CAB9001A2C82 /* TSCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98D40D15F0CAB9001A2C82 /* TSCryptoUtils.m */; };
 		9F98D41115F0CCB3001A2C82 /* TSStringUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98D41015F0CCB3001A2C82 /* TSStringUtils.m */; };
 		9F98D41715F7B137001A2C82 /* iPadSandbox.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F98D41615F7B137001A2C82 /* iPadSandbox.storyboard */; };
@@ -126,6 +128,10 @@
 		9F8ED49615B98C6A00391EF8 /* TanukiSecretsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TanukiSecretsTests.m; sourceTree = "<group>"; };
 		9F8ED4B215B9A0EB00391EF8 /* TSFilesystemTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSFilesystemTableViewController.h; sourceTree = "<group>"; };
 		9F8ED4B315B9A0EB00391EF8 /* TSFilesystemTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSFilesystemTableViewController.m; sourceTree = "<group>"; };
+		9F967744162055AE00C9182D /* TSiCloudWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSiCloudWrapper.h; sourceTree = "<group>"; };
+		9F967745162055AE00C9182D /* TSiCloudWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSiCloudWrapper.m; sourceTree = "<group>"; };
+		9F96775C162096C700C9182D /* TSUIDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUIDocument.h; sourceTree = "<group>"; };
+		9F96775D162096C700C9182D /* TSUIDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUIDocument.m; sourceTree = "<group>"; };
 		9F98D40C15F0CAB9001A2C82 /* TSCryptoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSCryptoUtils.h; sourceTree = "<group>"; };
 		9F98D40D15F0CAB9001A2C82 /* TSCryptoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSCryptoUtils.m; sourceTree = "<group>"; };
 		9F98D40F15F0CCB3001A2C82 /* TSStringUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSStringUtils.h; sourceTree = "<group>"; };
@@ -401,6 +407,8 @@
 				9FC16204161F081700094E43 /* TSDatabaseWrapper.m */,
 				9FF76E85160A5ABA00613DA1 /* TSDropboxWrapper.h */,
 				9FF76E86160A5ABD00613DA1 /* TSDropboxWrapper.m */,
+				9F967744162055AE00C9182D /* TSiCloudWrapper.h */,
+				9F967745162055AE00C9182D /* TSiCloudWrapper.m */,
 				9FC16206161F243300094E43 /* TSRemoteStorage.h */,
 			);
 			path = worker;
@@ -437,6 +445,8 @@
 				9F1463B815FE342000EA03D6 /* TSSharedState.h */,
 				9F1463B915FE342000EA03D6 /* TSSharedState.m */,
 				9FF76E801609FA9C00613DA1 /* TSBinarySerializable.h */,
+				9F96775C162096C700C9182D /* TSUIDocument.h */,
+				9F96775D162096C700C9182D /* TSUIDocument.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -600,6 +610,8 @@
 				9F57C20A16146E420085703E /* TSBackupUtils.m in Sources */,
 				9F57C20E161734400085703E /* TSUtils.m in Sources */,
 				9FC16205161F081700094E43 /* TSDatabaseWrapper.m in Sources */,
+				9F967746162055AE00C9182D /* TSiCloudWrapper.m in Sources */,
+				9F96775E162096C700C9182D /* TSUIDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

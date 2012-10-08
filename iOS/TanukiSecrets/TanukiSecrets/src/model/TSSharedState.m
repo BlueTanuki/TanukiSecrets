@@ -10,16 +10,20 @@
 
 #import "TSStringUtils.h"
 #import "TSUserDefaults.h"
+#import "TSDropboxWrapper.h"
+#import "TSiCloudWrapper.h"
 
 @interface TSSharedState()
 
 @property(nonatomic, readonly) TSDatabaseWrapper *dropboxWrapper;
+@property(nonatomic, readonly) TSDatabaseWrapper *iCloudWrapper;
 
 @end
 
 @implementation TSSharedState
 
-@synthesize instanceUID = _instanceUID, dropboxWrapper = _dropboxWrapper;
+@synthesize instanceUID = _instanceUID, dropboxWrapper = _dropboxWrapper,
+iCloudWrapper = _iCloudWrapper;
 
 #pragma mark - singleton creation
 
@@ -64,6 +68,26 @@
 	}
 	_dropboxWrapper.delegate = delegate;
 	return _dropboxWrapper;
+}
+
++ (TSDatabaseWrapper *)iCloudWrapperForDelegate:(id<TSDatabaseWrapperDelegate>)delegate
+{
+	return [[self sharedState] iCloudWrapperForDelegate:delegate];
+}
+
+- (TSDatabaseWrapper *)iCloudWrapperForDelegate:(id<TSDatabaseWrapperDelegate>)delegate
+{
+	if (_iCloudWrapper == nil) {
+		TSiCloudWrapper *worker = [[TSiCloudWrapper alloc] init];
+		_iCloudWrapper = [TSDatabaseWrapper databaseWrapperWithWorker:worker];
+	}
+	if ([_iCloudWrapper busy] == YES) {
+		NSLog (@"iCloudWrapper instance is busy...");
+		return nil;
+	}
+	_iCloudWrapper.delegate = delegate;
+	[(TSiCloudWrapper *)_iCloudWrapper.worker refreshUbiquityContainerURL];
+	return _iCloudWrapper;
 }
 
 @end

@@ -11,7 +11,6 @@
 #import "TSConstants.h"
 
 #import "TSDatabaseWrapper.h"
-#import "TSDropboxWrapper.h"
 
 
 /*
@@ -29,6 +28,9 @@
 
 + (TSDatabaseWrapper *)dropboxWrapperForDelegate:(id<TSDatabaseWrapperDelegate>)delegate;
 - (TSDatabaseWrapper *)dropboxWrapperForDelegate:(id<TSDatabaseWrapperDelegate>)delegate;
+
++ (TSDatabaseWrapper *)iCloudWrapperForDelegate:(id<TSDatabaseWrapperDelegate>)delegate;
+- (TSDatabaseWrapper *)iCloudWrapperForDelegate:(id<TSDatabaseWrapperDelegate>)delegate;
 
 @property(nonatomic, readonly) NSString *instanceUID;
 
