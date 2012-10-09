@@ -60,6 +60,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 												 selector:@selector(iCloudFinishedGathering:)
 													 name:NSMetadataQueryDidFinishGatheringNotification
 												   object:self.iCloudQuery];
+		
 		[self.iCloudQuery startQuery];
 	}
 }
@@ -105,8 +106,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	if ([absolutePath hasPrefix:basePath]) {
 		relativePath = [absolutePath substringFromIndex:[basePath length]];
 	}else {
-		NSLog (@"WARNING : the path %@ does not seem to belong to a descendant of %@", absolutePath, basePath);
-		relativePath = absolutePath;
+//		NSLog (@"WARNING : the path %@ does not seem to belong to a descendant of %@", absolutePath, basePath);
+//		relativePath = absolutePath;
+		relativePath = nil;
 	}
 	return relativePath;
 }
@@ -129,14 +131,16 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	NSMutableSet *aux = [NSMutableSet set];
 	for (NSURL *itemURL in itemURLs) {
 		NSString *relativePath = [self pathOfItem:[itemURL path] relativeToBase:[baseURL path]];
-		NSArray *pathComponents = [relativePath pathComponents];
-		NSString *filename;
-		if ([@"/" isEqualToString:[pathComponents objectAtIndex:0]]) {
-			filename = [pathComponents objectAtIndex:1];
-		}else {
-			filename = [pathComponents objectAtIndex:0];
+		if (relativePath != nil) {
+			NSArray *pathComponents = [relativePath pathComponents];
+			NSString *filename;
+			if ([@"/" isEqualToString:[pathComponents objectAtIndex:0]]) {
+				filename = [pathComponents objectAtIndex:1];
+			}else {
+				filename = [pathComponents objectAtIndex:0];
+			}
+			[aux addObject:filename];
 		}
-		[aux addObject:filename];
 	}
 	return [NSArray arrayWithArray:[aux allObjects]];
 }
@@ -286,14 +290,39 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 			//not sure how to properly implement this in a single step, so doing it in two steps
 			NSURL *oldURL = [self urlForRemoteCloudPath:self.fileRemotePath];
 			if ([[NSFileManager defaultManager] fileExistsAtPath:[oldURL path]]) {
+				NSLog (@"%@", oldURL);
+				NSData *data = [NSData dataWithContentsOfURL:oldURL];
+				NSLog (@"%d", data.length);
+				ios5 : data.length > 0
+				ios6 : data is nil (i.e. file content is NOT LOADED!!!!!!!!!!!!!!!)
+				
 				NSFileCoordinator* fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
 				NSError *error;
 				[fileCoordinator coordinateWritingItemAtURL:oldURL options:NSFileCoordinatorWritingForDeleting error:&error byAccessor:^(NSURL* writingURL) {
 					NSURL *newURL = [self urlForRemoteCloudPath:self.fileRemotePath2];
 					BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:[newURL path]];
+					
+					NSString *parentFolderPath = [[newURL path] stringByDeletingLastPathComponent];
+					BOOL parentIsDirectory;
+					BOOL parentExists = [[NSFileManager defaultManager] fileExistsAtPath:parentFolderPath isDirectory:&parentIsDirectory];
+					if (parentExists == NO) {
+						[[NSFileManager defaultManager] createDirectoryAtPath:parentFolderPath withIntermediateDirectories:YES attributes:nil error:nil];
+					}
+					
 					UIDocumentSaveOperation createOrOverwrite = exists ? UIDocumentSaveForOverwriting : UIDocumentSaveForCreating;
 					TSUIDocument *document = [[TSUIDocument alloc] initWithFileURL:newURL];
+					NSLog (@"%d", [document.tsuiDocData length]);
+					NSLog (@"%@", oldURL);
+					NSLog (@"%@", writingURL);
 					document.tsuiDocData = [NSData dataWithContentsOfURL:writingURL];
+					NSLog (@"%d", [document.tsuiDocData length]);
+					
+					DIFFERENCE between iOS 5 and 6 :: the file is empty, maybe it needs to be explicitly read...
+					this portion needs to be rewritten !!!!
+					
+					if (document.tsuiDocData == nil) {
+						NSLog (@"FAIL :: document at %@ no longer has any data!!!", writingURL);
+					}
 					[document saveToURL:document.fileURL
 					   forSaveOperation:createOrOverwrite
 					  completionHandler:^(BOOL success) {
@@ -337,10 +366,21 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 
 - (void)listFilesInFolder:(NSString *)folderPath
 {
+	/*
+	 NOTE on dispatch_async :: NSURLConnections created in async mode cause problems
+	 when the method that creates the object is executed from a background thread.
+	 (it seems the connection gets freed because the thread thinks it should be freed or something)
+	 This pretty much means that the caller has to take care and know to only call
+	 such methods from the main thread... ;_;
+	 Yet another fuckup from the brilliant minds that decided iPhone does not need
+	 upsideDown orientation and thought it is a good idea to disable support for it inside UIViewController.
+	 */
 	if (self.iCloudQuery == nil) {
 		self.fileRemotePath = folderPath;
 		self.operation = LIST_FILES;
-		[self startCloudQuery];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self startCloudQuery];
+		});
 	}else {
 		NSLog (@"ERROR : cannot start a new iQuery before the previous one finishes.");
 		dispatch_async(dispatch_get_current_queue(), ^{
@@ -354,7 +394,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	if (self.iCloudQuery == nil) {
 		self.fileRemotePath = remotePath;
 		self.operation = ITEM_EXISTS;
-		[self startCloudQuery];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self startCloudQuery];
+		});
 	}else {
 		NSLog (@"ERROR : cannot start a new iQuery before the previous one finishes.");
 		dispatch_async(dispatch_get_current_queue(), ^{
@@ -385,7 +427,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 		self.fileLocalPath = fileLocalPath;
 		self.fileRemotePath = fileRemotePath;
 		self.operation = DOWNLOAD_FILE;
-		[self startCloudQuery];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self startCloudQuery];
+		});
 	}else {
 		NSLog (@"ERROR : cannot start a new iQuery before the previous one finishes.");
 		dispatch_async(dispatch_get_current_queue(), ^{
@@ -401,7 +445,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 		self.fileLocalPath = fileLocalPath;
 		self.fileRemotePath = fileRemotePath;
 		self.operation = UPLOAD_FILE;
-		[self startCloudQuery];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self startCloudQuery];
+		});
 	}else {
 		NSLog (@"ERROR : cannot start a new iQuery before the previous one finishes.");
 		dispatch_async(dispatch_get_current_queue(), ^{
@@ -429,7 +475,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 		self.fileRemotePath = oldPath;
 		self.fileRemotePath2 = newPath;
 		self.operation = RENAME_FILE;
-		[self startCloudQuery];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self startCloudQuery];
+		});
 	}else {
 		NSLog (@"ERROR : cannot start a new iQuery before the previous one finishes.");
 		dispatch_async(dispatch_get_current_queue(), ^{
