@@ -19,6 +19,11 @@
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedListDatabaseUids:(NSArray *)databaseUids;
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper listDatabaseUidsFailedWithError:(NSString *)error;
 
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedListBackupIds:(NSArray *)backupIds
+			forDatabase:(NSString *)databaseUid;
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper listBackupIdsForDatabase:(NSString *)databaseUid
+		failedWithError:(NSString *)error;
+
 //upload database call finished successfully
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedUploadingDatabase:(NSString *)databaseUid;
 //generic failure (most likely communication failure with remote servers)
@@ -44,6 +49,15 @@
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper cleanupForDatabase:(NSString *)databaseUid
 failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock;
 
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedDownloadingDatabase:(NSString *)databaseUid
+ andSavedMetadataFileAs:(NSString *)metadataFilePath andDatabaseFileAs:(NSString *)databaseFilePath;
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper downloadDatabase:(NSString *)databaseUid failedWithError:(NSString *)error;
+
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedDownloadingBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid
+ andSavedMetadataFileAs:(NSString *)metadataFilePath andDatabaseFileAs:(NSString *)databaseFilePath;
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper downloadBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid failedWithError:(NSString *)error;
+
+
 @optional
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper attemptingToLockDatabase:(NSString *)databaseUid;
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper successfullyLockedDatabase:(NSString *)databaseUid;
@@ -61,6 +75,7 @@ typedef enum {
 	WAITING,
 	
 	LIST_DATABASE_UIDS = 50,
+	LIST_BACKUP_IDS,
 	
 	UPLOAD_READ_LOCKFILE = 100,
 	UPLOAD_STALLED_OPTIMISTIC_LOCK,
@@ -90,7 +105,10 @@ typedef enum {
 	CLEANUP_DELETE_REDUNDANT_LOCKFILE,
 	CLEANUP_CHECK_BACKUP_FOLDER_EXISTS,
 	CLEANUP_DELETE_OLD_BACKUP,
-	CLEANUP_DELETE_LOCKFILE
+	CLEANUP_DELETE_LOCKFILE,
+	
+	DOWNLOAD_METADATA = 400,
+	DOWNLOAD_DATABASE
 	
 } TSDatabaseWrapperState;
 
@@ -114,6 +132,7 @@ typedef enum {
 - (BOOL)uploadStalledOptimisticLock;
 
 - (BOOL)listDatabaseUids;
+- (BOOL)listBackupIdsForDatabase:(NSString *)databaseUid;
 
 ///start the upload process for the metadata file and the database file
 ///return YES if the command was successfully started (cannot start process if already busy)
@@ -126,13 +145,10 @@ typedef enum {
 - (BOOL)addOptimisticLockForDatabase:(NSString *)databaseUid comment:(NSString *)comment;
 - (BOOL)removeOptimisticLockForDatabase:(NSString *)databaseUid;
 
-
 //deletes old backups, removes any extra lock files that may have been created during concurrent locking attempts
 - (BOOL)cleanupDatabase:(NSString *)databaseUid;
 
-
-#pragma mark - "private" API, only for subclasses
-
-
+- (BOOL)downloadDatabase:(NSString *)databaseUid;
+- (BOOL)downloadBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid;
 
 @end

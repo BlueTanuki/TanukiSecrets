@@ -22,6 +22,9 @@
 @property(nonatomic, copy) NSString *remoteFileRevision;
 @property(nonatomic, copy) NSString *optimisticLockComment;
 
+@property(nonatomic, copy) NSString *downloadDatabaseRemotePrefix;
+@property(nonatomic, copy) NSString *downloadDatabaseLocalPrefix;
+
 @property(nonatomic, strong) NSArray *toBeDeleted;
 @property(nonatomic, assign) NSInteger toBeDeletedIndex;
 
@@ -35,6 +38,8 @@
 state = _state, databaseUid = _databaseUid,
 remoteBackupId = _remoteBackupId, remoteFileRevision = _remoteFileRevision,
 optimisticLockComment = _optimisticLockComment,
+downloadDatabaseRemotePrefix = _downloadDatabaseRemotePrefix,
+downloadDatabaseLocalPrefix = _downloadDatabaseLocalPrefix, 
 toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 #pragma mark - initializers
@@ -64,6 +69,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			return @"WAITING";
 		case LIST_DATABASE_UIDS:
 			return @"LIST_DATABASE_UIDS";
+		case LIST_BACKUP_IDS:
+			return @"LIST_BACKUP_IDS";
 		case UPLOAD_READ_LOCKFILE:
 			return @"UPLOAD_READ_LOCKFILE";
 		case UPLOAD_STALLED_OPTIMISTIC_LOCK:
@@ -116,8 +123,10 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			return @"CLEANUP_DELETE_OLD_BACKUP";
 		case CLEANUP_DELETE_LOCKFILE:
 			return @"CLEANUP_DELETE_LOCKFILE";
-			//		case XXX:
-			//			return @"XXX";
+		case DOWNLOAD_METADATA:
+			return @"DOWNLOAD_METADATA";
+		case DOWNLOAD_DATABASE:
+			return @"DOWNLOAD_DATABASE";
 		default:
 			return @"UNKNOWN";
 	}
@@ -154,12 +163,49 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	return [ret copy];
 }
 
+- (NSString *)downloadRemotePrefix:(NSString *)databaseUid forBackup:(NSString *)backupId
+{
+	NSString *ret = [self.worker rootFolderPath];
+	ret = [ret stringByAppendingPathComponent:databaseUid];
+	if (backupId != nil) {
+		ret = [ret stringByAppendingString:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
+		ret = [ret stringByAppendingPathComponent:backupId];
+	}
+	return ret;
+}
+
+- (NSString *)downloadLocalPrefix:(NSString *)databaseUid forBackup:(NSString *)backupId
+{
+	if (backupId == nil) {
+		return [TSIOUtils temporaryFileNamed:databaseUid];
+	}else {
+		return [TSIOUtils temporaryFileNamed:backupId];
+	}
+}
+
+- (NSString *)downloadRemotePrefix:(NSString *)databaseUid
+{
+	return [self downloadRemotePrefix:databaseUid forBackup:nil];
+}
+
+- (NSString *)downloadLocalPrefix:(NSString *)databaseUid
+{
+	return [self downloadLocalPrefix:databaseUid forBackup:nil];
+}
+
+
 #pragma mark - reused operations
 
 - (void)reportListDatabaseUidsErrorToDelegate:(NSString *)errorText
 {
 	[self setState:IDLE];
 	[self.delegate databaseWrapper:self listDatabaseUidsFailedWithError:errorText];
+}
+
+- (void)reportListBackupIdsErrorToDelegate:(NSString *)errorText
+{
+	[self setState:IDLE];
+	[self.delegate databaseWrapper:self listBackupIdsForDatabase:self.databaseUid failedWithError:errorText];
 }
 
 - (void)reportDatabaseUploadErrorToDelegate:(NSString *)errorText
@@ -184,6 +230,16 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	[self setState:IDLE];
 	[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedWithError:errorText];
+}
+
+- (void)reportDownloadErrorToDelegate:(NSString *)errorText
+{
+	[self setState:IDLE];
+	if (self.remoteBackupId == nil) {
+		[self.delegate databaseWrapper:self downloadDatabase:self.databaseUid failedWithError:errorText];
+	}else {
+		[self.delegate databaseWrapper:self downloadBackup:self.remoteBackupId ofDatabase:self.databaseUid failedWithError:errorText];
+	}
 }
 
 - (void)downloadLockFile
@@ -336,6 +392,20 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	[self setState:UPLOAD_DATABASE];
 }
 
+- (void)downloadDatabase
+{
+	NSString *remotePath = [self.downloadDatabaseRemotePrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE];
+	NSString *localPath = [self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE];
+	[self.worker downloadFile:remotePath andSaveLocallyAs:localPath];
+}
+
+- (void)downloadDatabaseMetadata
+{
+	NSString *remotePath = [self.downloadDatabaseRemotePrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA];
+	NSString *localPath = [self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA];
+	[self.worker downloadFile:remotePath andSaveLocallyAs:localPath];
+}
+
 #pragma mark - TSRemoteStorageDelegate
 
 - (void)listFilesInFolder:(NSString *)folderPath finished:(NSArray *)filenames
@@ -345,6 +415,13 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		case LIST_DATABASE_UIDS: {
 			[self setState:IDLE];
 			[self.delegate databaseWrapper:self finishedListDatabaseUids:[self namesOfMetadataFilesFromFileList:filenames]];
+		}
+			break;
+			
+		case LIST_BACKUP_IDS: {
+			[self setState:IDLE];
+			NSArray *backupIds = [TSBackupUtils backupIds:filenames];
+			[self.delegate databaseWrapper:self finishedListBackupIds:backupIds forDatabase:self.databaseUid];
 		}
 			break;
 			
@@ -376,7 +453,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			NSString *backupsFolderName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
 			NSString *backupsFolderRemotePath = [[self.worker rootFolderPath] stringByAppendingPathComponent:backupsFolderName];
 			
-			NSArray *retainedFiles = [TSBackupUtils retainOnlyNeededBackups:filenames];
+			NSArray *retainedFiles = [TSBackupUtils retainOnly:TS_NUMBER_OF_REMOTE_BACKUPS backups:filenames];
 			for (NSString *filename in filenames) {
 				if ([retainedFiles containsObject:filename] == NO) {
 					NSString *path = [backupsFolderRemotePath stringByAppendingPathComponent:filename];
@@ -409,6 +486,13 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
 			[self reportListDatabaseUidsErrorToDelegate:[error description]];
+		}
+			break;
+			
+		case LIST_BACKUP_IDS: {
+			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+			[self reportListBackupIdsErrorToDelegate:[error description]];
 		}
 			break;
 			
@@ -701,6 +785,26 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
+		case DOWNLOAD_METADATA: {
+			[self downloadDatabase];
+			[self setState:DOWNLOAD_DATABASE];
+		}
+			break;
+			
+		case DOWNLOAD_DATABASE: {
+			[self setState:IDLE];
+			if (self.remoteBackupId == nil) {
+				[self.delegate databaseWrapper:self finishedDownloadingDatabase:self.databaseUid
+						andSavedMetadataFileAs:[self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA]
+							 andDatabaseFileAs:[self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE]];
+			}else {
+				[self.delegate databaseWrapper:self finishedDownloadingBackup:self.remoteBackupId ofDatabase:self.databaseUid
+						andSavedMetadataFileAs:[self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA]
+							 andDatabaseFileAs:[self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE]];
+			}
+		}
+			break;
+			
 		default: {
 			[self stateTransitionError:@"file download"];
 		}
@@ -774,6 +878,20 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		{
 			NSLog (@"Lockfile download failed :: %@", [error debugDescription]);
 			[self reportCleanupErrorToDelegate:@"Failed to check the recently uploaded lockfile!"];
+		}
+			break;
+			
+		case DOWNLOAD_METADATA: {
+			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+			[self reportDownloadErrorToDelegate:@"Download of the metadata file failed."];
+		}
+			break;
+			
+		case DOWNLOAD_DATABASE: {
+			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
+				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
+			[self reportDownloadErrorToDelegate:@"Download of the database file failed."];
 		}
 			break;
 			
@@ -994,6 +1112,18 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	return NO;
 }
 
+- (BOOL)listBackupIdsForDatabase:(NSString *)databaseUid
+{
+	if (self.state == IDLE) {
+		self.databaseUid = databaseUid;
+		[self listBackupsFolderContent];
+		[self setState:LIST_BACKUP_IDS];
+		return YES;
+	}
+	NSLog (@"Rejected listBackupIdsForDatabase request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
+	return NO;
+}
+
 - (BOOL)uploadDatabaseWithUid:(NSString *)databaseUid
 {
 //	NSLog (@"uploadDatabaseWithUid uid : %@", databaseUid);
@@ -1072,5 +1202,34 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	return NO;
 }
 
+- (BOOL)downloadDatabase:(NSString *)databaseUid
+{
+	if (self.state == IDLE) {
+		self.downloadDatabaseRemotePrefix = [self downloadRemotePrefix:databaseUid];
+		self.downloadDatabaseLocalPrefix = [self downloadLocalPrefix:databaseUid];
+		self.databaseUid = databaseUid;
+		self.remoteBackupId = nil;
+		[self downloadDatabaseMetadata];
+		[self setState:DOWNLOAD_METADATA];
+		return YES;
+	}
+	NSLog (@"Rejected downloadDatabase request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
+	return NO;
+}
+
+- (BOOL)downloadBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid
+{
+	if (self.state == IDLE) {
+		self.downloadDatabaseRemotePrefix = [self downloadRemotePrefix:databaseUid forBackup:backupId];
+		self.downloadDatabaseLocalPrefix = [self downloadLocalPrefix:databaseUid forBackup:backupId];
+		self.databaseUid = databaseUid;
+		self.remoteBackupId = backupId;
+		[self downloadDatabaseMetadata];
+		[self setState:DOWNLOAD_METADATA];
+		return YES;
+	}
+	NSLog (@"Rejected downloadDatabaseBackup request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
+	return NO;
+}
 
 @end

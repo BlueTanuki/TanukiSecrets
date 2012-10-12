@@ -21,6 +21,7 @@
 		9F57C2031611E3590085703E /* TSNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57C2021611E3590085703E /* TSNavigationController.m */; };
 		9F57C20A16146E420085703E /* TSBackupUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57C20916146E420085703E /* TSBackupUtils.m */; };
 		9F57C20E161734400085703E /* TSUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57C20D1617343E0085703E /* TSUtils.m */; };
+		9F8E0369162837B60040662C /* TSDbStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E0368162837B60040662C /* TSDbStatusViewController.m */; };
 		9F8ED46615B98C6A00391EF8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46515B98C6A00391EF8 /* UIKit.framework */; };
 		9F8ED46815B98C6A00391EF8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46715B98C6A00391EF8 /* Foundation.framework */; };
 		9F8ED46A15B98C6A00391EF8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46915B98C6A00391EF8 /* CoreGraphics.framework */; };
@@ -104,6 +105,8 @@
 		9F57C20916146E420085703E /* TSBackupUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSBackupUtils.m; sourceTree = "<group>"; };
 		9F57C20C1617343C0085703E /* TSUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUtils.h; sourceTree = "<group>"; };
 		9F57C20D1617343E0085703E /* TSUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUtils.m; sourceTree = "<group>"; };
+		9F8E0367162837B60040662C /* TSDbStatusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDbStatusViewController.h; sourceTree = "<group>"; };
+		9F8E0368162837B60040662C /* TSDbStatusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDbStatusViewController.m; sourceTree = "<group>"; };
 		9F8ED46115B98C6A00391EF8 /* TanukiSecrets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TanukiSecrets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F8ED46515B98C6A00391EF8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		9F8ED46715B98C6A00391EF8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -367,14 +370,16 @@
 		9F8ED4B015B9A0AC00391EF8 /* sandbox */ = {
 			isa = PBXGroup;
 			children = (
+				9F8E0367162837B60040662C /* TSDbStatusViewController.h */,
+				9F8E0368162837B60040662C /* TSDbStatusViewController.m */,
 				9F8ED4B215B9A0EB00391EF8 /* TSFilesystemTableViewController.h */,
 				9F8ED4B315B9A0EB00391EF8 /* TSFilesystemTableViewController.m */,
-				9FEC4E0715C93F0D008B18D5 /* TSUnlockViewController.h */,
-				9FEC4E0815C93F0D008B18D5 /* TSUnlockViewController.m */,
-				9FEC4E3C15CAA386008B18D5 /* TSListOfItems.h */,
-				9FEC4E3D15CAA386008B18D5 /* TSListOfItems.m */,
 				9FEC4E3F15CAA396008B18D5 /* TSItem.h */,
 				9FEC4E4015CAA396008B18D5 /* TSItem.m */,
+				9FEC4E3C15CAA386008B18D5 /* TSListOfItems.h */,
+				9FEC4E3D15CAA386008B18D5 /* TSListOfItems.m */,
+				9FEC4E0715C93F0D008B18D5 /* TSUnlockViewController.h */,
+				9FEC4E0815C93F0D008B18D5 /* TSUnlockViewController.m */,
 			);
 			path = sandbox;
 			sourceTree = "<group>";
@@ -612,6 +617,7 @@
 				9FC16205161F081700094E43 /* TSDatabaseWrapper.m in Sources */,
 				9F967746162055AE00C9182D /* TSiCloudWrapper.m in Sources */,
 				9F96775E162096C700C9182D /* TSUIDocument.m in Sources */,
+				9F8E0369162837B60040662C /* TSDbStatusViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

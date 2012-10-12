@@ -80,10 +80,10 @@
 		CC_SHA512(buf + (i - 2) * CC_SHA512_DIGEST_LENGTH, CC_SHA512_DIGEST_LENGTH,
 				  buf + i * CC_SHA512_DIGEST_LENGTH);
 	}
-	
-	NSData *bytes = [NSData dataWithBytes:buf length:bufSize];
+	unsigned char hash[CC_MD5_DIGEST_LENGTH];
+	CC_MD5(buf, bufSize, hash);
+	NSData *ret = [NSData dataWithBytes:hash length:CC_MD5_DIGEST_LENGTH];
 	free(buf);
-	NSData *ret = [self md5:bytes];
 	return ret;
 }
 

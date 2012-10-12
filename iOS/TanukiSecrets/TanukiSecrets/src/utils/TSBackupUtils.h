@@ -44,6 +44,6 @@
  Note : this method returns only the name of the files, even if the input 
  contained absolute paths.
  */
-+ (NSArray *)retainOnlyNeededBackups:(NSArray *)fileNames;
++ (NSArray *)retainOnly:(NSInteger)numberOfBackups backups:(NSArray *)fileNames;
 
 @end

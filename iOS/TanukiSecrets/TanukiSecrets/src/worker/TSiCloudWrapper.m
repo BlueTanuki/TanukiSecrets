@@ -10,6 +10,7 @@
 
 #import "TSStringUtils.h"
 #import "TSUIDocument.h"
+#import "TSIOUtils.h"
 
 @interface TSiCloudWrapper()
 
@@ -209,7 +210,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 - (void)iCloudFinishedGathering:(NSNotification *)notification
 {
 	[self.iCloudQuery disableUpdates];
-	[self debugCloudQueryResult:NO];
+//	[self debugCloudQueryResult:NO];
 	NSUInteger resultCount = [self.iCloudQuery resultCount];
 	NSMutableArray *aux = [NSMutableArray arrayWithCapacity:resultCount];
 	for (int i=0; i<resultCount; i++) {
@@ -290,61 +291,64 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 			//not sure how to properly implement this in a single step, so doing it in two steps
 			NSURL *oldURL = [self urlForRemoteCloudPath:self.fileRemotePath];
 			if ([[NSFileManager defaultManager] fileExistsAtPath:[oldURL path]]) {
-				NSLog (@"%@", oldURL);
-				NSData *data = [NSData dataWithContentsOfURL:oldURL];
-				NSLog (@"%d", data.length);
-				ios5 : data.length > 0
-				ios6 : data is nil (i.e. file content is NOT LOADED!!!!!!!!!!!!!!!)
-				
-				NSFileCoordinator* fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-				NSError *error;
-				[fileCoordinator coordinateWritingItemAtURL:oldURL options:NSFileCoordinatorWritingForDeleting error:&error byAccessor:^(NSURL* writingURL) {
-					NSURL *newURL = [self urlForRemoteCloudPath:self.fileRemotePath2];
-					BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:[newURL path]];
-					
-					NSString *parentFolderPath = [[newURL path] stringByDeletingLastPathComponent];
-					BOOL parentIsDirectory;
-					BOOL parentExists = [[NSFileManager defaultManager] fileExistsAtPath:parentFolderPath isDirectory:&parentIsDirectory];
-					if (parentExists == NO) {
-						[[NSFileManager defaultManager] createDirectoryAtPath:parentFolderPath withIntermediateDirectories:YES attributes:nil error:nil];
+				NSString *temporaryLocation = [TSIOUtils temporaryFileNamed:[oldURL lastPathComponent]];
+				TSUIDocument *document = [[TSUIDocument alloc] initWithFileURL:oldURL];
+				[document openWithCompletionHandler:^(BOOL success) {
+					if (success) {
+						if ([document saveToLocalFilesystem:temporaryLocation]) {
+							[document closeWithCompletionHandler:^(BOOL success) {
+								if (success) {
+									NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+									NSError *error;
+									[fileCoordinator coordinateWritingItemAtURL:oldURL options:NSFileCoordinatorWritingForDeleting error:&error byAccessor:^(NSURL* writingURL) {
+										NSURL *newURL = [self urlForRemoteCloudPath:self.fileRemotePath2];
+										BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:[newURL path]];
+										
+										NSString *parentFolderPath = [[newURL path] stringByDeletingLastPathComponent];
+										BOOL parentIsDirectory;
+										BOOL parentExists = [[NSFileManager defaultManager] fileExistsAtPath:parentFolderPath isDirectory:&parentIsDirectory];
+										if (parentExists == NO) {
+											[[NSFileManager defaultManager] createDirectoryAtPath:parentFolderPath withIntermediateDirectories:YES attributes:nil error:nil];
+										}
+										
+										UIDocumentSaveOperation createOrOverwrite = exists ? UIDocumentSaveForOverwriting : UIDocumentSaveForCreating;
+										TSUIDocument *document = [[TSUIDocument alloc] initWithFileURL:newURL];
+										document.tsuiDocData = [NSData dataWithContentsOfFile:temporaryLocation];
+										[document saveToURL:document.fileURL
+										   forSaveOperation:createOrOverwrite
+										  completionHandler:^(BOOL success) {
+											  if (success) {
+												  // Saving implicitly opens the file. An open document will restore the its (remotely) deleted file representation.
+												  [document closeWithCompletionHandler:nil];
+												  NSError *error2;
+												  BOOL ok = [[NSFileManager defaultManager] removeItemAtURL:writingURL error:&error2];
+												  if (ok) {
+													  [self.delegate renamedFile:self.fileRemotePath as:self.fileRemotePath2];
+												  }else {
+													  [self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:error2];
+												  }
+											  }else {
+												  NSLog(@"%s error while saving", __PRETTY_FUNCTION__);
+												  [self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"iCloud problem"]];
+											  }
+										  }];
+									}];
+									if (error) {
+										[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:error];
+									}
+								}else {
+									[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"failed to close source document after opening it for reading"]];
+								}
+							}];
+						}else {
+							[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"could not create a local copy of the file"]];
+							[document closeWithCompletionHandler:nil];
+						}
+					}else {
+						[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"could not open source for reading"]];
+						[document closeWithCompletionHandler:nil];
 					}
-					
-					UIDocumentSaveOperation createOrOverwrite = exists ? UIDocumentSaveForOverwriting : UIDocumentSaveForCreating;
-					TSUIDocument *document = [[TSUIDocument alloc] initWithFileURL:newURL];
-					NSLog (@"%d", [document.tsuiDocData length]);
-					NSLog (@"%@", oldURL);
-					NSLog (@"%@", writingURL);
-					document.tsuiDocData = [NSData dataWithContentsOfURL:writingURL];
-					NSLog (@"%d", [document.tsuiDocData length]);
-					
-					DIFFERENCE between iOS 5 and 6 :: the file is empty, maybe it needs to be explicitly read...
-					this portion needs to be rewritten !!!!
-					
-					if (document.tsuiDocData == nil) {
-						NSLog (@"FAIL :: document at %@ no longer has any data!!!", writingURL);
-					}
-					[document saveToURL:document.fileURL
-					   forSaveOperation:createOrOverwrite
-					  completionHandler:^(BOOL success) {
-						  if (success) {
-							  // Saving implicitly opens the file. An open document will restore the its (remotely) deleted file representation.
-							  [document closeWithCompletionHandler:nil];
-							  NSError *error2;
-							  BOOL ok = [[NSFileManager defaultManager] removeItemAtURL:writingURL error:&error2];
-							  if (ok) {
-								  [self.delegate renamedFile:self.fileRemotePath as:self.fileRemotePath2];
-							  }else {
-								  [self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:error2];
-							  }
-						  }else {
-							  NSLog(@"%s error while saving", __PRETTY_FUNCTION__);
-							  [self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"iCloud problem"]];
-						  }
-					  }];
 				}];
-				if (error) {
-					[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:error];
-				}
 			}else {
 				[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"source does not exist"]];
 			}
@@ -369,7 +373,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	/*
 	 NOTE on dispatch_async :: NSURLConnections created in async mode cause problems
 	 when the method that creates the object is executed from a background thread.
-	 (it seems the connection gets freed because the thread thinks it should be freed or something)
+	 (it seems the connection gets freed or something)
 	 This pretty much means that the caller has to take care and know to only call
 	 such methods from the main thread... ;_;
 	 Yet another fuckup from the brilliant minds that decided iPhone does not need

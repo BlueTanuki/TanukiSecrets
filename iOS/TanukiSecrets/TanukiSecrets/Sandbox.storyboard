@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2843" systemVersion="12C54" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4cE-kc-Zx9">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2843" systemVersion="12C60" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4cE-kc-Zx9">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1929"/>
     </dependencies>
@@ -303,6 +303,21 @@
                                     <action selector="iClean:" destination="Rdo-KC-Vnd" eventType="touchUpInside" id="ed3-cn-qx9"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="gw1-ky-iQG">
+                                <rect key="frame" x="205" y="353" width="95" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="Db Status">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="BcK-eM-r2F" kind="push" id="puh-Sk-URF"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -338,13 +353,52 @@
             </objects>
             <point key="canvasLocation" x="372" y="-984"/>
         </scene>
+        <!--Db Status View Controller-->
+        <scene sceneID="1bl-m2-65T">
+            <objects>
+                <tableViewController id="BcK-eM-r2F" customClass="TSDbStatusViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="ciG-IV-Mn8">
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FSCell" textLabel="gIU-an-idd" style="IBUITableViewCellStyleDefault" id="NI9-5E-WVo">
+                                <rect key="frame" x="0.0" y="46" width="320" height="46"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="10" y="1" width="300" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="gIU-an-idd">
+                                            <rect key="frame" x="10" y="0.0" width="280" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="BcK-eM-r2F" id="jpQ-yj-htu"/>
+                            <outlet property="delegate" destination="BcK-eM-r2F" id="tYl-2a-Hg9"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="u1y-ca-kp4"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sxW-qW-Ri0" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="898" y="-270"/>
+        </scene>
     </scenes>
     <classes>
+        <class className="TSDbStatusViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSDbStatusViewController.h"/>
+        </class>
         <class className="TSFilesystemTableViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSFilesystemTableViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="addDropboxItem:" candidateClass="UIButton"/>
-            </relationships>
         </class>
         <class className="TSNavigationController" superclassName="UINavigationController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNavigationController.h"/>
@@ -357,6 +411,10 @@
                 <relationship kind="action" name="createTestDatabase:" candidateClass="UIButton"/>
                 <relationship kind="action" name="dropboxUpdateTest:" candidateClass="UIButton"/>
                 <relationship kind="action" name="go:"/>
+                <relationship kind="action" name="iClean:"/>
+                <relationship kind="action" name="iLock:"/>
+                <relationship kind="action" name="iUnlock:"/>
+                <relationship kind="action" name="iUpdate:"/>
                 <relationship kind="action" name="manyUpdatesWithBackups:" candidateClass="UIButton"/>
                 <relationship kind="action" name="removeOptimisticLock:" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="onOffSwitch" candidateClass="UISwitch"/>

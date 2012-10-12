@@ -389,7 +389,7 @@
 	NSArray *fileNames = [self listFilesForDirectory:backupsFolder filenameOnly:YES];
 //	NSLog (@"Before cleanup : %@", fileNames);
 	
-	NSArray *retainedFiles = [TSBackupUtils retainOnlyNeededBackups:fileNames];
+	NSArray *retainedFiles = [TSBackupUtils retainOnly: TS_NUMBER_OF_LOCAL_BACKUPS backups:fileNames];
 //	NSLog (@"Retained files : %@", retainedFiles);
 	for (NSString *filename in fileNames) {
 		if ([retainedFiles containsObject:filename] == NO) {

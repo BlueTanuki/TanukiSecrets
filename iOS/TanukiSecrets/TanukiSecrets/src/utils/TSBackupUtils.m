@@ -65,12 +65,12 @@ static NSDateFormatter *backupIdDateFormat = nil;
 	return [backupIds copy];
 }
 
-+ (NSArray *)retainOnlyNeededBackups:(NSArray *)fileNames
++ (NSArray *)retainOnly:(NSInteger)numberOfBackups backups:(NSArray *)fileNames
 {
 	NSArray *allBackupIds = [self backupIds:fileNames];
 	NSArray *retainedBackupIds = allBackupIds;
-	if ([allBackupIds count] > TS_NUMBER_OF_BACKUPS) {
-		retainedBackupIds = [allBackupIds subarrayWithRange:NSMakeRange(0, TS_NUMBER_OF_BACKUPS)];
+	if ([allBackupIds count] > numberOfBackups) {
+		retainedBackupIds = [allBackupIds subarrayWithRange:NSMakeRange(0, numberOfBackups)];
 	}
 	NSMutableArray *retainedFiles = [NSMutableArray array];
 	for (NSString *backupId in retainedBackupIds) {

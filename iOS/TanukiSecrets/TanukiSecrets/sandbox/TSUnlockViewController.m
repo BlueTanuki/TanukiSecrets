@@ -435,6 +435,36 @@ BOOL firstTimeSegueTriggered = NO;
 	[TSNotifierUtils error:[NSString stringWithFormat:@"Cleanup FAILED for %@", databaseUid]];
 }
 
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedListBackupIds:(NSArray *)backupIds forDatabase:(NSString *)databaseUid
+{
+	NSLog(@"TSDatabaseWrapperDelegate callback :: %s", __PRETTY_FUNCTION__);
+}
+
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper listBackupIdsForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
+{
+	NSLog(@"TSDatabaseWrapperDelegate callback :: %s", __PRETTY_FUNCTION__);	
+}
+
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedDownloadingDatabase:(NSString *)databaseUid andSavedMetadataFileAs:(NSString *)metadataFilePath andDatabaseFileAs:(NSString *)databaseFilePath
+{
+	NSLog(@"TSDatabaseWrapperDelegate callback :: %s", __PRETTY_FUNCTION__);
+}
+
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper downloadDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
+{
+	NSLog(@"TSDatabaseWrapperDelegate callback :: %s", __PRETTY_FUNCTION__);
+}
+
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedDownloadingBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid andSavedMetadataFileAs:(NSString *)metadataFilePath andDatabaseFileAs:(NSString *)databaseFilePath
+{
+	NSLog(@"TSDatabaseWrapperDelegate callback :: %s", __PRETTY_FUNCTION__);
+}
+
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper downloadBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
+{
+	NSLog(@"TSDatabaseWrapperDelegate callback :: %s", __PRETTY_FUNCTION__);
+}
+
 #pragma mark - Listeners
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
