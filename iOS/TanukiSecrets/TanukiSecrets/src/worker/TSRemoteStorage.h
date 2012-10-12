@@ -46,7 +46,8 @@ typedef enum {
 	DOWNLOAD_FILE,
 	UPLOAD_FILE,
 	DELETE_FILE,
-	RENAME_FILE
+	RENAME_FILE,
+	CHECK_CONFLICT_STATUS
 } TSRemoteStorageOperation;
 
 @protocol TSRemoteStorage <NSObject>

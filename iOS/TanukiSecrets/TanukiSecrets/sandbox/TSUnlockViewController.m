@@ -24,11 +24,13 @@
 #import "TSIOUtils.h"
 #import "TSDatabaseWrapper.h"
 #import "TSDeviceUtils.h"
+#import "TSiCloudWrapper.h"
 
 @interface TSUnlockViewController () <UITextFieldDelegate, TSDatabaseWrapperDelegate>
 
 @property(nonatomic, strong) TSDatabaseWrapper *dropboxWrapper;
 @property(nonatomic, strong) TSDatabaseWrapper *iCloudWrapper;
+@property(nonatomic, strong) TSiCloudWrapper *directCloudAccess;
 
 @property(nonatomic, strong) TSDatabase *reusedDatabase;
 @property(nonatomic, strong) TSDatabaseMetadata *reusedDatabaseMetadata;
@@ -47,7 +49,8 @@
 
 @synthesize dropboxWrapper = _dropboxWrapper, iCloudWrapper = _iCloudWrapper, 
 reusedDatabase = _reusedDatabase, reusedDatabaseMetadata = _reusedDatabaseMetadata,
-toBeCleanedUp = _toBeCleanedUp, toBeCleanedUpIndex = _toBeCleanedUpIndex;
+toBeCleanedUp = _toBeCleanedUp, toBeCleanedUpIndex = _toBeCleanedUpIndex,
+directCloudAccess = _directCloudAccess;
 
 @synthesize unlockCodeTextField;
 @synthesize unlockCodeLabel;
@@ -71,6 +74,15 @@ BOOL firstTimeSegueTriggered = NO;
 		_iCloudWrapper = [TSSharedState iCloudWrapperForDelegate:self];
 	}
 	return _iCloudWrapper;
+}
+
+- (TSiCloudWrapper *)directCloudAccess
+{
+	if (_directCloudAccess == nil) {
+		_directCloudAccess = [[TSiCloudWrapper alloc] init];
+		[_directCloudAccess refreshUbiquityContainerURL];
+	}
+	return _directCloudAccess;
 }
 
 - (TSDatabaseMetadata *)reusedDatabaseMetadata
@@ -465,6 +477,7 @@ BOOL firstTimeSegueTriggered = NO;
 	NSLog(@"TSDatabaseWrapperDelegate callback :: %s", __PRETTY_FUNCTION__);
 }
 
+
 #pragma mark - Listeners
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -624,6 +637,11 @@ BOOL firstTimeSegueTriggered = NO;
 		return;
 	}
 	[self.iCloudWrapper listDatabaseUids];
+}
+
+- (IBAction)iCheckForConflicts:(id)sender {
+	NSLog (@"iCheckForConflicts");
+	[self.directCloudAccess checkConflicts];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

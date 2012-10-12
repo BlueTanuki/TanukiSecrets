@@ -14,4 +14,6 @@
 
 - (void)refreshUbiquityContainerURL;
 
+- (void)checkConflicts;
+
 @end

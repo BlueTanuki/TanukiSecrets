@@ -355,6 +355,16 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 		}
 			break;
 			
+		case CHECK_CONFLICT_STATUS: {
+			for (NSURL *itemURL in itemURLs) {
+				NSFileVersion *currentVersion = [NSFileVersion currentVersionOfItemAtURL:itemURL];
+				if (currentVersion.conflict) {
+					NSLog (@"Item %@ IN CONFLICT", itemURL);
+				}
+			}
+		}
+			break;
+			
 		default:
 			NSLog (@"ERROR : received iCloudFinishedGathering notification but was not expecting any results (current operation is %d)", self.operation);
 			break;
@@ -390,6 +400,20 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 		dispatch_async(dispatch_get_current_queue(), ^{
 			[self.delegate listFilesInFolder:folderPath failedWithError:[TSStringUtils simpleError:@"another iQuery is still running"]];
 		});
+	}
+}
+
+- (void)checkConflicts
+{
+	if (self.iCloudQuery == nil) {
+		self.operation = CHECK_CONFLICT_STATUS;
+		self.fileRemotePath = @"/";
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self startCloudQuery];
+			NSLog (@"Started query.");
+		});
+	}else {
+		NSLog (@"ERROR : cannot start a new iQuery before the previous one finishes.");
 	}
 }
 
