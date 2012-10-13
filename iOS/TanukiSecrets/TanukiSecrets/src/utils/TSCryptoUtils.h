@@ -30,8 +30,8 @@
 
 #pragma mark - Encryption
 
-+ (NSData *) aes128CbcWithPaddingEncrypt:(NSData *)data usingKey:(NSData *)key andIV:(NSData *)iv;
-+ (NSData *) aes128CbcWithPaddingDecrypt:(NSData *)data usingKey:(NSData *)key andIV:(NSData *)iv;
++ (NSData *) aesCbcWithPaddingEncrypt:(NSData *)data usingKey:(NSData *)key andIV:(NSData *)iv;
++ (NSData *) aesCbcWithPaddingDecrypt:(NSData *)data usingKey:(NSData *)key andIV:(NSData *)iv;
 
 + (NSData *) tanukiEncrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt;
 + (NSData *) tanukiDecrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt;

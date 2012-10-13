@@ -30,7 +30,7 @@ public class OpensslDecryptHelper {
 		String keyString = Hex.encodeHexString (key);
 		String ivString = Hex.encodeHexString (iv);
 		System.out.println ("Execute the following command : \n"
-				  + "openssl enc -d -aes-128-cbc -in /path/to/encryptedFile -out /path/to/decryptedFile " 
+				  + "openssl enc -d -aes-256-cbc -in /path/to/encryptedFile -out /path/to/decryptedFile " 
 				  + "-K " + keyString + " -iv " + ivString + " -nosalt");
 	}
 

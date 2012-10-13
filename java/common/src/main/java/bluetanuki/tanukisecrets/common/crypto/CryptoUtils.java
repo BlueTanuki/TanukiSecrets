@@ -17,7 +17,7 @@ import org.apache.commons.codec.digest.DigestUtils;
  */
 public class CryptoUtils {
 	
-	private static byte[] aes128CbcWithPadding (byte[] data, byte[] key, byte[] iv, boolean decrypt) throws Exception {
+	private static byte[] aesCbcWithPadding (byte[] data, byte[] key, byte[] iv, boolean decrypt) throws Exception {
 		SecretKeySpec keySpec = new SecretKeySpec (key, "AES");
 
 		Cipher cipher = Cipher.getInstance ("AES/CBC/PKCS5Padding");
@@ -31,7 +31,7 @@ public class CryptoUtils {
 		return cipher.doFinal (data);
 	}
 	
-	private static byte[] aes128CbcWithoutPadding (byte[] encrypted, byte[] key, byte[] iv, boolean decrypt) throws Exception {
+	private static byte[] aesCbcWithoutPadding (byte[] encrypted, byte[] key, byte[] iv, boolean decrypt) throws Exception {
 		SecretKeySpec keySpec = new SecretKeySpec (key, "AES");
 
 		Cipher cipher = Cipher.getInstance ("AES/CBC/NOPadding");
@@ -46,23 +46,23 @@ public class CryptoUtils {
 	}
 	
 	/**
-	 *  Helper function to decrypt a AES128-encrypted byte array. This method should be used if 
+	 *  Helper function to decrypt a AES-encrypted byte array. This method should be used if 
 	 * the encryption was done in CBC mode with PKCS7 padding and initialization vector. 
 	 */
-	public static byte[] decryptAes128CbcWithPadding (byte[] encrypted, byte[] key, byte[] iv) throws Exception {
-		return aes128CbcWithPadding (encrypted, key, iv, true);
+	public static byte[] decryptAesCbcWithPadding (byte[] encrypted, byte[] key, byte[] iv) throws Exception {
+		return aesCbcWithPadding (encrypted, key, iv, true);
 	}
 	
 	public static byte[] tanukiDecrypt (byte[] encrypted, String secret, byte[] salt) throws Exception {
 		byte[] key = HashFunctions.tanukiHash (secret, salt);
 		byte[] iv = DigestUtils.md5 (salt);
-		return decryptAes128CbcWithPadding (encrypted, key, iv);
+		return decryptAesCbcWithPadding (encrypted, key, iv);
 	}
 	
 	public static byte[] tanukiDecryptField (byte[] encrypted, String secret, String patentItemId) throws Exception {
 		byte[] key = DigestUtils.md5 (secret.getBytes ("UTF-8"));
 		byte[] iv = DigestUtils.md5 (patentItemId.getBytes ("UTF-8"));
-		return decryptAes128CbcWithPadding (encrypted, key, iv);
+		return decryptAesCbcWithPadding (encrypted, key, iv);
 	}
 	
 }

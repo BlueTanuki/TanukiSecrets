@@ -1,6 +1,10 @@
 package bluetanuki.tanukisecrets.common.crypto;
 
 import java.nio.ByteBuffer;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.KeySpec;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 
@@ -33,7 +37,7 @@ public class HashFunctions {
 	 * - set newA = sha512 (a) and newB = sha512 (b)
 	 * - write these new values to the next two unoccupied slices of the buffer
 	 * - update a = newA, b = newB to prepare for the next step
-	 * 3. the return value is the md5 of the entire 13MB buffer.
+	 * 3. the return value is the sha256 of the entire 13MB buffer.
 	 */
 	public static byte[] tanukiHash (byte[] secret, byte[] salt) {
 		long start = System.currentTimeMillis ();
@@ -56,9 +60,32 @@ public class HashFunctions {
 			b = newB;
 		}
 		
-		byte[] ret = DigestUtils.md5 (buf);
+		byte[] ret = DigestUtils.sha256 (buf);
 		long end = System.currentTimeMillis ();
 		LOGGER.debug ("tanukiHash took " + (end - start) + " milliseconds");
+		return ret;
+	}
+	
+	/* 
+	 * It would be nice if we cound use this, but iOS side is unable to produce a key 
+	 * of the size I want (appears to only work for 16, 32 byte keys).
+	 */
+	public static byte[] tanukiHashPBKDF2 (String secret, byte[] salt) throws Exception {
+		return HashFunctions.tanukiHashPBKDF2 (secret.toCharArray (), salt);
+	}
+	
+	public static byte[] tanukiHashPBKDF2 (char[] secret, byte[] salt) throws Exception {
+		long start = System.currentTimeMillis ();
+		int derivedKeyLength = 1024 * 1024 * 13;
+
+		String algorithm = "PBKDF2WithHmacSHA1";
+		int iterations = 100;
+		KeySpec spec = new PBEKeySpec(secret, salt, iterations, derivedKeyLength);
+		SecretKeyFactory f = SecretKeyFactory.getInstance(algorithm);
+		
+		byte[] ret = DigestUtils.sha256 (f.generateSecret(spec).getEncoded());
+		long end = System.currentTimeMillis ();
+		LOGGER.info ("tanukiHash took " + (end - start) + " milliseconds");
 		return ret;
 	}
 
