@@ -106,8 +106,8 @@ public class Decrypt {
 	}
 	
 	public static void main (String[] args) throws Exception {
-//		decryptAllEncryptedFields (args);
 		decryptAllTSMs (args);
+		decryptAllEncryptedFields (args);
 	}
 	
 }

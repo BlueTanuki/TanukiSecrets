@@ -1,10 +1,8 @@
 package bluetanuki.tanukisecrets.common.crypto;
 
 import java.nio.ByteBuffer;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.KeySpec;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 
@@ -19,8 +17,8 @@ public class HashFunctions {
 	/**
 	 *   Convenience method, shorthand for tanukiHash (secret.getBytes ("UTF-8"), salt).
 	 */
-	public static byte[] tanukiHash (String secret, byte[] salt) throws Exception {
-		return HashFunctions.tanukiHash (secret.getBytes ("UTF-8"), salt);
+	public static byte[] tanukiHashXX (String secret, byte[] salt) throws Exception {
+		return HashFunctions.tanukiHashXX (secret.getBytes ("UTF-8"), salt);
 	}
 	
 	/**
@@ -38,8 +36,10 @@ public class HashFunctions {
 	 * - write these new values to the next two unoccupied slices of the buffer
 	 * - update a = newA, b = newB to prepare for the next step
 	 * 3. the return value is the sha256 of the entire 13MB buffer.
+	 * 
+	 * @deprecated 
 	 */
-	public static byte[] tanukiHash (byte[] secret, byte[] salt) {
+	public static byte[] tanukiHashXX (byte[] secret, byte[] salt) {
 		long start = System.currentTimeMillis ();
 		int bufSize = 1024 * 1024 * 13;
 		byte[] buf = new byte[bufSize];
@@ -66,24 +66,51 @@ public class HashFunctions {
 		return ret;
 	}
 	
-	/* 
-	 * It would be nice if we cound use this, but iOS side is unable to produce a key 
-	 * of the size I want (appears to only work for 16, 32 byte keys).
+	/**
+	 *   Convenience method, shorthand for tanukiHash (secret.getBytes ("UTF-8"), salt).
 	 */
-	public static byte[] tanukiHashPBKDF2 (String secret, byte[] salt) throws Exception {
-		return HashFunctions.tanukiHashPBKDF2 (secret.toCharArray (), salt);
+	public static byte[] tanukiHash (String secret, byte[] salt) throws Exception {
+		return HashFunctions.tanukiHash (secret.getBytes ("UTF-8"), salt);
 	}
 	
-	public static byte[] tanukiHashPBKDF2 (char[] secret, byte[] salt) throws Exception {
+	/**
+	 *   Slightly modified PBKDF2 implementation. Customizations and algorithm choices:
+	 * - the used PRF is HMAC-SHA512
+	 * - the changes were made so that the computation uses 13*1024*1024 bytes 
+	 * (212'992 iterations in standard PBKDF2)
+	 * - the U_1...U_212992 values are not XOR'd, but are kept in a big buffer,
+	 * the buffer is populated in reverse order (U_1 is last in the buffer, this 
+	 * should make it impossible to compute the hash of the array in parallel with the array)
+	 * - the output is a SHA256 of the entire 13MB array.
+	 * 
+	 */
+	public static byte[] tanukiHash (byte[] secret, byte[] salt) throws Exception {
 		long start = System.currentTimeMillis ();
-		int derivedKeyLength = 1024 * 1024 * 13;
-
-		String algorithm = "PBKDF2WithHmacSHA1";
-		int iterations = 100;
-		KeySpec spec = new PBEKeySpec(secret, salt, iterations, derivedKeyLength);
-		SecretKeyFactory f = SecretKeyFactory.getInstance(algorithm);
 		
-		byte[] ret = DigestUtils.sha256 (f.generateSecret(spec).getEncoded());
+		int bufSize = 1024 * 1024 * 13;
+		byte[] buf = new byte[bufSize];
+		Mac mac = Mac.getInstance ("HmacSHA512");
+		SecretKeySpec keySpec = new SecretKeySpec (secret, "HmacSHA512");
+		mac.init (keySpec);
+		
+		int SHA512_LENGTH = 64;
+		int n = bufSize / SHA512_LENGTH;
+		byte[] aux = mac.doFinal (salt);
+		if (aux.length != SHA512_LENGTH) {
+			throw new IllegalStateException ("The result of a HmacSHA512 operation had " + 
+					  aux.length + " bytes!");
+		}
+		System.arraycopy (aux, 0, buf, (n-1)*SHA512_LENGTH, SHA512_LENGTH);
+		for (int i=1; i<n; i++) {
+			aux = mac.doFinal (aux);
+			if (aux.length != SHA512_LENGTH) {
+				throw new IllegalStateException ("The result of a HmacSHA512 operation had " + 
+						  aux.length + " bytes!");
+			}
+			System.arraycopy (aux, 0, buf, (n-i-1)*SHA512_LENGTH, SHA512_LENGTH);
+		}
+		
+		byte[] ret = DigestUtils.sha256 (buf);
 		long end = System.currentTimeMillis ();
 		LOGGER.info ("tanukiHash took " + (end - start) + " milliseconds");
 		return ret;

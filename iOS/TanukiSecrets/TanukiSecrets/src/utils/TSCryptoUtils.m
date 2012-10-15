@@ -68,7 +68,9 @@
 	return [self md5:bytes];
 }
 
-+ (NSData *) tanukiHash:(NSString *) secret usingSalt:(NSData *)salt
+
+
++ (NSData *) tanukiHashXX:(NSString *) secret usingSalt:(NSData *)salt
 {
 	unsigned long bufSize = 1024l * 1024 * 13;
 	uint8_t *buf = malloc(bufSize * sizeof(uint8_t));
@@ -92,6 +94,36 @@
 	//	unsigned char hash[CC_MD5_DIGEST_LENGTH];
 	//	CC_MD5(buf, bufSize, hash);
 	//	NSData *ret = [NSData dataWithBytes:hash length:CC_MD5_DIGEST_LENGTH];
+	unsigned char hash[CC_SHA256_DIGEST_LENGTH];
+	CC_SHA256(buf, bufSize, hash);
+	NSData *ret = [NSData dataWithBytes:hash length:CC_SHA256_DIGEST_LENGTH];
+	free(buf);
+	return ret;
+}
+
+/*
+ PBKDF2 implementation (using HMAC-SHA512) modified for memory usage : instead of 
+ XORing the Ui values, all are collected in a big (13*1024*1024 bytes) array, 
+ and the entire array is SHA256'd to produce the result of the hash.
+ (note : this roughly translates to a 212'992-round PBKDF2, but all intermediary
+ values U1...U212992 are needed in-memory)
+ */
++ (NSData *) tanukiHash:(NSString *) secret usingSalt:(NSData *)salt
+{
+	unsigned long bufSize = 1024l * 1024 * 13;
+	uint8_t *buf = malloc(bufSize * sizeof(uint8_t));
+	NSData *secretBytes = [secret dataUsingEncoding:NSUTF8StringEncoding];
+	
+	//NOTE : compute the big array's chunks in reverse order so the first chucks that get hashed are the last ones computed
+	unsigned long n = bufSize / CC_SHA512_DIGEST_LENGTH;
+	CCHmac(kCCHmacAlgSHA512, [secretBytes bytes], [secretBytes length],
+		   [salt bytes], [salt length], buf + (n - 1)*CC_SHA512_DIGEST_LENGTH);
+	for (unsigned long i=1; i<n; i++) {
+		CCHmac(kCCHmacAlgSHA512, [secretBytes bytes], [secretBytes length],
+			   buf + (n-i)*CC_SHA512_DIGEST_LENGTH, CC_SHA512_DIGEST_LENGTH,
+			   buf + (n-i-1)*CC_SHA512_DIGEST_LENGTH);
+	}
+	
 	unsigned char hash[CC_SHA256_DIGEST_LENGTH];
 	CC_SHA256(buf, bufSize, hash);
 	NSData *ret = [NSData dataWithBytes:hash length:CC_SHA256_DIGEST_LENGTH];
