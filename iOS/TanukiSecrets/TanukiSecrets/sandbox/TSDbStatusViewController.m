@@ -148,15 +148,19 @@
 	[self debugStatusOfDatabase:database havingMetadata:metadata];
 	[TSNotifierUtils info:@"local database info dumpded to log"];
 	NSArray *backupIDs = [TSIOUtils backupIdsForDatabase:databaseUId];
-	NSLog (@"*** *** *** This database has %d backups", [backupIDs count]);
-	for (NSString *backupID in backupIDs) {
-		metadataPath = [TSIOUtils metadataFilePath:databaseUId forBackup:backupID];
-		metadata = [TSIOUtils loadDatabaseMetadataFromFile:metadataPath];
-		databasePath = [TSIOUtils databaseFilePath:databaseUId forBackup:backupID];
-		database = [TSIOUtils loadDatabaseFromFile:databasePath havingMetadata:metadata usingSecret:[self secret]];
-		NSLog (@"*** *** Backup %@ of database %@", backupID, databaseUId);
-		[self debugStatusOfDatabase:database havingMetadata:metadata];
-		[TSNotifierUtils info:@"local backup info dumpded to log"];
+	if ([backupIDs count] > 0) {
+		NSLog (@"*** *** *** This database has %d backups", [backupIDs count]);
+		for (NSString *backupID in backupIDs) {
+			metadataPath = [TSIOUtils metadataFilePath:databaseUId forBackup:backupID];
+			metadata = [TSIOUtils loadDatabaseMetadataFromFile:metadataPath];
+			databasePath = [TSIOUtils databaseFilePath:databaseUId forBackup:backupID];
+			database = [TSIOUtils loadDatabaseFromFile:databasePath havingMetadata:metadata usingSecret:[self secret]];
+			NSLog (@"*** *** Backup %@ of database %@", backupID, databaseUId);
+			[self debugStatusOfDatabase:database havingMetadata:metadata];
+			[TSNotifierUtils info:@"local backup info dumpded to log"];
+		}
+	}else {
+		NSLog (@"*** *** *** This database does not have any backups");
 	}
 	NSLog (@"*** *** *** END Debug information for local database with UID %@", databaseUId);
 	[TSNotifierUtils info:@"END local db debug print"];
@@ -213,10 +217,14 @@
 
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedListBackupIds:(NSArray *)backupIds forDatabase:(NSString *)databaseUid
 {
-	NSLog (@"*** *** *** This database has %d backups", [backupIds count]);
-	self.toBePrintedBackupIds = backupIds;
-	self.toBePrintedBackupIdsIndex = 0;
-	[databaseWrapper downloadBackup:[self.toBePrintedBackupIds objectAtIndex:self.toBePrintedBackupIdsIndex] ofDatabase:databaseUid];
+	if ([backupIds count] > 0) {
+		NSLog (@"*** *** *** This database has %d backups", [backupIds count]);
+		self.toBePrintedBackupIds = backupIds;
+		self.toBePrintedBackupIdsIndex = 0;
+		[databaseWrapper downloadBackup:[self.toBePrintedBackupIds objectAtIndex:self.toBePrintedBackupIdsIndex] ofDatabase:databaseUid];
+	}else {
+		NSLog (@"*** *** *** This database does not have any backups yet.");
+	}
 }
 
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper listBackupIdsForDatabase:(NSString *)databaseUid failedWithError:(NSString *)error

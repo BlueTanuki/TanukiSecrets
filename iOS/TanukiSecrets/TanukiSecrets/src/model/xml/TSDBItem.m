@@ -84,7 +84,7 @@ tags = _tags, fields = _fields, defaultFieldName = _defaultFieldName;
 			for (SMXMLElement *child in children) {
 				TSDBItemField *field = [TSDBItemField readFrom:child];
 				field.parent = ret;
-				[ret.tags addObject:field];
+				[ret.fields addObject:field];
 			}
 		}
 		ret.defaultFieldName = [element valueWithPath:TS_XML_DB_ITEM_DEFAULT_FIELD_TAG_NAME];

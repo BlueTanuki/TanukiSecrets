@@ -148,227 +148,234 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 
 - (void)deleteItem:(NSString *)remotePath
 {
-	NSError *error;
-	NSFileCoordinator* fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-	[fileCoordinator coordinateWritingItemAtURL:[self urlForRemoteCloudPath:remotePath]
-										options:NSFileCoordinatorWritingForDeleting
-										  error:&error
-									 byAccessor:^(NSURL* writingURL) {
-		 NSFileManager* fileManager = [NSFileManager defaultManager];
-		 NSError *error2;
-		 BOOL ok = [fileManager removeItemAtURL:writingURL error:&error2];
-		 if (ok) {
-			 switch (self.operation) {
-				 case DELETE_FOLDER:
-					 [self.delegate deletedFolder:remotePath];
-					 break;
-					 
-				 case DELETE_FILE:
-					 [self.delegate deletedFile:remotePath];
-					 break;
-					 
-				 default:
-					 NSLog (@"ERROR : delete of %@ succeeded during unknown operation (%d)", writingURL, self.operation);
-					 break;
-			 }
-		 }else {
-			 switch (self.operation) {
-				 case DELETE_FOLDER:
-					 [self.delegate deleteFolder:remotePath failedWithError:error2];
-					 break;
-					 
-				 case DELETE_FILE:
-					 [self.delegate deleteFile:remotePath failedWithError:error2];
-					 break;
-					 
-				 default:
-					 NSLog (@"ERROR : delete failed during unknown operation (%d)", self.operation);
-					 break;
-			 }
-		 }
-	 }];
-	if (error) {
-		NSLog (@"Could not delete cloud item %@ (%@) :: %@", remotePath, [self urlForRemoteCloudPath:remotePath], [error debugDescription]);
-		switch (self.operation) {
-			case DELETE_FOLDER:
-				[self.delegate deleteFolder:remotePath failedWithError:error];
-				break;
-				
-			case DELETE_FILE:
-				[self.delegate deleteFile:remotePath failedWithError:error];
-				break;
-				
-			default:
-				NSLog (@"ERROR : delete failed during unknown operation (%d)", self.operation);
-				break;
+	/*
+	 see Dropbox wrapper notes on dispatch_sysnc
+	 */
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		NSError *error;
+		NSFileCoordinator* fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+		[fileCoordinator coordinateWritingItemAtURL:[self urlForRemoteCloudPath:remotePath]
+											options:NSFileCoordinatorWritingForDeleting
+											  error:&error
+										 byAccessor:^(NSURL* writingURL) {
+											 NSFileManager* fileManager = [NSFileManager defaultManager];
+											 NSError *error2;
+											 BOOL ok = [fileManager removeItemAtURL:writingURL error:&error2];
+											 if (ok) {
+												 switch (self.operation) {
+													 case DELETE_FOLDER:
+														 [self.delegate deletedFolder:remotePath];
+														 break;
+														 
+													 case DELETE_FILE:
+														 [self.delegate deletedFile:remotePath];
+														 break;
+														 
+													 default:
+														 NSLog (@"ERROR : delete of %@ succeeded during unknown operation (%d)", writingURL, self.operation);
+														 break;
+												 }
+											 }else {
+												 switch (self.operation) {
+													 case DELETE_FOLDER:
+														 [self.delegate deleteFolder:remotePath failedWithError:error2];
+														 break;
+														 
+													 case DELETE_FILE:
+														 [self.delegate deleteFile:remotePath failedWithError:error2];
+														 break;
+														 
+													 default:
+														 NSLog (@"ERROR : delete failed during unknown operation (%d)", self.operation);
+														 break;
+												 }
+											 }
+										 }];
+		if (error) {
+			NSLog (@"Could not delete cloud item %@ (%@) :: %@", remotePath, [self urlForRemoteCloudPath:remotePath], [error debugDescription]);
+			switch (self.operation) {
+				case DELETE_FOLDER:
+					[self.delegate deleteFolder:remotePath failedWithError:error];
+					break;
+					
+				case DELETE_FILE:
+					[self.delegate deleteFile:remotePath failedWithError:error];
+					break;
+					
+				default:
+					NSLog (@"ERROR : delete failed during unknown operation (%d)", self.operation);
+					break;
+			}
 		}
-	}
+	});
 }
 
 #pragma mark - iCloud callbacks
 
 - (void)iCloudFinishedGathering:(NSNotification *)notification
 {
-	[self.iCloudQuery disableUpdates];
-//	[self debugCloudQueryResult:NO];
-	NSUInteger resultCount = [self.iCloudQuery resultCount];
-	NSMutableArray *aux = [NSMutableArray arrayWithCapacity:resultCount];
-	for (int i=0; i<resultCount; i++) {
-		NSMetadataItem *item = [self.iCloudQuery resultAtIndex:i];
-		NSURL *itemURL = [item valueForAttribute:NSMetadataItemURLKey];
-		[aux addObject:itemURL];
-	}
-	NSArray *itemURLs = [aux copy];
-	[self stopCloudQuery];
-	
-	switch (self.operation) {
-		case LIST_FILES: {
-			NSArray *filenames = [self filenamesOfFirstLevelDescendantsFor:self.fileRemotePath fromRecursiveListing:itemURLs];
-			[self.delegate listFilesInFolder:self.fileRemotePath finished:filenames];
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		[self.iCloudQuery disableUpdates];
+		//	[self debugCloudQueryResult:NO];
+		NSUInteger resultCount = [self.iCloudQuery resultCount];
+		NSMutableArray *aux = [NSMutableArray arrayWithCapacity:resultCount];
+		for (int i=0; i<resultCount; i++) {
+			NSMetadataItem *item = [self.iCloudQuery resultAtIndex:i];
+			NSURL *itemURL = [item valueForAttribute:NSMetadataItemURLKey];
+			[aux addObject:itemURL];
 		}
-			break;
-			
-		case ITEM_EXISTS: {
-			NSString *path = [[self urlForRemoteCloudPath:self.fileRemotePath] path];
-			BOOL isDirectory = NO;
-			BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory];
-			[self.delegate itemAtPath:self.fileRemotePath exists:exists andIsFolder:isDirectory];
-		}
-			break;
-			
-		case DOWNLOAD_FILE: {
-			NSURL *url = [self urlForRemoteCloudPath:self.fileRemotePath];
-			BOOL isDirectory;
-			BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:[url path] isDirectory:&isDirectory];
-			if (exists) {
-				if (isDirectory == NO) {
-					TSUIDocument *document = [[TSUIDocument alloc] initWithFileURL:url];
+		NSArray *itemURLs = [aux copy];
+		[self stopCloudQuery];
+		
+		switch (self.operation) {
+			case LIST_FILES: {
+				NSArray *filenames = [self filenamesOfFirstLevelDescendantsFor:self.fileRemotePath fromRecursiveListing:itemURLs];
+				[self.delegate listFilesInFolder:self.fileRemotePath finished:filenames];
+			}
+				break;
+				
+			case ITEM_EXISTS: {
+				NSString *path = [[self urlForRemoteCloudPath:self.fileRemotePath] path];
+				BOOL isDirectory = NO;
+				BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory];
+				[self.delegate itemAtPath:self.fileRemotePath exists:exists andIsFolder:isDirectory];
+			}
+				break;
+				
+			case DOWNLOAD_FILE: {
+				NSURL *url = [self urlForRemoteCloudPath:self.fileRemotePath];
+				BOOL isDirectory;
+				BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:[url path] isDirectory:&isDirectory];
+				if (exists) {
+					if (isDirectory == NO) {
+						TSUIDocument *document = [[TSUIDocument alloc] initWithFileURL:url];
+						[document openWithCompletionHandler:^(BOOL success) {
+							if (success) {
+								if ([document saveToLocalFilesystem:self.fileLocalPath]) {
+									[self.delegate downloadedFile:self.fileRemotePath to:self.fileLocalPath];
+								}else {
+									[self.delegate downloadFile:self.fileRemotePath failedWithError:[TSStringUtils simpleError:@"local filesystem write failed"]];
+								}
+							}else {
+								[self.delegate downloadFile:self.fileRemotePath failedWithError:[TSStringUtils simpleError:@"iCloud read failed"]];
+							}
+							[document closeWithCompletionHandler:nil];
+						}];
+					}else {
+						[self.delegate downloadFile:self.fileRemotePath failedWithError:[TSStringUtils simpleError:@"download file called for folder"]];
+					}
+				}else {
+					[self.delegate downloadFile:self.fileRemotePath failedWithError:[TSStringUtils simpleError:@"file does not exist" withCode:404]];
+				}
+			}
+				break;
+				
+			case UPLOAD_FILE: {
+				NSURL *url = [self urlForRemoteCloudPath:self.fileRemotePath];
+				NSString *path = [url path];
+				BOOL isDirectory;
+				BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory];
+				UIDocumentSaveOperation createOrOverwrite = exists ? UIDocumentSaveForOverwriting : UIDocumentSaveForCreating;
+				TSUIDocument *document = [[TSUIDocument alloc] initWithFileURL:url];
+				[document loadFromLocalFilesystem:self.fileLocalPath];
+				[document saveToURL:document.fileURL
+				   forSaveOperation:createOrOverwrite
+				  completionHandler:^(BOOL success) {
+					  if (success) {
+						  // Saving implicitly opens the file. An open document will restore the its (remotely) deleted file representation.
+						  [document closeWithCompletionHandler:nil];
+						  [self.delegate uploadedFile:self.fileLocalPath to:self.fileRemotePath];
+					  }else {
+						  NSLog(@"%s error while saving", __PRETTY_FUNCTION__);
+						  [self.delegate uploadFile:self.fileLocalPath failedWithError:[TSStringUtils simpleError:@"iCloud problem"]];
+					  }
+				  }];
+			}
+				break;
+				
+			case RENAME_FILE: {
+				//not sure how to properly implement this in a single step, so doing it in two steps
+				NSURL *oldURL = [self urlForRemoteCloudPath:self.fileRemotePath];
+				if ([[NSFileManager defaultManager] fileExistsAtPath:[oldURL path]]) {
+					NSString *temporaryLocation = [TSIOUtils temporaryFileNamed:[oldURL lastPathComponent]];
+					TSUIDocument *document = [[TSUIDocument alloc] initWithFileURL:oldURL];
 					[document openWithCompletionHandler:^(BOOL success) {
 						if (success) {
-							if ([document saveToLocalFilesystem:self.fileLocalPath]) {
-								[self.delegate downloadedFile:self.fileRemotePath to:self.fileLocalPath];
+							if ([document saveToLocalFilesystem:temporaryLocation]) {
+								[document closeWithCompletionHandler:^(BOOL success) {
+									if (success) {
+										NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+										NSError *error;
+										[fileCoordinator coordinateWritingItemAtURL:oldURL options:NSFileCoordinatorWritingForDeleting error:&error byAccessor:^(NSURL* writingURL) {
+											NSURL *newURL = [self urlForRemoteCloudPath:self.fileRemotePath2];
+											BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:[newURL path]];
+											
+											NSString *parentFolderPath = [[newURL path] stringByDeletingLastPathComponent];
+											BOOL parentIsDirectory;
+											BOOL parentExists = [[NSFileManager defaultManager] fileExistsAtPath:parentFolderPath isDirectory:&parentIsDirectory];
+											if (parentExists == NO) {
+												[[NSFileManager defaultManager] createDirectoryAtPath:parentFolderPath withIntermediateDirectories:YES attributes:nil error:nil];
+											}
+											
+											UIDocumentSaveOperation createOrOverwrite = exists ? UIDocumentSaveForOverwriting : UIDocumentSaveForCreating;
+											TSUIDocument *document = [[TSUIDocument alloc] initWithFileURL:newURL];
+											document.tsuiDocData = [NSData dataWithContentsOfFile:temporaryLocation];
+											[document saveToURL:document.fileURL
+											   forSaveOperation:createOrOverwrite
+											  completionHandler:^(BOOL success) {
+												  if (success) {
+													  // Saving implicitly opens the file. An open document will restore the its (remotely) deleted file representation.
+													  [document closeWithCompletionHandler:nil];
+													  NSError *error2;
+													  BOOL ok = [[NSFileManager defaultManager] removeItemAtURL:writingURL error:&error2];
+													  if (ok) {
+														  [self.delegate renamedFile:self.fileRemotePath as:self.fileRemotePath2];
+													  }else {
+														  [self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:error2];
+													  }
+												  }else {
+													  NSLog(@"%s error while saving", __PRETTY_FUNCTION__);
+													  [self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"iCloud problem"]];
+												  }
+											  }];
+										}];
+										if (error) {
+											[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:error];
+										}
+									}else {
+										[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"failed to close source document after opening it for reading"]];
+									}
+								}];
 							}else {
-								[self.delegate downloadFile:self.fileRemotePath failedWithError:[TSStringUtils simpleError:@"local filesystem write failed"]];
+								[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"could not create a local copy of the file"]];
+								[document closeWithCompletionHandler:nil];
 							}
 						}else {
-							[self.delegate downloadFile:self.fileRemotePath failedWithError:[TSStringUtils simpleError:@"iCloud read failed"]];
-						}
-						[document closeWithCompletionHandler:nil];
-					}];
-				}else {
-					[self.delegate downloadFile:self.fileRemotePath failedWithError:[TSStringUtils simpleError:@"download file called for folder"]];
-				}
-			}else {
-				[self.delegate downloadFile:self.fileRemotePath failedWithError:[TSStringUtils simpleError:@"file does not exist" withCode:404]];
-			}
-		}
-			break;
-			
-		case UPLOAD_FILE: {
-			NSURL *url = [self urlForRemoteCloudPath:self.fileRemotePath];
-			NSString *path = [url path];
-			BOOL isDirectory;
-			BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory];
-			UIDocumentSaveOperation createOrOverwrite = exists ? UIDocumentSaveForOverwriting : UIDocumentSaveForCreating;
-			TSUIDocument *document = [[TSUIDocument alloc] initWithFileURL:url];
-			[document loadFromLocalFilesystem:self.fileLocalPath];
-			[document saveToURL:document.fileURL
-			   forSaveOperation:createOrOverwrite
-			  completionHandler:^(BOOL success) {
-				  if (success) {
-					  // Saving implicitly opens the file. An open document will restore the its (remotely) deleted file representation.
-					  [document closeWithCompletionHandler:nil];
-					  [self.delegate uploadedFile:self.fileLocalPath to:self.fileRemotePath];
-				  }else {
-					  NSLog(@"%s error while saving", __PRETTY_FUNCTION__);
-					  [self.delegate uploadFile:self.fileLocalPath failedWithError:[TSStringUtils simpleError:@"iCloud problem"]];
-				  }
-			  }];
-		}
-			break;
-			
-		case RENAME_FILE: {
-			//not sure how to properly implement this in a single step, so doing it in two steps
-			NSURL *oldURL = [self urlForRemoteCloudPath:self.fileRemotePath];
-			if ([[NSFileManager defaultManager] fileExistsAtPath:[oldURL path]]) {
-				NSString *temporaryLocation = [TSIOUtils temporaryFileNamed:[oldURL lastPathComponent]];
-				TSUIDocument *document = [[TSUIDocument alloc] initWithFileURL:oldURL];
-				[document openWithCompletionHandler:^(BOOL success) {
-					if (success) {
-						if ([document saveToLocalFilesystem:temporaryLocation]) {
-							[document closeWithCompletionHandler:^(BOOL success) {
-								if (success) {
-									NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-									NSError *error;
-									[fileCoordinator coordinateWritingItemAtURL:oldURL options:NSFileCoordinatorWritingForDeleting error:&error byAccessor:^(NSURL* writingURL) {
-										NSURL *newURL = [self urlForRemoteCloudPath:self.fileRemotePath2];
-										BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:[newURL path]];
-										
-										NSString *parentFolderPath = [[newURL path] stringByDeletingLastPathComponent];
-										BOOL parentIsDirectory;
-										BOOL parentExists = [[NSFileManager defaultManager] fileExistsAtPath:parentFolderPath isDirectory:&parentIsDirectory];
-										if (parentExists == NO) {
-											[[NSFileManager defaultManager] createDirectoryAtPath:parentFolderPath withIntermediateDirectories:YES attributes:nil error:nil];
-										}
-										
-										UIDocumentSaveOperation createOrOverwrite = exists ? UIDocumentSaveForOverwriting : UIDocumentSaveForCreating;
-										TSUIDocument *document = [[TSUIDocument alloc] initWithFileURL:newURL];
-										document.tsuiDocData = [NSData dataWithContentsOfFile:temporaryLocation];
-										[document saveToURL:document.fileURL
-										   forSaveOperation:createOrOverwrite
-										  completionHandler:^(BOOL success) {
-											  if (success) {
-												  // Saving implicitly opens the file. An open document will restore the its (remotely) deleted file representation.
-												  [document closeWithCompletionHandler:nil];
-												  NSError *error2;
-												  BOOL ok = [[NSFileManager defaultManager] removeItemAtURL:writingURL error:&error2];
-												  if (ok) {
-													  [self.delegate renamedFile:self.fileRemotePath as:self.fileRemotePath2];
-												  }else {
-													  [self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:error2];
-												  }
-											  }else {
-												  NSLog(@"%s error while saving", __PRETTY_FUNCTION__);
-												  [self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"iCloud problem"]];
-											  }
-										  }];
-									}];
-									if (error) {
-										[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:error];
-									}
-								}else {
-									[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"failed to close source document after opening it for reading"]];
-								}
-							}];
-						}else {
-							[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"could not create a local copy of the file"]];
+							[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"could not open source for reading"]];
 							[document closeWithCompletionHandler:nil];
 						}
-					}else {
-						[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"could not open source for reading"]];
-						[document closeWithCompletionHandler:nil];
-					}
-				}];
-			}else {
-				[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"source does not exist"]];
-			}
-		}
-			break;
-			
-		case CHECK_CONFLICT_STATUS: {
-			for (NSURL *itemURL in itemURLs) {
-				NSFileVersion *currentVersion = [NSFileVersion currentVersionOfItemAtURL:itemURL];
-				if (currentVersion.conflict) {
-					NSLog (@"Item %@ IN CONFLICT", itemURL);
+					}];
+				}else {
+					[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:[TSStringUtils simpleError:@"source does not exist"]];
 				}
 			}
+				break;
+				
+			case CHECK_CONFLICT_STATUS: {
+				for (NSURL *itemURL in itemURLs) {
+					NSFileVersion *currentVersion = [NSFileVersion currentVersionOfItemAtURL:itemURL];
+					if (currentVersion.conflict) {
+						NSLog (@"Item %@ IN CONFLICT", itemURL);
+					}
+				}
+			}
+				break;
+				
+			default:
+				NSLog (@"ERROR : received iCloudFinishedGathering notification but was not expecting any results (current operation is %d)", self.operation);
+				break;
 		}
-			break;
-			
-		default:
-			NSLog (@"ERROR : received iCloudFinishedGathering notification but was not expecting any results (current operation is %d)", self.operation);
-			break;
-	}
+	});
 }
 
 #pragma mark - TSRemoteStorage
@@ -381,13 +388,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 - (void)listFilesInFolder:(NSString *)folderPath
 {
 	/*
-	 NOTE on dispatch_async :: NSURLConnections created in async mode cause problems
-	 when the method that creates the object is executed from a background thread.
-	 (it seems the connection gets freed or something)
-	 This pretty much means that the caller has to take care and know to only call
-	 such methods from the main thread... ;_;
-	 Yet another fuckup from the brilliant minds that decided iPhone does not need
-	 upsideDown orientation and thought it is a good idea to disable support for it inside UIViewController.
+	 see Dropbox wrapper notes on dispatch_sysnc
 	 */
 	if (self.iCloudQuery == nil) {
 		self.fileRemotePath = folderPath;

@@ -232,6 +232,10 @@
 					   ignoreChecksum:(BOOL)ignoreChecksum
 {
 	NSData *data = [self tanukiDecrypt:encryptedData usingSecret:secret andSalt:databaseMetadata.salt];
+	if (data == nil) {
+		NSLog (@"ERROR : decrypt database %@ failed!", databaseMetadata.uid);
+		return nil;
+	}
 	if (ignoreChecksum == NO) {
 		NSString *checksum = [TSStringUtils hexStringFromData:[self sha512:data]];
 		if ([checksum isEqualToString:databaseMetadata.version.checksum] == NO) {
