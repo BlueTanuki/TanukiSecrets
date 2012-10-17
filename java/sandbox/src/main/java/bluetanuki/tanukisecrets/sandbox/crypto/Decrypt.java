@@ -8,9 +8,6 @@ import bluetanuki.tanukisecrets.common.model.xml.Group;
 import bluetanuki.tanukisecrets.common.model.xml.Item;
 import bluetanuki.tanukisecrets.common.xml.XMLUtils;
 import java.io.File;
-import java.security.Provider;
-import java.security.Security;
-import java.util.Enumeration;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
@@ -40,7 +37,7 @@ public class Decrypt {
 				System.out.println ("salt :: " + Hex.encodeHexString (salt));
 				byte[] encrypted = FileUtils.readFileToByteArray (file);
 				System.out.println ("encrypted :: " + Base64.encodeBase64String (encrypted));
-				byte[] decrypted = CryptoUtils.tanukiDecrypt (encrypted, "TheTanukiSais...NI-PAH~!", salt);
+				byte[] decrypted = CryptoUtils.tanukiDecrypt (encrypted, "TheTanukiSais...NI-PAH~!", salt, null);
 				System.out.println ("decrypted :: " + Base64.encodeBase64String (decrypted));
 				System.out.println ("as string :: |" + new String (decrypted, "UTF-8") + "|");
 				long end = System.currentTimeMillis ();
@@ -58,7 +55,7 @@ public class Decrypt {
 				byte[] salt = Hex.decodeHex (dbMetadata.getSalt ().toCharArray ());
 				File encryptedFile = new File (baseFolder, dbMetadata.getUid () + ".ts");
 				byte[] encrypted = FileUtils.readFileToByteArray (encryptedFile);
-				byte[] decrypted = CryptoUtils.tanukiDecrypt (encrypted, "TheTanukiSais...NI-PAH~!", salt);
+				byte[] decrypted = CryptoUtils.tanukiDecrypt (encrypted, "TheTanukiSais...NI-PAH~!", salt, dbMetadata.getHashUsedMemory ());
 				File decryptedFile = new File ("/tmp/" + dbMetadata.getUid () + ".ts.decrypted");
 				FileUtils.writeByteArrayToFile (decryptedFile, decrypted);
 				LOGGER.info ("Wrote decrypted database to " + decryptedFile.getAbsolutePath ());

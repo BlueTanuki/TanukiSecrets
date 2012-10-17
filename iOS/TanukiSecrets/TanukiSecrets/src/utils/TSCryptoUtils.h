@@ -26,15 +26,15 @@
 + (NSData *) md5:(NSData *)bytes;
 + (NSData *) md5text:(NSString *)string;
 
-+ (NSData *) tanukiHash:(NSString *)secret usingSalt:(NSData *)salt;
++ (NSData *) tanukiHash:(NSString *)secret usingSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB;
 
 #pragma mark - Encryption
 
 + (NSData *) aesCbcWithPaddingEncrypt:(NSData *)data usingKey:(NSData *)key andIV:(NSData *)iv;
 + (NSData *) aesCbcWithPaddingDecrypt:(NSData *)data usingKey:(NSData *)key andIV:(NSData *)iv;
 
-+ (NSData *) tanukiEncrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt;
-+ (NSData *) tanukiDecrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt;
++ (NSData *) tanukiEncrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB;
++ (NSData *) tanukiDecrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB;
 
 + (NSString *) tanukiEncryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
 					  usingSecret:(NSString *)secret;

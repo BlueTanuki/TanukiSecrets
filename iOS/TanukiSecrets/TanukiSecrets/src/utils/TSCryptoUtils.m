@@ -68,8 +68,6 @@
 	return [self md5:bytes];
 }
 
-
-
 + (NSData *) tanukiHashXX:(NSString *) secret usingSalt:(NSData *)salt
 {
 	unsigned long bufSize = 1024l * 1024 * 13;
@@ -108,20 +106,66 @@
  (note : this roughly translates to a 212'992-round PBKDF2, but all intermediary
  values U1...U212992 are needed in-memory)
  */
-+ (NSData *) tanukiHash:(NSString *) secret usingSalt:(NSData *)salt
++ (NSData *) tanukiHash:(NSString *) secret usingSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB
 {
-	unsigned long bufSize = 1024l * 1024 * 13;
+	int bufSizeMB = 13;
+	if (consumedMB < 5) {
+		NSLog (@"WARNING : the consumed memory is not allowed to be below 5MB, using default value of 13!");
+	}else if (consumedMB > 25) {
+		NSLog (@"WARNING : for performace reasons, the consumed memory is not allowed to be above 25MB, using default value of 13!");
+	}else {
+		bufSizeMB = consumedMB;
+	}
+	unsigned long bufSize = 1024l * 1024 * bufSizeMB;
 	uint8_t *buf = malloc(bufSize * sizeof(uint8_t));
 	NSData *secretBytes = [secret dataUsingEncoding:NSUTF8StringEncoding];
 	
-	//NOTE : compute the big array's chunks in reverse order so the first chucks that get hashed are the last ones computed
+	unsigned long debugCount = 0;
+	
+	//NOTE : compute the big array's chunks in funny order dictated by a pseudorandom permutation
 	unsigned long n = bufSize / CC_SHA512_DIGEST_LENGTH;
 	CCHmac(kCCHmacAlgSHA512, [secretBytes bytes], [secretBytes length],
-		   [salt bytes], [salt length], buf + (n - 1)*CC_SHA512_DIGEST_LENGTH);
+		   [salt bytes], [salt length], buf);
+	unsigned long oldBlockOffset = 0;
 	for (unsigned long i=1; i<n; i++) {
+		//first put the new block in its normal position
+		unsigned long newBlockOffset = i * CC_SHA512_DIGEST_LENGTH;
 		CCHmac(kCCHmacAlgSHA512, [secretBytes bytes], [secretBytes length],
-			   buf + (n-i)*CC_SHA512_DIGEST_LENGTH, CC_SHA512_DIGEST_LENGTH,
-			   buf + (n-i-1)*CC_SHA512_DIGEST_LENGTH);
+			   buf + oldBlockOffset, CC_SHA512_DIGEST_LENGTH,
+			   buf + newBlockOffset);
+		//then compute a new index for the block (as the sum of its bytes modulo i+1)
+		unsigned long newIndex = buf[newBlockOffset];
+		if (i <= debugCount) {
+			NSLog (@"add %d", buf[newBlockOffset]);
+		}
+		for (int j=1; j<CC_SHA512_DIGEST_LENGTH; j++) {
+			newIndex = (newIndex * 13 + buf[newBlockOffset + j]) % (i + 1);
+			if (i <= debugCount) {
+				NSLog (@"add %d", buf[newBlockOffset + j]);
+			}
+		}
+		if (i <= debugCount) {
+			NSLog (@"new index is %ld", newIndex);
+		}
+		//this value should roughly be a uniform random over 0..i
+		//now swap the block with the one of that position
+		if (newIndex != i) {
+			unsigned long relocatedOffset = newIndex * CC_SHA512_DIGEST_LENGTH;
+			if (i <= debugCount) {
+				NSLog (@"swap blocks %ld and %ld (offset %ld and %ld)", i, newIndex, newBlockOffset, relocatedOffset);
+			}
+			for (int j=0; j<CC_SHA512_DIGEST_LENGTH; j++) {
+				if (i <= debugCount) {
+					NSLog (@"swap %d and %d", buf[relocatedOffset + j], buf[newBlockOffset + j]);
+				}
+				uint8_t swap = buf[relocatedOffset + j];
+				buf[relocatedOffset + j] = buf[newBlockOffset + j];
+				buf[newBlockOffset + j] = swap;
+			}
+			oldBlockOffset = relocatedOffset;
+		}else {
+			oldBlockOffset = i * CC_SHA512_DIGEST_LENGTH;
+		}
 	}
 	
 	unsigned char hash[CC_SHA256_DIGEST_LENGTH];
@@ -173,16 +217,16 @@
 	return decryptedData;
 }
 
-+ (NSData *)tanukiEncrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt
++ (NSData *)tanukiEncrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB
 {	
-	NSData *key = [self tanukiHash:secret usingSalt:salt];
+	NSData *key = [self tanukiHash:secret usingSalt:salt consumingMemory:consumedMB];
 	NSData *iv = [self md5:salt];
 	return [self aesCbcWithPaddingEncrypt:data usingKey:key andIV:iv];
 }
 
-+ (NSData *)tanukiDecrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt
++ (NSData *)tanukiDecrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB
 {	
-	NSData *key = [self tanukiHash:secret usingSalt:salt];
+	NSData *key = [self tanukiHash:secret usingSalt:salt consumingMemory:consumedMB];
 	NSData *iv = [self md5:salt];
 	return [self aesCbcWithPaddingDecrypt:data usingKey:key andIV:iv];
 }
@@ -223,7 +267,7 @@
 	}
 	databaseMetadata.version.checksum = [TSStringUtils hexStringFromData:[self sha512:unencryptedDatabase]];
 	
-	return [self tanukiEncrypt:unencryptedDatabase usingSecret:secret andSalt:salt];
+	return [self tanukiEncrypt:unencryptedDatabase usingSecret:secret andSalt:salt consumingMemory:databaseMetadata.hashUsedMemory];
 }
 
 + (TSDatabase *)tanukiDecryptDatabase:(NSData *)encryptedData
@@ -231,7 +275,7 @@
 						  usingSecret:(NSString *)secret
 					   ignoreChecksum:(BOOL)ignoreChecksum
 {
-	NSData *data = [self tanukiDecrypt:encryptedData usingSecret:secret andSalt:databaseMetadata.salt];
+	NSData *data = [self tanukiDecrypt:encryptedData usingSecret:secret andSalt:databaseMetadata.salt consumingMemory:databaseMetadata.hashUsedMemory];
 	if (data == nil) {
 		NSLog (@"ERROR : decrypt database %@ failed!", databaseMetadata.uid);
 		return nil;

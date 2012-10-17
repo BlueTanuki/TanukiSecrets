@@ -15,6 +15,7 @@
 #define TS_XML_DB_META_UID_TAG_NAME @"uid"
 #define TS_XML_DB_META_VERSION_TAG_NAME @"version"
 #define TS_XML_DB_META_SALT_TAG_NAME @"salt"
+#define TS_XML_DB_META_HASH_USED_MEMORY_TAG_NAME @"hashUsedMemory"
 #define TS_XML_DB_META_NAME_TAG_NAME @"name"
 #define TS_XML_DB_META_DESCRIPTION_TAG_NAME @"description"
 #define TS_XML_DB_META_CREATED_TAG_NAME @"createdBy"
@@ -23,7 +24,8 @@
 @implementation TSDatabaseMetadata
 
 @synthesize uid = _uid, version = _version, salt = _salt, name = _name,
-description= _description, createdBy = _createdBy, lastModifiedBy = _lastModifiedBy;
+description= _description, createdBy = _createdBy, lastModifiedBy = _lastModifiedBy,
+hashUsedMemory = _hashUsedMemory;
 
 #pragma mark - TSXMLSerializable
 
@@ -35,6 +37,8 @@ description= _description, createdBy = _createdBy, lastModifiedBy = _lastModifie
 	[self.version writeTo:writer usingTagName:TS_XML_DB_META_VERSION_TAG_NAME];
 	[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_META_SALT_TAG_NAME
 				  withBinaryContent:self.salt toWriter:writer];
+	[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_META_HASH_USED_MEMORY_TAG_NAME
+				  withIntegerContent:self.hashUsedMemory toWriter:writer];
 	[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_META_NAME_TAG_NAME
 				  withStringContent:self.name toWriter:writer];
 	[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_META_DESCRIPTION_TAG_NAME
@@ -56,6 +60,7 @@ description= _description, createdBy = _createdBy, lastModifiedBy = _lastModifie
 			ret.version = [TSVersion readFrom:aux usingTagName:TS_XML_DB_META_VERSION_TAG_NAME];
 		}
 		ret.salt = [TSStringUtils dataFromHexString:[element valueWithPath:TS_XML_DB_META_SALT_TAG_NAME]];
+		ret.hashUsedMemory = [[element valueWithPath:TS_XML_DB_META_HASH_USED_MEMORY_TAG_NAME] integerValue];
 		ret.name = [element valueWithPath:TS_XML_DB_META_NAME_TAG_NAME];
 		ret.description = [element valueWithPath:TS_XML_DB_META_DESCRIPTION_TAG_NAME];
 		aux = [element childNamed:TS_XML_DB_META_CREATED_TAG_NAME];

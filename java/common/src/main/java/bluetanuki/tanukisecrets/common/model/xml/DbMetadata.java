@@ -9,10 +9,19 @@ public class DbMetadata {
 	private String uid;
 	private Version version;
 	private String salt;
+	private Integer hashUsedMemory;
 	private String name;
 	private String description;
 	private Author createdBy;
 	private Author lastModifiedBy;
+
+	public Integer getHashUsedMemory () {
+		return hashUsedMemory;
+	}
+
+	public void setHashUsedMemory (Integer hashUsedMemory) {
+		this.hashUsedMemory = hashUsedMemory;
+	}
 
 	public String getUid () {
 		return uid;

@@ -53,8 +53,8 @@ public class CryptoUtils {
 		return aesCbcWithPadding (encrypted, key, iv, true);
 	}
 	
-	public static byte[] tanukiDecrypt (byte[] encrypted, String secret, byte[] salt) throws Exception {
-		byte[] key = HashFunctions.tanukiHash (secret, salt);
+	public static byte[] tanukiDecrypt (byte[] encrypted, String secret, byte[] salt, Integer consumedMemoryMB) throws Exception {
+		byte[] key = HashFunctions.tanukiHash (secret, salt, consumedMemoryMB);
 		byte[] iv = DigestUtils.md5 (salt);
 		return decryptAesCbcWithPadding (encrypted, key, iv);
 	}

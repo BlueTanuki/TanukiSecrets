@@ -25,6 +25,7 @@
 @property(nonatomic, strong) NSString *uid;
 @property(nonatomic, strong) TSVersion *version;
 @property(nonatomic, strong) NSData *salt;
+@property(nonatomic, assign) NSInteger hashUsedMemory;
 
 @property(nonatomic, strong) NSString *name;
 @property(nonatomic, strong) NSString *description;

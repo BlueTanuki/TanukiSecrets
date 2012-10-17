@@ -23,7 +23,7 @@ public class TanukiUtils {
 	public static Database loadDatabase (DbMetadata dbMetadata, File databaseEncryptedFile, String secret) throws Exception {
 		byte[] salt = Hex.decodeHex (dbMetadata.getSalt ().toCharArray ());
 		byte[] encrypted = FileUtils.readFileToByteArray (databaseEncryptedFile);
-		byte[] decrypted = CryptoUtils.tanukiDecrypt (encrypted, secret, salt);
+		byte[] decrypted = CryptoUtils.tanukiDecrypt (encrypted, secret, salt, dbMetadata.getHashUsedMemory ());
 		String expectedChecksum = dbMetadata.getVersion ().getChecksum ();
 		String checksum = DigestUtils.sha512Hex (decrypted);
 		if (!checksum.equalsIgnoreCase (expectedChecksum)) {

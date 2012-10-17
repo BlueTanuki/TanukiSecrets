@@ -149,6 +149,7 @@ BOOL firstTimeSegueTriggered = NO;
 - (TSDatabaseMetadata *)testDatabaseMetadata
 {
 	TSDatabaseMetadata *ret = [TSDatabaseMetadata newDatabaseNamed:@"myFirstDatabase"];
+	ret.hashUsedMemory = 7;
 	return ret;
 }
 

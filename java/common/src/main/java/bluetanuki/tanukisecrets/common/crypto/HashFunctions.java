@@ -69,8 +69,8 @@ public class HashFunctions {
 	/**
 	 *   Convenience method, shorthand for tanukiHash (secret.getBytes ("UTF-8"), salt).
 	 */
-	public static byte[] tanukiHash (String secret, byte[] salt) throws Exception {
-		return HashFunctions.tanukiHash (secret.getBytes ("UTF-8"), salt);
+	public static byte[] tanukiHash (String secret, byte[] salt, Integer consumedMemoryMB) throws Exception {
+		return HashFunctions.tanukiHash (secret.getBytes ("UTF-8"), salt, consumedMemoryMB);
 	}
 	
 	/**
@@ -79,15 +79,25 @@ public class HashFunctions {
 	 * - the changes were made so that the computation uses 13*1024*1024 bytes 
 	 * (212'992 iterations in standard PBKDF2)
 	 * - the U_1...U_212992 values are not XOR'd, but are kept in a big buffer,
-	 * the buffer is populated in reverse order (U_1 is last in the buffer, this 
-	 * should make it impossible to compute the hash of the array in parallel with the array)
+	 * the buffer is populated in a pseudorandom order (initially Ui is placed on the i-th
+	 * position, but then it gets swapped with another block whose index is computed by
+	 * summing the bytes of Ui modulo i+1)
 	 * - the output is a SHA256 of the entire 13MB array.
 	 * 
 	 */
-	public static byte[] tanukiHash (byte[] secret, byte[] salt) throws Exception {
+	public static byte[] tanukiHash (byte[] secret, byte[] salt, Integer consumedMemoryMB) throws Exception {
 		long start = System.currentTimeMillis ();
+		int debugCount = 0;
 		
-		int bufSize = 1024 * 1024 * 13;
+		int bufSizeMB = 13;
+		if ((consumedMemoryMB == null) || (consumedMemoryMB < 5)) {
+			LOGGER.warn ("the consumed memory is not allowed to be below 5MB, using default value of 13!");
+		}else if (consumedMemoryMB > 25) {
+			LOGGER.warn ("for performace reasons, the consumed memory is not allowed to be above 25MB, using default value of 13!");
+		}else {
+			bufSizeMB = consumedMemoryMB;
+		}
+		int bufSize = 1024 * 1024 * bufSizeMB;
 		byte[] buf = new byte[bufSize];
 		Mac mac = Mac.getInstance ("HmacSHA512");
 		SecretKeySpec keySpec = new SecretKeySpec (secret, "HmacSHA512");
@@ -100,14 +110,43 @@ public class HashFunctions {
 			throw new IllegalStateException ("The result of a HmacSHA512 operation had " + 
 					  aux.length + " bytes!");
 		}
-		System.arraycopy (aux, 0, buf, (n-1)*SHA512_LENGTH, SHA512_LENGTH);
+		System.arraycopy (aux, 0, buf, 0, SHA512_LENGTH);
 		for (int i=1; i<n; i++) {
 			aux = mac.doFinal (aux);
 			if (aux.length != SHA512_LENGTH) {
 				throw new IllegalStateException ("The result of a HmacSHA512 operation had " + 
 						  aux.length + " bytes!");
 			}
-			System.arraycopy (aux, 0, buf, (n-i-1)*SHA512_LENGTH, SHA512_LENGTH);
+			int newBlockOffset = i * SHA512_LENGTH;
+			System.arraycopy (aux, 0, buf, newBlockOffset, SHA512_LENGTH);
+			int newIndex = (int)buf[newBlockOffset] & 0xff;
+			if (i <= debugCount) {
+				System.out.println ("add " + ((int)buf[newBlockOffset] & 0xff));
+			}
+			for (int j = 1; j < SHA512_LENGTH; j++) {
+				newIndex = (newIndex * 13 + ((int)buf[newBlockOffset + j] & 0xff)) % (i + 1);
+				if (i <= debugCount) {
+					System.out.println ("add " + ((int)buf[newBlockOffset + j] & 0xff));
+				}
+			}
+			if (i <= debugCount) {
+				System.out.println ("new index is " + newIndex);
+			}
+			if (newIndex != i) {
+				int relocatedOffset = newIndex * SHA512_LENGTH;
+				if (i <= debugCount) {
+					LOGGER.info ("Swap blocks " + i + " and " + newIndex + "(offset " + 
+						  newBlockOffset + " and " + relocatedOffset + ")");
+				}
+				for (int j=0; j<SHA512_LENGTH; j++) {
+					if (i <= debugCount) {
+						LOGGER.info ("Swap  " + buf[relocatedOffset + j] + " and " + buf[newBlockOffset + j]);
+					}
+					byte swap = buf[relocatedOffset + j];
+					buf[relocatedOffset + j] = buf[newBlockOffset + j];
+					buf[newBlockOffset + j] = swap;
+				}
+			}
 		}
 		
 		byte[] ret = DigestUtils.sha256 (buf);
