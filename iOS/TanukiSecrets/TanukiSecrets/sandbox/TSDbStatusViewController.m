@@ -100,7 +100,7 @@
 	[self.iCloudWrapper listDatabaseUids];
 }
 
-- (void)refreshData
+- (void)refreshData:(id)sender
 {
 	if (self.working == NO) {
 		self.working = YES;
@@ -180,6 +180,30 @@
 	[self.iCloudWrapper downloadDatabase:databaseUId];
 }
 
+- (void)deleteLocalDatabase:(NSString *)databaseUid
+{
+	if ([TSIOUtils deleteDatabase:databaseUid]) {
+		[TSNotifierUtils info:@"Local database deleted."];
+		int64_t delayInSeconds = 1.0;
+		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+		dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+			[self refreshData:nil];
+		});
+	}else {
+		[TSNotifierUtils error:@"Failed to delete local database."];
+	}
+}
+
+- (void)deleteDropboxDatabase:(NSString *)databaseUid
+{
+	[self.dropboxWrapper deleteDatabase:databaseUid];
+}
+
+- (void)deleteICloudDatabase:(NSString *)databaseUid
+{
+	[self.iCloudWrapper deleteDatabase:databaseUid];
+}
+
 #pragma mark - TSDatabaseWrapperDelegate
 
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper listDatabaseUidsFailedWithError:(NSString *)error
@@ -245,6 +269,26 @@
 		NSLog (@"*** *** *** END Debug information for local database with UID %@", databaseUid);
 		[TSNotifierUtils info:@"END remote db debug print"];
 	}
+}
+
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper deletedDatabase:(NSString *)databaseUid
+{
+	[TSNotifierUtils info:@"Delete database finished..."];
+	int64_t delayInSeconds = 5.0;
+	dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+	dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+		[self refreshData:nil];
+	});
+}
+
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper deleteDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
+{
+	[TSNotifierUtils error:@"Delete failed"];
+}
+
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper deleteDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
+{
+	[TSNotifierUtils error:@"Database is locked"];
 }
 
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper downloadBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
@@ -429,7 +473,7 @@
 			break;
 	}
 	if (aux == nil) {
-		[self refreshData];
+		[self refreshData:nil];
 		return 0;
 	}
 	return [aux count];
@@ -463,6 +507,42 @@
 		cell.textLabel.text = [aux objectAtIndex:indexPath.row];
 	}
 	return cell;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if (editingStyle == UITableViewCellEditingStyleDelete) {
+		switch (indexPath.section) {
+			case 0: {
+				NSString *databaseUid = [self.localDatabaseUIDs objectAtIndex:indexPath.row];
+				[self deleteLocalDatabase:databaseUid];
+			}
+				break;
+				
+			case 1: {
+				NSString *databaseUid = [self.dropboxDatabaseUIDs objectAtIndex:indexPath.row];
+				[self deleteDropboxDatabase:databaseUid];
+				[TSNotifierUtils info:@"Delete database starting..."];
+			}
+				break;
+				
+			case 2: {
+				NSString *databaseUid = [self.iCloudDatabaseUIDs objectAtIndex:indexPath.row];
+				[self deleteICloudDatabase:databaseUid];
+				[TSNotifierUtils info:@"Delete database starting..."];
+			}
+				break;
+				
+			default:
+				NSLog (@"WARNING : commitEditingStyle called for unknown section : %d", indexPath.section);
+				break;
+		}
+    }
 }
 
 #pragma mark - Table view delegate

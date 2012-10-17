@@ -448,6 +448,21 @@ BOOL firstTimeSegueTriggered = NO;
 	[TSNotifierUtils error:[NSString stringWithFormat:@"Cleanup FAILED for %@", databaseUid]];
 }
 
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper deletedDatabase:(NSString *)databaseUid
+{
+	NSLog(@"TSDatabaseWrapperDelegate callback :: %s", __PRETTY_FUNCTION__);
+}
+
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper deleteDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
+{
+	NSLog(@"TSDatabaseWrapperDelegate callback :: %s", __PRETTY_FUNCTION__);
+}
+
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper deleteDatabase:(NSString *)databaseUid failedWithError:(NSString *)error
+{
+	NSLog(@"TSDatabaseWrapperDelegate callback :: %s", __PRETTY_FUNCTION__);
+}
+
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedListBackupIds:(NSArray *)backupIds forDatabase:(NSString *)databaseUid
 {
 	NSLog(@"TSDatabaseWrapperDelegate callback :: %s", __PRETTY_FUNCTION__);

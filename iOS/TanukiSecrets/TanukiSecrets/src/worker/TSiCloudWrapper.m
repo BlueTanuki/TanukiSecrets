@@ -163,9 +163,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 											 BOOL ok = [fileManager removeItemAtURL:writingURL error:&error2];
 											 if (ok) {
 												 switch (self.operation) {
-													 case DELETE_FOLDER:
-														 [self.delegate deletedFolder:remotePath];
-														 break;
+//													 case DELETE_FOLDER:
+//														 [self.delegate deletedFolder:remotePath];
+//														 break;
 														 
 													 case DELETE_FILE:
 														 [self.delegate deletedFile:remotePath];
@@ -177,9 +177,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 												 }
 											 }else {
 												 switch (self.operation) {
-													 case DELETE_FOLDER:
-														 [self.delegate deleteFolder:remotePath failedWithError:error2];
-														 break;
+//													 case DELETE_FOLDER:
+//														 [self.delegate deleteFolder:remotePath failedWithError:error2];
+//														 break;
 														 
 													 case DELETE_FILE:
 														 [self.delegate deleteFile:remotePath failedWithError:error2];
@@ -194,9 +194,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 		if (error) {
 			NSLog (@"Could not delete cloud item %@ (%@) :: %@", remotePath, [self urlForRemoteCloudPath:remotePath], [error debugDescription]);
 			switch (self.operation) {
-				case DELETE_FOLDER:
-					[self.delegate deleteFolder:remotePath failedWithError:error];
-					break;
+//				case DELETE_FOLDER:
+//					[self.delegate deleteFolder:remotePath failedWithError:error];
+//					break;
 					
 				case DELETE_FILE:
 					[self.delegate deleteFile:remotePath failedWithError:error];
@@ -444,9 +444,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 
 - (void)deleteFolder:(NSString *)folderPath
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
-		self.operation = DELETE_FOLDER;
-		[self deleteItem:folderPath];
+//	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+//		self.operation = DELETE_FOLDER;
+//		[self deleteItem:folderPath];
+//	});
+	//NOTE : since createFolder is a NO-OP, so is deleteFolder
+	dispatch_async(dispatch_get_current_queue(), ^{
+		[self.delegate deletedFolder:folderPath];
 	});
 }
 

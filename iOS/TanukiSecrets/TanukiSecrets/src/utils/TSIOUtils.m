@@ -97,6 +97,12 @@
 	return [self fileAtPath:path hasFileType:NSFileTypeDirectory];
 }
 
++ (BOOL)exists:(NSString *)path
+{
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	return [fileManager fileExistsAtPath:path];
+}
+
 + (NSArray *)listFilesForDirectory:(NSString *)baseFolderPath filenameOnly:(BOOL)filenameOnly
 {
 	NSMutableArray *ret = nil;
@@ -243,6 +249,9 @@
 
 + (BOOL)recursiveDeleteFolder:(NSString *)folderPath allowDeletionOfNonLocalFiles:(BOOL)allow
 {
+	if ([self exists:folderPath] == NO) {
+		return YES;
+	}
 	if ([self isFolder:folderPath] == NO) {
 		return NO;
 	}
@@ -286,8 +295,10 @@
 				return YES;
 			}
 			NSLog(@"Failed to delete backups folder for database %@", databaseUid);
+			return NO;
 		}
 		NSLog(@"Failed to delete metadata file for database %@", databaseUid);
+		return NO;
 	}
 	NSLog(@"Failed to delete main file for database %@", databaseUid);
 	return NO;

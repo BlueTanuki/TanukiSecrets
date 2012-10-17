@@ -57,6 +57,10 @@ failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock;
  andSavedMetadataFileAs:(NSString *)metadataFilePath andDatabaseFileAs:(NSString *)databaseFilePath;
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper downloadBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid failedWithError:(NSString *)error;
 
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper deletedDatabase:(NSString *)databaseUid;
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper deleteDatabase:(NSString *)databaseUid failedWithError:(NSString *)error;
+- (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper deleteDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock;
+
 
 @optional
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper attemptingToLockDatabase:(NSString *)databaseUid;
@@ -108,7 +112,18 @@ typedef enum {
 	CLEANUP_DELETE_LOCKFILE,
 	
 	DOWNLOAD_METADATA = 400,
-	DOWNLOAD_DATABASE
+	DOWNLOAD_DATABASE,
+	
+	DELETE_READ_LOCKFILE = 500,
+	DELETE_WRITE_LOCKFILE,
+	DELETE_CHECK_LOCKFILE,
+	DELETE_RECHECK_LOCKFILE,
+	DELETE_CHECK_BACKUP_FOLDER_EXISTS,
+	DELETE_BACKUP_FILE,
+	DELETE_BACKUP_FOLDER,
+	DELETE_DATABASE,
+	DELETE_METADATA,
+	DELETE_LOCKFILE
 	
 } TSDatabaseWrapperState;
 
@@ -150,5 +165,8 @@ typedef enum {
 
 - (BOOL)downloadDatabase:(NSString *)databaseUid;
 - (BOOL)downloadBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid;
+
+//WARNING : highly destructive method
+- (BOOL)deleteDatabase:(NSString *)databaseUid;
 
 @end
