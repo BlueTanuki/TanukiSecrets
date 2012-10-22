@@ -474,6 +474,11 @@
 	return nil;
 }
 
++ (TSDatabaseMetadata *)loadDatabaseMetadata:(NSString *)databaseUid
+{
+	return [self loadDatabaseMetadataFromFile:[self metadataFilePath:databaseUid]];
+}
+
 + (TSDatabase *)loadDatabaseFromFile:(NSString *)encryptedFilePath havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret
 {
 	NSData *encryptedData = [NSData dataWithContentsOfFile:encryptedFilePath];
@@ -482,6 +487,11 @@
 		return nil;
 	}
 	return [TSCryptoUtils tanukiDecryptDatabase:encryptedData havingMetadata:metadata usingSecret:secret];
+}
+
++ (TSDatabase *)loadDatabase:(NSString *)databaseUid havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret
+{
+	return [self loadDatabaseFromFile:[self databaseFilePath:databaseUid] havingMetadata:metadata usingSecret:secret];
 }
 
 + (TSDatabaseLock *)loadDatabaseLockFromFile:(NSString *)filePath

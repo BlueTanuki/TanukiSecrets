@@ -46,6 +46,11 @@
 		9F9D868E15CBFDF60066BC04 /* SMXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */; };
 		9F9D869115CC14CA0066BC04 /* Sandbox.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */; };
 		9FC16205161F081700094E43 /* TSDatabaseWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC16204161F081700094E43 /* TSDatabaseWrapper.m */; };
+		9FCE97BD1631A289003FE67F /* TSLocalDatabasesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCE97BC1631A288003FE67F /* TSLocalDatabasesViewController.m */; };
+		9FCE97C61631BD2E003FE67F /* TSChooseCreationMethodViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCE97C51631BD2E003FE67F /* TSChooseCreationMethodViewController.m */; };
+		9FCE97C91635B2E6003FE67F /* TSRemoteDatabasesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCE97C81635B2E5003FE67F /* TSRemoteDatabasesViewController.m */; };
+		9FCE97CC1635C14A003FE67F /* TSCreateDatabaseFromDropboxViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCE97CB1635C14A003FE67F /* TSCreateDatabaseFromDropboxViewController.m */; };
+		9FCE97CF1635D23E003FE67F /* TSLinkWithDropboxViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCE97CE1635D23D003FE67F /* TSLinkWithDropboxViewController.m */; };
 		9FEC4DCF15C29894008B18D5 /* JSNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4DCE15C29894008B18D5 /* JSNotifier.m */; };
 		9FEC4DD415C298E7008B18D5 /* NotifyCheck.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FEC4DD015C298E7008B18D5 /* NotifyCheck.png */; };
 		9FEC4DD515C298E7008B18D5 /* NotifyCheck@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FEC4DD115C298E7008B18D5 /* NotifyCheck@2x.png */; };
@@ -146,6 +151,16 @@
 		9FC16203161F081700094E43 /* TSDatabaseWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDatabaseWrapper.h; sourceTree = "<group>"; };
 		9FC16204161F081700094E43 /* TSDatabaseWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDatabaseWrapper.m; sourceTree = "<group>"; };
 		9FC16206161F243300094E43 /* TSRemoteStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSRemoteStorage.h; sourceTree = "<group>"; };
+		9FCE97BB1631A288003FE67F /* TSLocalDatabasesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLocalDatabasesViewController.h; sourceTree = "<group>"; };
+		9FCE97BC1631A288003FE67F /* TSLocalDatabasesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLocalDatabasesViewController.m; sourceTree = "<group>"; };
+		9FCE97C41631BD2E003FE67F /* TSChooseCreationMethodViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSChooseCreationMethodViewController.h; sourceTree = "<group>"; };
+		9FCE97C51631BD2E003FE67F /* TSChooseCreationMethodViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSChooseCreationMethodViewController.m; sourceTree = "<group>"; };
+		9FCE97C71635B2E5003FE67F /* TSRemoteDatabasesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSRemoteDatabasesViewController.h; sourceTree = "<group>"; };
+		9FCE97C81635B2E5003FE67F /* TSRemoteDatabasesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSRemoteDatabasesViewController.m; sourceTree = "<group>"; };
+		9FCE97CA1635C14A003FE67F /* TSCreateDatabaseFromDropboxViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSCreateDatabaseFromDropboxViewController.h; sourceTree = "<group>"; };
+		9FCE97CB1635C14A003FE67F /* TSCreateDatabaseFromDropboxViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSCreateDatabaseFromDropboxViewController.m; sourceTree = "<group>"; };
+		9FCE97CD1635D23C003FE67F /* TSLinkWithDropboxViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLinkWithDropboxViewController.h; sourceTree = "<group>"; };
+		9FCE97CE1635D23D003FE67F /* TSLinkWithDropboxViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLinkWithDropboxViewController.m; sourceTree = "<group>"; };
 		9FEC4DC515C18107008B18D5 /* TanukiSecrets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TanukiSecrets.entitlements; sourceTree = "<group>"; };
 		9FEC4DCD15C29894008B18D5 /* JSNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotifier.h; sourceTree = "<group>"; };
 		9FEC4DCE15C29894008B18D5 /* JSNotifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSNotifier.m; sourceTree = "<group>"; };
@@ -396,11 +411,18 @@
 		9F9D868F15CC10530066BC04 /* controller */ = {
 			isa = PBXGroup;
 			children = (
+				9FCE97C31631BCD2003FE67F /* createDatabase */,
 				9F57C2001611E2DE0085703E /* rotation */,
 				9F8ED47D15B98C6A00391EF8 /* TSMasterViewController.h */,
 				9F8ED47E15B98C6A00391EF8 /* TSMasterViewController.m */,
 				9F8ED48015B98C6A00391EF8 /* TSDetailViewController.h */,
 				9F8ED48115B98C6A00391EF8 /* TSDetailViewController.m */,
+				9FCE97BB1631A288003FE67F /* TSLocalDatabasesViewController.h */,
+				9FCE97BC1631A288003FE67F /* TSLocalDatabasesViewController.m */,
+				9FCE97C71635B2E5003FE67F /* TSRemoteDatabasesViewController.h */,
+				9FCE97C81635B2E5003FE67F /* TSRemoteDatabasesViewController.m */,
+				9FCE97CD1635D23C003FE67F /* TSLinkWithDropboxViewController.h */,
+				9FCE97CE1635D23D003FE67F /* TSLinkWithDropboxViewController.m */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -417,6 +439,17 @@
 				9FC16206161F243300094E43 /* TSRemoteStorage.h */,
 			);
 			path = worker;
+			sourceTree = "<group>";
+		};
+		9FCE97C31631BCD2003FE67F /* createDatabase */ = {
+			isa = PBXGroup;
+			children = (
+				9FCE97C41631BD2E003FE67F /* TSChooseCreationMethodViewController.h */,
+				9FCE97C51631BD2E003FE67F /* TSChooseCreationMethodViewController.m */,
+				9FCE97CA1635C14A003FE67F /* TSCreateDatabaseFromDropboxViewController.h */,
+				9FCE97CB1635C14A003FE67F /* TSCreateDatabaseFromDropboxViewController.m */,
+			);
+			path = createDatabase;
 			sourceTree = "<group>";
 		};
 		9FEC4DCB15C29847008B18D5 /* lib */ = {
@@ -618,6 +651,11 @@
 				9F967746162055AE00C9182D /* TSiCloudWrapper.m in Sources */,
 				9F96775E162096C700C9182D /* TSUIDocument.m in Sources */,
 				9F8E0369162837B60040662C /* TSDbStatusViewController.m in Sources */,
+				9FCE97BD1631A289003FE67F /* TSLocalDatabasesViewController.m in Sources */,
+				9FCE97C61631BD2E003FE67F /* TSChooseCreationMethodViewController.m in Sources */,
+				9FCE97C91635B2E6003FE67F /* TSRemoteDatabasesViewController.m in Sources */,
+				9FCE97CC1635C14A003FE67F /* TSCreateDatabaseFromDropboxViewController.m in Sources */,
+				9FCE97CF1635D23E003FE67F /* TSLinkWithDropboxViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -304,7 +304,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="gw1-ky-iQG">
-                                <rect key="frame" x="205" y="353" width="95" height="44"/>
+                                <rect key="frame" x="207" y="329" width="95" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Db Status">
@@ -333,6 +333,17 @@
                                     <action selector="iCheckForConflicts:" destination="Rdo-KC-Vnd" eventType="touchUpInside" id="cLL-Wx-dXK"/>
                                 </connections>
                             </button>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="7hB-Ti-Axz">
+                                <rect key="frame" x="0.0" y="372" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <items>
+                                    <barButtonItem title="Unlink" id="vR8-kC-lSn">
+                                        <connections>
+                                            <action selector="unlinkDropbox:" destination="Rdo-KC-Vnd" id="2yU-fy-f0h"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -426,6 +437,7 @@
                 <relationship kind="action" name="createTestDatabase:" candidateClass="UIButton"/>
                 <relationship kind="action" name="dropboxUpdateTest:" candidateClass="UIButton"/>
                 <relationship kind="action" name="go:"/>
+                <relationship kind="action" name="iCheckForConflicts:"/>
                 <relationship kind="action" name="iClean:"/>
                 <relationship kind="action" name="iLock:"/>
                 <relationship kind="action" name="iUnlock:"/>

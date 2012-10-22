@@ -10,15 +10,15 @@
 
 @implementation TSDateUtils
 
-static NSDateFormatter *dateTimeFormat = nil;
+static NSDateFormatter *_dateTimeFormat = nil;
 
 + (NSDateFormatter *) dateTimeFormat
 {
-	if (dateTimeFormat == nil) {
-		dateTimeFormat = [[NSDateFormatter alloc] init];
-		[dateTimeFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
+	if (_dateTimeFormat == nil) {
+		_dateTimeFormat = [[NSDateFormatter alloc] init];
+		[_dateTimeFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
 	}
-	return dateTimeFormat;
+	return _dateTimeFormat;
 }
 
 + (NSString *)stringFromDate:(NSDate *)date
@@ -30,5 +30,22 @@ static NSDateFormatter *dateTimeFormat = nil;
 {
 	return [[self dateTimeFormat] dateFromString:string];
 }
+
+static NSDateFormatter *_interfaceDateFormat = nil;
+
++ (NSDateFormatter *) interfaceDateFormat
+{
+	if (_interfaceDateFormat == nil) {
+		_interfaceDateFormat = [[NSDateFormatter alloc] init];
+		[_interfaceDateFormat setDateFormat:@"yyyy-MM-dd HH:mm"];
+	}
+	return _interfaceDateFormat;
+}
+
++ (NSString *)interfaceStringFromDate:(NSDate *)date
+{
+	return [[self interfaceDateFormat] stringFromDate:date];
+}
+
 
 @end

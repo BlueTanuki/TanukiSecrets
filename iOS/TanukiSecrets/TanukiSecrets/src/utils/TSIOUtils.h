@@ -51,8 +51,11 @@
  */
 + (BOOL)saveDatabase:(TSDatabase *)database havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret;
 
++ (TSDatabaseMetadata *)loadDatabaseMetadata:(NSString *)databaseUid;
 + (TSDatabaseMetadata *)loadDatabaseMetadataFromFile:(NSString *)filePath;
++ (TSDatabase *)loadDatabase:(NSString *)databaseUid havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret;
 + (TSDatabase *)loadDatabaseFromFile:(NSString *)encryptedFilePath havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret;
+
 + (TSDatabaseLock *)loadDatabaseLockFromFile:(NSString *)filePath;
 
 + (BOOL)testDatabase:(NSString *)databaseUid usingSecret:(NSString *)secret;

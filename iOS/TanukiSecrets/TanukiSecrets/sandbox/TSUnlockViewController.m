@@ -8,6 +8,8 @@
 
 #import "TSUnlockViewController.h"
 
+#import <DropboxSDK/DropboxSDK.h>
+
 #import "TSSharedState.h"
 
 #import "TSDatabaseMetadata.h"
@@ -672,6 +674,11 @@ BOOL firstTimeSegueTriggered = NO;
 	}else {
 		NSLog (@"Strange... Received alert view click on button %@ but dropboxWrapper is not stalled", buttonText);
 	}
+}
+- (IBAction)unlinkDropbox:(id)sender {
+    if ([[DBSession sharedSession] isLinked]) {
+        [[DBSession sharedSession] unlinkAll];
+    }
 }
 
 #pragma mark - view lifecycle
