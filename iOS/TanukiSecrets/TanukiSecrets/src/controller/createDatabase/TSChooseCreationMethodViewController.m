@@ -10,7 +10,11 @@
 
 #import <DropboxSDK/DropboxSDK.h>
 
+#import "TSConstants.h"
+
 @interface TSChooseCreationMethodViewController ()
+
+- (void)dropboxWasLinked:(NSNotification *)notification;
 
 @end
 
@@ -63,13 +67,13 @@
 {
 	switch (section) {
 		case 0:
-			return @"Choose this option if you want to create a new empty database.";
+			return @"Choose this option if you want to create a new empty database. If this is your first time using this app, this is the only valid option for creating your first database.";
 			
 		case 1:
-			return @"Choose this option if you want to create the database from an already existing version stored in your Dropbox account.";
+			return @"Choose this option if you want to create the database from an already existing version stored in your Dropbox account. This only works for databases that have been created on another device and synchronized with Dropbox.";
 
 		case 2:
-			return @"Choose this option if you want to create the database from an already existing iCloud version.";
+			return @"Choose this option if you want to create the database from an already existing iCloud version. This only works for databases you have synchronized with iCloud from other iDevices (using the same Apple ID).";
 			
 		default:
 			return @"This table has only 3 sections...";
@@ -118,6 +122,10 @@
 			
 		case 1:
 			if ([[DBSession sharedSession] isLinked] == NO) {
+				[[NSNotificationCenter defaultCenter] addObserver:self
+														 selector:@selector(dropboxWasLinked:)
+															 name:TS_NOTIFICATION_DROPBOX_WAS_LINKED
+														   object:nil];
 				[self performSegueWithIdentifier:@"LinkWithDropbox" sender:nil];
 			}else {
 				[self performSegueWithIdentifier:@"Dropbox" sender:nil];
@@ -137,8 +145,25 @@
 #pragma mark - listeners
 
 - (IBAction)cancel:(id)sender {
-	[self.presentingViewController dismissModalViewControllerAnimated:YES];
+	[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)(void))completion
+{
+	NSLog (@"Dismissing VC with completion...");
+	[super dismissViewControllerAnimated:flag completion:^{
+		[self performSegueWithIdentifier:@"Dropbox" sender:nil];
+		completion();
+	}];
+}
+
+- (void)dropboxWasLinked:(NSNotification *)notification
+{
+	NSLog (@"received dropbox was linked notification");
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self performSegueWithIdentifier:@"Dropbox" sender:nil];
+	});
+}
 
 @end

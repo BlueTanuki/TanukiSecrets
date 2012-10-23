@@ -44,10 +44,12 @@
 
 #pragma mark - presenting view controller
 
-- (void)dismissModalViewControllerAnimated:(BOOL)animated
+- (void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)(void))completion
 {
 	_localDatabaseUIDs = nil;
-	[super dismissModalViewControllerAnimated:animated];
+	[super dismissViewControllerAnimated:flag completion:^{
+		completion();
+	}];
 }
 
 #pragma mark - TableViewController
@@ -132,6 +134,22 @@
      // Pass the selected object to the new view controller.
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
+}
+
+#pragma mark - listeners
+
+
+- (IBAction)switchToSandboxStoryboard:(id)sender {
+	if (self.presentingViewController) {
+		NSLog (@"Storyboard switch by dismissing self");
+		[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+	}else {
+		NSLog (@"Storyboard switch by modally presenting other");
+		UIStoryboard *sandboxStoryboard = [UIStoryboard storyboardWithName:@"Sandbox" bundle:nil];
+		UIViewController *sandboxInitialViewController = [sandboxStoryboard instantiateInitialViewController];
+		sandboxInitialViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+		[self presentModalViewController:sandboxInitialViewController animated:YES];
+	}
 }
 
 @end

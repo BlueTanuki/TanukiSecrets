@@ -63,9 +63,7 @@ databaseFilePaths;
 												 action:@selector(refreshData:)];
 		self.navigationItem.rightBarButtonItem = refreshDropboxButton;
 		[self.tableView reloadData];
-//		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-			[self refreshFinished];
-//		});
+		[self refreshFinished];
 	});
 }
 
@@ -80,9 +78,7 @@ databaseFilePaths;
 												 action:@selector(refreshData:)];
 		self.navigationItem.rightBarButtonItem = refreshDropboxButton;
 		[self.tableView reloadData];
-//		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-			[self refreshFailed];
-//		});
+		[self refreshFailed];
 	});
 }
 
@@ -100,9 +96,7 @@ databaseFilePaths;
 		UIBarButtonItem *refreshButton = [[UIBarButtonItem alloc]
 										  initWithCustomView:busy];
 		self.navigationItem.rightBarButtonItem = refreshButton;
-//		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-			[self refreshStarted];
-//		});
+		[self refreshStarted];
 		[self.tableView reloadData];
 	}else {
 		NSLog (@"Refresh is already in progress");
@@ -347,13 +341,7 @@ databaseFilePaths;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    [TSNotifierUtils error:@"Not implemented!"];
 	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 

@@ -20,4 +20,6 @@
 #define TS_NUMBER_OF_LOCAL_BACKUPS 25
 #define TS_NUMBER_OF_REMOTE_BACKUPS 3
 
+#define TS_NOTIFICATION_DROPBOX_WAS_LINKED @"TSDropboxWasLinkedNotification"
+
 #endif

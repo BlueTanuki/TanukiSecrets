@@ -9,7 +9,7 @@
             <objects>
                 <tableViewController id="XmC-4j-m8p" customClass="TSFilesystemTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="NbV-5O-Ixk">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="372"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <button key="tableFooterView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="QhH-Cf-xQN">
@@ -70,7 +70,7 @@
             <objects>
                 <viewController id="9qk-JK-dHl" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Pf6-N7-kYp">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="372"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Off" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="4lb-SD-pBm">
@@ -94,7 +94,7 @@
             <objects>
                 <viewController id="Fwk-LF-P5u" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="HzA-aI-8J8">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="372"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="On" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="5Lp-fu-9fj">
@@ -118,7 +118,7 @@
             <objects>
                 <viewController id="Rdo-KC-Vnd" customClass="TSUnlockViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="G6r-Qh-LGl">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="372"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" clearButtonMode="whileEditing" id="RFN-44-bMh">
@@ -135,7 +135,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="U2C-2H-AiJ">
-                                <rect key="frame" x="203" y="19" width="97" height="37"/>
+                                <rect key="frame" x="203" y="16" width="97" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Go!">
@@ -333,21 +333,24 @@
                                     <action selector="iCheckForConflicts:" destination="Rdo-KC-Vnd" eventType="touchUpInside" id="cLL-Wx-dXK"/>
                                 </connections>
                             </button>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="7hB-Ti-Axz">
-                                <rect key="frame" x="0.0" y="372" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                <items>
-                                    <barButtonItem title="Unlink" id="vR8-kC-lSn">
-                                        <connections>
-                                            <action selector="unlinkDropbox:" destination="Rdo-KC-Vnd" id="2yU-fy-f0h"/>
-                                        </connections>
-                                    </barButtonItem>
-                                </items>
-                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <toolbarItems>
+                        <barButtonItem title="Main" id="ek8-6d-K4K">
+                            <connections>
+                                <action selector="switchToMainStoryboard:" destination="Rdo-KC-Vnd" id="YSN-ma-MRO"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="CuF-8L-qHS"/>
+                        <barButtonItem title="Unlink" id="uOS-Nx-ucI">
+                            <connections>
+                                <action selector="unlinkDropbox:" destination="Rdo-KC-Vnd" id="xRa-Vq-rXg"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" id="V3t-1C-NUE"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="onOffSwitch" destination="9sG-yk-w0m" id="UtR-9c-fpP"/>
                         <outlet property="unlockCodeLabel" destination="c5m-eO-LQI" id="aut-Eh-Qja"/>
@@ -364,13 +367,17 @@
         <!--Navigation Controller-->
         <scene sceneID="gKS-Pe-LBA">
             <objects>
-                <navigationController id="4cE-kc-Zx9" customClass="TSNavigationController" sceneMemberID="viewController">
+                <navigationController toolbarHidden="NO" id="4cE-kc-Zx9" customClass="TSNavigationController" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="weO-aY-pua">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="bAC-xm-baV">
+                        <rect key="frame" x="0.0" y="436" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="Rdo-KC-Vnd" kind="relationship" relationship="rootViewController" id="EDu-GQ-WHT"/>
                     </connections>
@@ -384,7 +391,7 @@
             <objects>
                 <tableViewController id="BcK-eM-r2F" customClass="TSDbStatusViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="ciG-IV-Mn8">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="372"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
@@ -419,37 +426,6 @@
             <point key="canvasLocation" x="898" y="-270"/>
         </scene>
     </scenes>
-    <classes>
-        <class className="TSDbStatusViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSDbStatusViewController.h"/>
-        </class>
-        <class className="TSFilesystemTableViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSFilesystemTableViewController.h"/>
-        </class>
-        <class className="TSNavigationController" superclassName="UINavigationController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNavigationController.h"/>
-        </class>
-        <class className="TSUnlockViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSUnlockViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="addOptimisticLock:" candidateClass="UIButton"/>
-                <relationship kind="action" name="cleanup:"/>
-                <relationship kind="action" name="createTestDatabase:" candidateClass="UIButton"/>
-                <relationship kind="action" name="dropboxUpdateTest:" candidateClass="UIButton"/>
-                <relationship kind="action" name="go:"/>
-                <relationship kind="action" name="iCheckForConflicts:"/>
-                <relationship kind="action" name="iClean:"/>
-                <relationship kind="action" name="iLock:"/>
-                <relationship kind="action" name="iUnlock:"/>
-                <relationship kind="action" name="iUpdate:"/>
-                <relationship kind="action" name="manyUpdatesWithBackups:" candidateClass="UIButton"/>
-                <relationship kind="action" name="removeOptimisticLock:" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="onOffSwitch" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="unlockCodeLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="unlockCodeTextField" candidateClass="UITextField"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

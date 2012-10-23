@@ -1,50 +1,44 @@
 //
-//  TSCreateDatabaseFromDropboxViewController.m
+//  TSCreateDatabaseFromICloudViewController.m
 //  TanukiSecrets
 //
-//  Created by Lucian Ganea on 10/22/12.
+//  Created by Lucian Ganea on 10/23/12.
 //  Copyright (c) 2012 BlueTanuki. All rights reserved.
 //
 
-#import "TSCreateDatabaseFromDropboxViewController.h"
-
-#import <DropboxSDK/DropboxSDK.h>
+#import "TSCreateDatabaseFromICloudViewController.h"
 
 #import "TSSharedState.h"
-#import "TSNotifierUtils.h"
 #import "TSIOUtils.h"
 
-@interface TSCreateDatabaseFromDropboxViewController ()
+@interface TSCreateDatabaseFromICloudViewController ()
 
-@property(nonatomic, strong) TSDatabaseWrapper *dropboxWrapper;
+@property(nonatomic, strong) TSDatabaseWrapper *iCloudWrapper;
 @property(nonatomic, assign) BOOL failed;
 @property(nonatomic, assign) BOOL filteredOutLocalDatabases;
 
 @end
 
-@implementation TSCreateDatabaseFromDropboxViewController
+@implementation TSCreateDatabaseFromICloudViewController
 
-@synthesize dropboxWrapper = _dropboxWrapper;
+@synthesize iCloudWrapper = _iCloudWrapper;
 @synthesize failed, filteredOutLocalDatabases;
 
 #pragma mark - override getters/setters
 
-- (TSDatabaseWrapper *)dropboxWrapper
+- (TSDatabaseWrapper *)iCloudWrapper
 {
-	if ([[DBSession sharedSession] isLinked] == NO) {
-		@throw NSInternalInconsistencyException;
+	if (_iCloudWrapper == nil) {
+		_iCloudWrapper = [TSSharedState iCloudWrapperForDelegate:self];
 	}
-	if (_dropboxWrapper == nil) {
-		_dropboxWrapper = [TSSharedState dropboxWrapperForDelegate:self];
-	}
-	return _dropboxWrapper;
+	return _iCloudWrapper;
 }
 
 #pragma mark - communication with subclass
 
 - (TSDatabaseWrapper *)databaseWrapper
 {
-	return self.dropboxWrapper;
+	return self.iCloudWrapper;
 }
 
 - (void)refreshStarted
@@ -81,18 +75,18 @@
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
 	if (self.working) {
-		return @"Fetching database list from Dropbox servers. Please wait.";
+		return @"Fetching database list from iCloud. Please wait.";
 	}
 	if (self.failed) {
-		return @"Communication with Dropbox servers failed. Make sure you have an internet connection and try again later.";
+		return @"Communication with iCloud servers failed. Make sure you have an internet connection and try again later.";
 	}
 	if ([self.remoteDatabaseUIDs count] > 0) {
 		return @"Please choose the database you want to synchronize with.";
 	}
 	if (self.filteredOutLocalDatabases) {
-		return @"You already have local versions of all the databases you have in your Dropbox account.";
+		return @"You already have local versions of all the databases you have synchronized with iCloud.";
 	}
-	return @"You do not have any databases in your Dropbox account. You must first synchronize an existing database with Dropbox, then you will be able to use it during the database creation process.";
+	return @"You do not have any databases in iCloud. You must first synchronize an existing database with iCloud using the same Apple ID, then you will be able to use it during the database creation process.";
 }
 
 @end

@@ -675,10 +675,24 @@ BOOL firstTimeSegueTriggered = NO;
 		NSLog (@"Strange... Received alert view click on button %@ but dropboxWrapper is not stalled", buttonText);
 	}
 }
+
 - (IBAction)unlinkDropbox:(id)sender {
     if ([[DBSession sharedSession] isLinked]) {
         [[DBSession sharedSession] unlinkAll];
     }
+}
+
+- (IBAction)switchToMainStoryboard:(id)sender {
+	if (self.presentingViewController) {
+		NSLog (@"Storyboard switch by dismissing self");
+		[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+	}else {
+		NSLog (@"Storyboard switch by modally presenting other");
+		UIStoryboard *sandboxStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
+		UIViewController *sandboxInitialViewController = [sandboxStoryboard instantiateInitialViewController];
+		sandboxInitialViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+		[self presentModalViewController:sandboxInitialViewController animated:YES];
+	}
 }
 
 #pragma mark - view lifecycle
