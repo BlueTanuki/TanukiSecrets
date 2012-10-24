@@ -10,6 +10,7 @@
 
 #import "TSSharedState.h"
 #import "TSIOUtils.h"
+#import "TSNotifierUtils.h"
 
 @interface TSCreateDatabaseFromICloudViewController ()
 
@@ -88,5 +89,26 @@
 	}
 	return @"You do not have any databases in iCloud. You must first synchronize an existing database with iCloud using the same Apple ID, then you will be able to use it during the database creation process.";
 }
+
+#pragma mark - Table view delegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	NSString *databaseUid = [self.remoteDatabaseUIDs objectAtIndex:indexPath.row];
+	NSString *metadataFilePath = [self.databaseMetadataFilePaths objectAtIndex:indexPath.row];
+	NSString *databaseFilePath = [self.databaseFilePaths objectAtIndex:indexPath.row];
+	if ([TSIOUtils moveFile:databaseFilePath to:[TSIOUtils databaseFilePath:databaseUid]]) {
+		if ([TSIOUtils moveFile:metadataFilePath to:[TSIOUtils metadataFilePath:databaseUid]]) {
+			NSNotification *notificatopn = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
+			[[NSNotificationCenter defaultCenter] postNotification:notificatopn];
+			[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+		}else {
+			[TSNotifierUtils error:@"Failed (metadata rename)"];
+		}
+	}else {
+		[TSNotifierUtils error:@"Failed (database rename)"];
+	}
+}
+
 
 @end

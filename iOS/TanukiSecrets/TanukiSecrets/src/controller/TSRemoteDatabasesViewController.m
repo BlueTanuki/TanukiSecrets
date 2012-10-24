@@ -325,8 +325,7 @@ databaseFilePaths;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	NSLog (@"Item at index called : %d", indexPath.row);
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
     
     TSDatabaseMetadata *databaseMetadata = [self.databaseMetadataArray objectAtIndex:indexPath.row];
 	cell.textLabel.text = [databaseMetadata name];

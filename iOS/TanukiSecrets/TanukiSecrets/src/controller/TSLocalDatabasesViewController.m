@@ -11,6 +11,7 @@
 #import "TSIOUtils.h"
 #import "TSDatabaseMetadata.h"
 #import "TSDateUtils.h"
+#import "TSConstants.h"
 
 @interface TSLocalDatabasesViewController ()
 
@@ -24,11 +25,11 @@
 @synthesize localDatabaseUIDs = _localDatabaseUIDs;
 @synthesize databaseMetadataArray;
 
-#pragma mark - Override getters
+#pragma mark - worker
 
-- (NSArray *)localDatabaseUIDs
+- (void)reloadDatabaseList:(id)sender
 {
-	if (_localDatabaseUIDs == nil) {
+	dispatch_async(dispatch_get_main_queue(), ^{
 		_localDatabaseUIDs = [TSIOUtils listDatabaseUids];
 		if (_localDatabaseUIDs != nil) {
 			NSMutableArray *aux = [NSMutableArray arrayWithCapacity:[_localDatabaseUIDs count]];
@@ -38,18 +39,18 @@
 			}
 			self.databaseMetadataArray = [aux copy];
 		}
-	}
-	return _localDatabaseUIDs;
+		[self.tableView reloadData];
+	});
 }
 
-#pragma mark - presenting view controller
+#pragma mark - Override getters
 
-- (void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)(void))completion
+- (NSArray *)localDatabaseUIDs
 {
-	_localDatabaseUIDs = nil;
-	[super dismissViewControllerAnimated:flag completion:^{
-		completion();
-	}];
+	if (_localDatabaseUIDs == nil) {
+		[self reloadDatabaseList:nil];
+	}
+	return _localDatabaseUIDs;
 }
 
 #pragma mark - TableViewController
@@ -102,8 +103,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: @"Cell"];
     
     TSDatabaseMetadata *databaseMetadata = [self.databaseMetadataArray objectAtIndex:indexPath.row];
 	cell.textLabel.text = [databaseMetadata name];
@@ -138,8 +138,29 @@
 
 #pragma mark - listeners
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+	if ([[segue identifier] isEqualToString:@"createNewDatabase"]) {
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(localDatabaseListChanged:)
+													 name:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED
+												   object:nil];
+	}
+	[super prepareForSegue:segue sender:sender];
+}
+
+- (void)localDatabaseListChanged:(NSNotification *)notification
+{
+	NSLog (@"received localDatabaseListChanged notification");
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	[self reloadDatabaseList:nil];
+}
 
 - (IBAction)switchToSandboxStoryboard:(id)sender {
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(localDatabaseListChanged:)
+												 name:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED
+											   object:nil];
 	if (self.presentingViewController) {
 		NSLog (@"Storyboard switch by dismissing self");
 		[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];

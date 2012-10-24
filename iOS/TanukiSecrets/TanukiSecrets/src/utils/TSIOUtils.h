@@ -18,6 +18,8 @@
 //returns the full path of a temporary file with the given name (caller responsible with deletion)
 + (NSString *)temporaryFileNamed:(NSString *)fileName;
 
++ (BOOL)moveFile:(NSString *)sourcePath to:(NSString *)destinationPath;
+
 + (NSArray *)listDatabaseUids;//of NSString
 
 + (NSString *)databaseFilePath:(NSString *)databaseUid;

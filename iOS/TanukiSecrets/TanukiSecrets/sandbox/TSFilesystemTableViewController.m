@@ -507,8 +507,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	if(indexPath.section == 1) {
-		static NSString *CellIdentifier = @"FSCell";
-		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FSCell"];
 		
 		NSString *filePath = [tableContent objectAtIndex:indexPath.row];
 		cell.textLabel.text = [filePath lastPathComponent];
@@ -516,8 +515,7 @@
 		
 		return cell;
 	}else if(indexPath.section == 2) {
-		static NSString *CellIdentifier = @"FSCell";
-		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FSCell"];
 
 		if (iCloudDocuments) {
 			NSURL *url = [iCloudDocuments objectAtIndex:indexPath.row];
@@ -529,8 +527,7 @@
 
 		return cell;
 	}else {
-		static NSString *CellIdentifier = @"FSCell";
-		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FSCell"];
 		
 		if (dropboxItems) {
 			DBMetadata *dropboxFileMetadata = [dropboxItems objectAtIndex:indexPath.row];

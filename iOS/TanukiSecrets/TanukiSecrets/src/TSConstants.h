@@ -21,5 +21,6 @@
 #define TS_NUMBER_OF_REMOTE_BACKUPS 3
 
 #define TS_NOTIFICATION_DROPBOX_WAS_LINKED @"TSDropboxWasLinkedNotification"
+#define TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED @"TSLocalDatabaseListChanged"
 
 #endif

@@ -683,6 +683,8 @@ BOOL firstTimeSegueTriggered = NO;
 }
 
 - (IBAction)switchToMainStoryboard:(id)sender {
+	NSNotification *notificatopn = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
+	[[NSNotificationCenter defaultCenter] postNotification:notificatopn];
 	if (self.presentingViewController) {
 		NSLog (@"Storyboard switch by dismissing self");
 		[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];

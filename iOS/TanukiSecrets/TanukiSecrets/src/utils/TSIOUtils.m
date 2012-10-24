@@ -32,8 +32,6 @@
 + (BOOL)copyFileFromPath:(NSString *)sourcePath toFolder:(NSString *)destinationFolder andRenameTo:(NSString *)newFilename;
 + (BOOL)copyFileWithPath:(NSString *)sourcePath toFolder:(NSString *)destinationFolder;//full paths
 
-+ (BOOL)moveFile:(NSString *)sourcePath to:(NSString *)destinationPath;
-
 + (BOOL)deleteFileOrFolder:(NSString *)filePath allowDeletionOfNonLocalFiles:(BOOL)allow;
 + (BOOL)deleteFile:(NSString *)filePath allowDeletionOfNonLocalFiles:(BOOL)allow;
 + (BOOL)recursiveDeleteFolder:(NSString *)folderPath allowDeletionOfNonLocalFiles:(BOOL)allow;

@@ -499,8 +499,7 @@
 			NSLog (@"WARNING : numberOfRows called for unknown section : %d", indexPath.section);
 			break;
 	}
-	NSString *CellIdentifier = @"FSCell";
-	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FSCell"];
 	if (aux == nil) {
 		cell.textLabel.text = @"ERROR";
 	}else {

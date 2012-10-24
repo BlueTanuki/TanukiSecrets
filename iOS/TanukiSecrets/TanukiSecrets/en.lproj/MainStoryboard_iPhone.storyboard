@@ -208,7 +208,7 @@
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="center" id="UcO-js-jnm">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.95577668795620441" alpha="1" colorSpace="calibratedWhite"/>
                                 <string key="text">Before using any Dropbox features, you must let this application acces your Dropbox account. TanukiSecrets does not access any of your existing files, you only need to grant permission to a separate folder where all the necessary files will be kept. You will have full access to these files, but you should only edit them through this application. Please press the "Link With Dropbox" button to begin this one-time process that will link TanukiSecrets with your Dropbox account.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <textInputTraits key="textInputTraits"/>
