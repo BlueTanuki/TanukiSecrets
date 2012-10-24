@@ -219,53 +219,98 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 - (void)reportListDatabaseUidsErrorToDelegate:(NSString *)errorText
 {
 	[self setState:IDLE];
-	[self.delegate databaseWrapper:self listDatabaseUidsFailedWithError:errorText];
+	if ([self.delegate respondsToSelector:@selector(databaseWrapper:listDatabaseUidsFailedWithError:)]) {
+		[self.delegate databaseWrapper:self listDatabaseUidsFailedWithError:errorText];
+	}else {
+		NSLog (@"ERROR : wanted to send databaseWrapper:listDatabaseUidsFailedWithError: message to delegate of class %@ but it does not implement this method.",
+			   NSStringFromClass([self.delegate class]));
+	}
 }
 
 - (void)reportListBackupIdsErrorToDelegate:(NSString *)errorText
 {
 	[self setState:IDLE];
-	[self.delegate databaseWrapper:self listBackupIdsForDatabase:self.databaseUid failedWithError:errorText];
+	if ([self.delegate respondsToSelector:@selector(databaseWrapper:listBackupIdsForDatabase:failedWithError:)]) {
+		[self.delegate databaseWrapper:self listBackupIdsForDatabase:self.databaseUid failedWithError:errorText];
+	}else {
+		NSLog (@"ERROR : wanted to send databaseWrapper:listBackupIdsForDatabase:failedWithError: message to delegate of class %@ but it does not implement this method.",
+			   NSStringFromClass([self.delegate class]));
+	}
 }
 
 - (void)reportDatabaseUploadErrorToDelegate:(NSString *)errorText
 {
 	[self setState:IDLE];
-	[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedWithError:errorText];
+	if ([self.delegate respondsToSelector:@selector(databaseWrapper:uploadForDatabase:failedWithError:)]) {
+		[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedWithError:errorText];
+	}else {
+		NSLog (@"ERROR : wanted to send databaseWrapper:uploadForDatabase:failedWithError: message to delegate of class %@ but it does not implement this method.",
+			   NSStringFromClass([self.delegate class]));
+	}
 }
 
 - (void)reportAddOptimisticLockErrorToDelegate:(NSString *)errorText
 {
 	[self setState:IDLE];
-	[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
+	if ([self.delegate respondsToSelector:@selector(databaseWrapper:addingOptimisticLockForDatabase:failedWithError:)]) {
+		[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
+	}else {
+		NSLog (@"ERROR : wanted to send databaseWrapper:addingOptimisticLockForDatabase:failedWithError: message to delegate of class %@ but it does not implement this method.",
+			   NSStringFromClass([self.delegate class]));
+	}
 }
 
 - (void)reportRemoveOptimisticLockErrorToDelegate:(NSString *)errorText
 {
 	[self setState:IDLE];
-	[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
+	if ([self.delegate respondsToSelector:@selector(databaseWrapper:removingOptimisticLockForDatabase:failedWithError:)]) {
+		[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
+	}else {
+		NSLog (@"ERROR : wanted to send databaseWrapper:removingOptimisticLockForDatabase:failedWithError: message to delegate of class %@ but it does not implement this method.",
+			   NSStringFromClass([self.delegate class]));
+	}
 }
 
 - (void)reportCleanupErrorToDelegate:(NSString *)errorText
 {
 	[self setState:IDLE];
-	[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedWithError:errorText];
+	if ([self.delegate respondsToSelector:@selector(databaseWrapper:cleanupForDatabase:failedWithError:)]) {
+		[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedWithError:errorText];
+	}else {
+		NSLog (@"ERROR : wanted to send databaseWrapper:cleanupForDatabase:failedWithError: message to delegate of class %@ but it does not implement this method.",
+			   NSStringFromClass([self.delegate class]));
+	}
 }
 
 - (void)reportDownloadErrorToDelegate:(NSString *)errorText
 {
 	[self setState:IDLE];
 	if (self.remoteBackupId == nil) {
-		[self.delegate databaseWrapper:self downloadDatabase:self.databaseUid failedWithError:errorText];
+		if ([self.delegate respondsToSelector:@selector(databaseWrapper:downloadDatabase:failedWithError:)]) {
+			[self.delegate databaseWrapper:self downloadDatabase:self.databaseUid failedWithError:errorText];
+		}else {
+			NSLog (@"ERROR : wanted to send databaseWrapper:downloadDatabase:failedWithError: message to delegate of class %@ but it does not implement this method.",
+				   NSStringFromClass([self.delegate class]));
+		}
 	}else {
-		[self.delegate databaseWrapper:self downloadBackup:self.remoteBackupId ofDatabase:self.databaseUid failedWithError:errorText];
+		if ([self.delegate respondsToSelector:@selector(databaseWrapper:downloadBackup:ofDatabase:failedWithError:)]) {
+			[self.delegate databaseWrapper:self downloadBackup:self.remoteBackupId ofDatabase:self.databaseUid failedWithError:errorText];
+		}else {
+			NSLog (@"ERROR : wanted to send databaseWrapper:downloadBackup:ofDatabase:failedWithError: message to delegate of class %@ but it does not implement this method.",
+				   NSStringFromClass([self.delegate class]));
+		}
 	}
 }
 
 - (void)reportDatabaseDeleteErrorToDelegate:(NSString *)errorText
 {
 	[self setState:IDLE];
-	[self.delegate databaseWrapper:self deleteDatabase:self.databaseUid failedWithError:errorText];
+	if ([self.delegate respondsToSelector:@selector(databaseWrapper:deleteDatabase:failedWithError:)]) {
+		[self.delegate databaseWrapper:self deleteDatabase:self.databaseUid failedWithError:errorText];
+	}else {
+		NSLog (@"ERROR : wanted to send databaseWrapper:deleteDatabase:failedWithError: message to delegate of class %@ but it does not implement this method.",
+			   NSStringFromClass([self.delegate class]));
+	}
 }
 
 
@@ -479,14 +524,24 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	switch (self.state) {
 		case LIST_DATABASE_UIDS: {
 			[self setState:IDLE];
-			[self.delegate databaseWrapper:self finishedListDatabaseUids:[self namesOfMetadataFilesFromFileList:filenames]];
+			if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedListDatabaseUids:)]) {
+				[self.delegate databaseWrapper:self finishedListDatabaseUids:[self namesOfMetadataFilesFromFileList:filenames]];
+			}else {
+				NSLog (@"ERROR : wanted to send databaseWrapper:finishedListDatabaseUids: message to delegate of class %@ but it does not implement this method.",
+					   NSStringFromClass([self.delegate class]));
+			}
 		}
 			break;
 			
 		case LIST_BACKUP_IDS: {
 			[self setState:IDLE];
 			NSArray *backupIds = [TSBackupUtils backupIds:filenames];
-			[self.delegate databaseWrapper:self finishedListBackupIds:backupIds forDatabase:self.databaseUid];
+			if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedListBackupIds:forDatabase:)]) {
+				[self.delegate databaseWrapper:self finishedListBackupIds:backupIds forDatabase:self.databaseUid];
+			}else {
+				NSLog (@"ERROR : wanted to send databaseWrapper:finishedListBackupIds:forDatabase: message to delegate of class %@ but it does not implement this method.",
+					   NSStringFromClass([self.delegate class]));
+			}
 		}
 			break;
 			
@@ -766,11 +821,21 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			if (databaseLock != nil) {
 				if ((databaseLock.writeLock != nil) && ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
 					[self setState:IDLE];
-					[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					if ([self.delegate respondsToSelector:@selector(databaseWrapper:uploadForDatabase:failedDueToDatabaseLock:)]) {
+						[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					}else {
+						NSLog (@"ERROR : wanted to send databaseWrapper:uploadForDatabase:failedDueToDatabaseLock: message to delegate of class %@ but it does not implement this method.",
+							   NSStringFromClass([self.delegate class]));
+					}
 				}else if ((databaseLock.optimisticLock != nil) && ([databaseLock.optimisticLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
 					[self setState:UPLOAD_STALLED_OPTIMISTIC_LOCK];
 					self.remoteFileRevision = revision;
-					[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid isStalledBecauseOfOptimisticLock:databaseLock];
+					if ([self.delegate respondsToSelector:@selector(databaseWrapper:uploadForDatabase:isStalledBecauseOfOptimisticLock:)]) {
+						[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid isStalledBecauseOfOptimisticLock:databaseLock];
+					}else {
+						NSLog (@"ERROR : wanted to send databaseWrapper:uploadForDatabase:isStalledBecauseOfOptimisticLock: message to delegate of class %@ but it does not implement this method.",
+							   NSStringFromClass([self.delegate class]));
+					}
 				}else {
 					[self uploadWriteLock:revision];
 				}
@@ -789,11 +854,21 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 						[self uploadOptimisticLock:revision];
 					}else {
 						[self setState:IDLE];
-						[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+						if ([self.delegate respondsToSelector:@selector(databaseWrapper:addingOptimisticLockForDatabase:failedDueToDatabaseLock:)]) {
+							[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+						}else {
+							NSLog (@"ERROR : wanted to send databaseWrapper:addingOptimisticLockForDatabase:failedDueToDatabaseLock: message to delegate of class %@ but it does not implement this method.",
+								   NSStringFromClass([self.delegate class]));
+						}
 					}
 				}else {
 					[self setState:IDLE];
-					[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					if ([self.delegate respondsToSelector:@selector(databaseWrapper:addingOptimisticLockForDatabase:failedDueToDatabaseLock:)]) {
+						[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					}else {
+						NSLog (@"ERROR : wanted to send databaseWrapper:addingOptimisticLockForDatabase:failedDueToDatabaseLock: message to delegate of class %@ but it does not implement this method.",
+							   NSStringFromClass([self.delegate class]));
+					}
 				}
 			}else {
 				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
@@ -811,11 +886,21 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 						[self setState:OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE];
 					}else {
 						[self setState:IDLE];
-						[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+						if ([self.delegate respondsToSelector:@selector(databaseWrapper:removingOptimisticLockForDatabase:failedDueToDatabaseLock:)]) {
+							[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+						}else {
+							NSLog (@"ERROR : wanted to send databaseWrapper:removingOptimisticLockForDatabase:failedDueToDatabaseLock: message to delegate of class %@ but it does not implement this method.",
+								   NSStringFromClass([self.delegate class]));
+						}
 					}
 				}else {
 					[self setState:IDLE];
-					[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					if ([self.delegate respondsToSelector:@selector(databaseWrapper:removingOptimisticLockForDatabase:failedDueToDatabaseLock:)]) {
+						[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					}else {
+						NSLog (@"ERROR : wanted to send databaseWrapper:removingOptimisticLockForDatabase:failedDueToDatabaseLock: message to delegate of class %@ but it does not implement this method.",
+							   NSStringFromClass([self.delegate class]));
+					}
 				}
 			}else {
 				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
@@ -832,7 +917,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 				if ((databaseLock.writeLock == nil) || ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
 					NSLog (@"Lockfile check failed, the lock is not held by the current device");
 					[self setState:IDLE];
-					[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					if ([self.delegate respondsToSelector:@selector(databaseWrapper:uploadForDatabase:failedDueToDatabaseLock:)]) {
+						[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					}else {
+						NSLog (@"ERROR : wanted to send databaseWrapper:uploadForDatabase:failedDueToDatabaseLock: message to delegate of class %@ but it does not implement this method.",
+							   NSStringFromClass([self.delegate class]));
+					}
 				}else {
 					if (self.state == UPLOAD_CHECK_LOCKFILE) {
 						NSLog (@"Lockfile check ok, waiting a little more then performing a recheck");
@@ -860,7 +950,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:fileLocalPath];
 			if (databaseLock != nil) {
 				[self setState:IDLE];
-				[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+				if ([self.delegate respondsToSelector:@selector(databaseWrapper:cleanupForDatabase:failedDueToDatabaseLock:)]) {
+					[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+				}else {
+					NSLog (@"ERROR : wanted to send databaseWrapper:cleanupForDatabase:failedDueToDatabaseLock: message to delegate of class %@ but it does not implement this method.",
+						   NSStringFromClass([self.delegate class]));
+				}
 			}else {
 				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
 				[self reportCleanupErrorToDelegate:@"Internal error (lockfile read)"];
@@ -875,7 +970,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 				if ((databaseLock.writeLock == nil) || ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
 					NSLog (@"Lockfile check failed, the lock is not held by the current device");
 					[self setState:IDLE];
-					[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					if ([self.delegate respondsToSelector:@selector(databaseWrapper:cleanupForDatabase:failedDueToDatabaseLock:)]) {
+						[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					}else {
+						NSLog (@"ERROR : wanted to send databaseWrapper:cleanupForDatabase:failedDueToDatabaseLock: message to delegate of class %@ but it does not implement this method.",
+							   NSStringFromClass([self.delegate class]));
+					}
 				}else {
 					[self.worker listFilesInFolder:[self.worker rootFolderPath]];
 					[self setState:CLEANUP_LIST_LOCKFILES];
@@ -896,13 +996,23 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		case DOWNLOAD_DATABASE: {
 			[self setState:IDLE];
 			if (self.remoteBackupId == nil) {
-				[self.delegate databaseWrapper:self finishedDownloadingDatabase:self.databaseUid
-						andSavedMetadataFileAs:[self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA]
-							 andDatabaseFileAs:[self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE]];
+				if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedDownloadingDatabase:andSavedMetadataFileAs:andDatabaseFileAs:)]) {
+					[self.delegate databaseWrapper:self finishedDownloadingDatabase:self.databaseUid
+							andSavedMetadataFileAs:[self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA]
+								 andDatabaseFileAs:[self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE]];
+				}else {
+					NSLog (@"ERROR : wanted to send databaseWrapper:finishedDownloadingDatabase:andSavedMetadataFileAs:andDatabaseFileAs: message to delegate of class %@ but it does not implement this method.",
+						   NSStringFromClass([self.delegate class]));
+				}
 			}else {
-				[self.delegate databaseWrapper:self finishedDownloadingBackup:self.remoteBackupId ofDatabase:self.databaseUid
-						andSavedMetadataFileAs:[self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA]
-							 andDatabaseFileAs:[self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE]];
+				if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedDownloadingBackup:ofDatabase:andSavedMetadataFileAs:andDatabaseFileAs:)]) {
+					[self.delegate databaseWrapper:self finishedDownloadingBackup:self.remoteBackupId ofDatabase:self.databaseUid
+							andSavedMetadataFileAs:[self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA]
+								 andDatabaseFileAs:[self.downloadDatabaseLocalPrefix stringByAppendingString:TS_FILE_SUFFIX_DATABASE]];
+				}else {
+					NSLog (@"ERROR : wanted to send databaseWrapper:finishedDownloadingBackup:ofDatabase:andSavedMetadataFileAs:andDatabaseFileAs: message to delegate of class %@ but it does not implement this method.",
+						   NSStringFromClass([self.delegate class]));
+				}
 			}
 		}
 			break;
@@ -913,7 +1023,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 				if (((databaseLock.writeLock != nil) && ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO))
 						|| ((databaseLock.optimisticLock != nil) && ([databaseLock.optimisticLock.uid isEqualToString:[TSSharedState instanceUID]] == NO))){
 					[self setState:IDLE];
-					[self.delegate databaseWrapper:self deleteDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					if ([self.delegate respondsToSelector:@selector(databaseWrapper:deleteDatabase:failedDueToDatabaseLock:)]) {
+						[self.delegate databaseWrapper:self deleteDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					}else {
+						NSLog (@"ERROR : wanted to send databaseWrapper:deleteDatabase:failedDueToDatabaseLock: message to delegate of class %@ but it does not implement this method.",
+							   NSStringFromClass([self.delegate class]));
+					}
 				}else {
 					[self uploadDeleteLock:revision];
 				}
@@ -932,7 +1047,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 				if ((databaseLock.writeLock == nil) || ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
 					NSLog (@"Lockfile check failed, the lock is not held by the current device");
 					[self setState:IDLE];
-					[self.delegate databaseWrapper:self deleteDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					if ([self.delegate respondsToSelector:@selector(databaseWrapper:deleteDatabase:failedDueToDatabaseLock:)]) {
+						[self.delegate databaseWrapper:self deleteDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
+					}else {
+						NSLog (@"ERROR : wanted to send databaseWrapper:deleteDatabase:failedDueToDatabaseLock: message to delegate of class %@ but it does not implement this method.",
+							   NSStringFromClass([self.delegate class]));
+					}
 				}else {
 					if (self.state == DELETE_CHECK_LOCKFILE) {
 						NSLog (@"Lockfile check ok, waiting a little more then performing a recheck");
@@ -997,7 +1117,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			if ([error code] == 404) {
 				NSLog (@"Removal of optimistic lock is actually not needed...");
 				[self setState:IDLE];
-				[self.delegate databaseWrapper:self finishedRemovingOptimisticLockForDatabase:self.databaseUid];
+				if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedRemovingOptimisticLockForDatabase:)]) {
+					[self.delegate databaseWrapper:self finishedRemovingOptimisticLockForDatabase:self.databaseUid];
+				}else {
+					NSLog (@"ERROR : wanted to send databaseWrapper:finishedRemovingOptimisticLockForDatabase: message to delegate of class %@ but it does not implement this method.",
+						   NSStringFromClass([self.delegate class]));
+				}
 			}else {
 				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
@@ -1103,7 +1228,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			
 		case OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE: {
 			[self setState:IDLE];
-			[self.delegate databaseWrapper:self finishedAddingOptimisticLockForDatabase:self.databaseUid];
+			if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedAddingOptimisticLockForDatabase:)]) {
+				[self.delegate databaseWrapper:self finishedAddingOptimisticLockForDatabase:self.databaseUid];
+			}else {
+				NSLog (@"ERROR : wanted to send databaseWrapper:finishedAddingOptimisticLockForDatabase: message to delegate of class %@ but it does not implement this method.",
+					   NSStringFromClass([self.delegate class]));
+			}
 		}
 			break;
 			
@@ -1168,13 +1298,23 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 				[self.delegate databaseWrapper:self successfullyUnlockedDatabase:self.databaseUid];
 			}
 			[self setState:IDLE];
-			[self.delegate databaseWrapper:self finishedUploadingDatabase:self.databaseUid];
+			if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedUploadingDatabase:)]) {
+				[self.delegate databaseWrapper:self finishedUploadingDatabase:self.databaseUid];
+			}else {
+				NSLog (@"ERROR : wanted to send databaseWrapper:finishedUploadingDatabase: message to delegate of class %@ but it does not implement this method.",
+					   NSStringFromClass([self.delegate class]));
+			}
 		}
 			break;
 			
 		case OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE: {
 			[self setState:IDLE];
-			[self.delegate databaseWrapper:self finishedRemovingOptimisticLockForDatabase:self.databaseUid];
+			if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedRemovingOptimisticLockForDatabase:)]) {
+				[self.delegate databaseWrapper:self finishedRemovingOptimisticLockForDatabase:self.databaseUid];
+			}else {
+				NSLog (@"ERROR : wanted to send databaseWrapper:finishedRemovingOptimisticLockForDatabase: message to delegate of class %@ but it does not implement this method.",
+					   NSStringFromClass([self.delegate class]));
+			}
 		}
 			break;
 			
@@ -1200,7 +1340,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			
 		case CLEANUP_DELETE_LOCKFILE: {
 			[self setState:IDLE];
-			[self.delegate databaseWrapper:self finishedCleanupForDatabase:self.databaseUid];
+			if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedCleanupForDatabase:)]) {
+				[self.delegate databaseWrapper:self finishedCleanupForDatabase:self.databaseUid];
+			}else {
+				NSLog (@"ERROR : wanted to send databaseWrapper:finishedCleanupForDatabase: message to delegate of class %@ but it does not implement this method.",
+					   NSStringFromClass([self.delegate class]));
+			}
 		}
 			break;
 			
@@ -1226,7 +1371,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			
 		case DELETE_LOCKFILE: {
 			[self setState:IDLE];
-			[self.delegate databaseWrapper:self deletedDatabase:self.databaseUid];
+			if ([self.delegate respondsToSelector:@selector(databaseWrapper:deletedDatabase:)]) {
+				[self.delegate databaseWrapper:self deletedDatabase:self.databaseUid];
+			}else {
+				NSLog (@"ERROR : wanted to send databaseWrapper:deletedDatabase: message to delegate of class %@ but it does not implement this method.",
+					   NSStringFromClass([self.delegate class]));
+			}
 		}
 			break;
 			

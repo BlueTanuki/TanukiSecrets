@@ -16,6 +16,8 @@
 
 @protocol TSDatabaseWrapperDelegate <NSObject>
 
+//optional but will cause errors in the logs if not implemented when they actually would be called
+@optional
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedListDatabaseUids:(NSArray *)databaseUids;
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper listDatabaseUidsFailedWithError:(NSString *)error;
 
@@ -61,8 +63,7 @@ failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock;
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper deleteDatabase:(NSString *)databaseUid failedWithError:(NSString *)error;
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper deleteDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock;
 
-
-@optional
+//really optional, safe not to implement even if interested in the use case
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper attemptingToLockDatabase:(NSString *)databaseUid;
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper successfullyLockedDatabase:(NSString *)databaseUid;
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper createdBackup:(NSString *)backupId forDatabase:(NSString *)databaseUid;
