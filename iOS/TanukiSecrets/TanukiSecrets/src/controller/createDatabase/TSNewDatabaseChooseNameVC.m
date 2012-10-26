@@ -12,6 +12,7 @@
 #import "TSStringUtils.h"
 #import "TSNotifierUtils.h"
 #import "TSIOUtils.h"
+#import "TSSharedState.h"
 
 #define DESCRIPTION_PLACEHOLDER_TEXT @"(optional) Enter a short description for this database."
 
@@ -58,11 +59,21 @@
 
 #pragma mark - worker methods
 
+- (BOOL)databaseNameIsValid
+{
+	NSString *wantedName = [TSStringUtils trim:self.name.text];
+	if ([self.localDatabaseNames containsObject:wantedName]) {
+		return NO;
+	}
+	return YES;
+}
+
 - (void)changeNextButtonStateIfNeeded
 {
 	if ([TSStringUtils isNotBlank:self.name.text]) {
 		if ([self databaseNameIsValid]) {
 			self.nextButton.enabled = YES;
+			[self.nextButton addTarget:self action:@selector(next:) forControlEvents:UIControlEventTouchUpInside];
 		}else {
 			self.nextButton.enabled = NO;
 			self.nextButton.titleLabel.text = @"Name already used";
@@ -92,6 +103,11 @@
 	return [NSArray arrayWithObjects:self.name, self.description, nil];
 }
 
+- (NSArray *)viewsThatNeedTapCallback
+{
+	return [NSArray arrayWithObject:self.nextButton];
+}
+
 - (void)viewWasTapped:(UIView *)view
 {
 //	if (view == self.name) {
@@ -111,6 +127,10 @@
 		self.description.textColor = [UIColor lightGrayColor];
 	}
 	[self changeNextButtonStateIfNeeded];
+	if (view == self.nextButton) {
+		//only in ios5, in ios6 the button captures the tap
+		[self next:nil];
+	}
 }
 
 - (void)outsideTapped:(UIView *)viewThatLostTheKeyboard
@@ -133,18 +153,18 @@
 
 #pragma mark - events
 
-- (BOOL)databaseNameIsValid
-{
-	NSString *wantedName = [TSStringUtils trim:self.name.text];
-	if ([self.localDatabaseNames containsObject:wantedName]) {
-		return NO;
-	}
-	return YES;
+- (IBAction)nameEditingEnded:(id)sender {
+	[self.name resignFirstResponder];
+	[self changeNextButtonStateIfNeeded];
 }
 
-- (IBAction)nameEditingEnded:(id)sender {
-	[name resignFirstResponder];
-	[self changeNextButtonStateIfNeeded];
+- (IBAction)next:(id)sender {
+	TSSharedState *sharedState = [TSSharedState sharedState];
+	sharedState.openDatabaseMetadata = [TSDatabaseMetadata newDatabaseNamed:[TSStringUtils trim:self.name.text]];
+	if ([TSStringUtils isNotBlank:self.description.text]) {
+		sharedState.openDatabaseMetadata.description = [TSStringUtils trim:self.description.text];
+	}
+	[self performSegueWithIdentifier:@"next" sender:nil];
 }
 
 @end

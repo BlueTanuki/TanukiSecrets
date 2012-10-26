@@ -21,6 +21,11 @@
 	return nil;
 }
 
+- (NSArray *)viewsThatNeedTapCallback
+{
+	return nil;
+}
+
 - (void)viewWasTapped:(UIView *)view
 {
 }
@@ -51,7 +56,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
 - (void)tap:(UITapGestureRecognizer *)gestureRecognizer {
 	CGPoint tapLocation = [gestureRecognizer locationInView:self.view];
-//	NSLog (@"Tap %f %f", tapLocation.x, tapLocation.y);
+	NSLog (@"Tap %f %f", tapLocation.x, tapLocation.y);
 	BOOL tappedInView = NO;
 	NSArray *viewsWithKeyboard = [self viewsThatNeedKeyboard];
 	for (UIView *viewWithKeyboard in viewsWithKeyboard) {
@@ -73,11 +78,17 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 			[self outsideTapped:nil];
 		}
 	}
+	NSArray *extraViewsThatNeedTapCallback = [self viewsThatNeedTapCallback];
+	for (UIView *extraView in extraViewsThatNeedTapCallback) {
+		if (CGRectContainsPoint([extraView frame], tapLocation)) {
+			[self viewWasTapped:extraView];
+		}
+	}
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewDidLoad
 {
-    [super viewDidAppear:animated];
+    [super viewDidLoad];
 	
 	UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
 	tapRecognizer.delegate = self;

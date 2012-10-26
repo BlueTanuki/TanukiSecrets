@@ -11,6 +11,8 @@
 #import "TSConstants.h"
 
 #import "TSDatabaseWrapper.h"
+#import "TSDatabaseMetadata.h"
+#import "TSDatabase.h"
 
 
 /*
@@ -33,6 +35,8 @@
 - (TSDatabaseWrapper *)iCloudWrapperForDelegate:(id<TSDatabaseWrapperDelegate>)delegate;
 
 @property(nonatomic, readonly) NSString *instanceUID;
-@property(nonatomic, strong) NSString *openDatabasePassword;
+@property(nonatomic, copy) NSString *openDatabasePassword;
+@property(nonatomic, strong) TSDatabaseMetadata *openDatabaseMetadata;
+@property(nonatomic, strong) TSDatabase *openDatabase;
 
 @end

@@ -184,7 +184,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="da1-FC-SIO" kind="push" id="7PQ-Ym-huF"/>
+                                    <action selector="next:" destination="MM5-pa-NdQ" eventType="touchUpInside" id="7Vy-4o-OEx"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -196,22 +196,102 @@
                         <outlet property="description" destination="blH-A4-WUz" id="e5C-Bd-0UL"/>
                         <outlet property="name" destination="hfS-yQ-7fJ" id="YzM-pb-k2k"/>
                         <outlet property="nextButton" destination="hht-kC-1zh" id="Jyy-pn-YyH"/>
+                        <segue destination="da1-FC-SIO" kind="push" identifier="next" id="put-Ak-l4Q"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zxJ-ab-ruD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-2580" y="-78"/>
         </scene>
-        <!--View Controller-->
+        <!--New Database Security SettingsVC-->
         <scene sceneID="kox-MQ-fRR">
             <objects>
-                <viewController id="da1-FC-SIO" sceneMemberID="viewController">
+                <viewController id="da1-FC-SIO" customClass="TSNewDatabaseSecuritySettingsVC" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="JXX-26-YaX">
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Choose a passphrase" minimumFontSize="17" clearButtonMode="whileEditing" id="fG9-qm-pj1">
+                                <rect key="frame" x="20" y="20" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                                <connections>
+                                    <action selector="passwordEditingEnded:" destination="da1-FC-SIO" eventType="editingDidEnd" id="79h-bq-5cJ"/>
+                                    <action selector="passwordEditingEnded:" destination="da1-FC-SIO" eventType="editingDidEndOnExit" id="Ylj-H5-YSA"/>
+                                </connections>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter the passphrase again" minimumFontSize="17" clearButtonMode="whileEditing" id="Wng-sU-nv6">
+                                <rect key="frame" x="20" y="58" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                                <connections>
+                                    <action selector="verifyPasswordEditingEnded:" destination="da1-FC-SIO" eventType="editingDidEndOnExit" id="pAi-cl-7Qr"/>
+                                    <action selector="verifyPasswordEditingEnded:" destination="da1-FC-SIO" eventType="editingDidEnd" id="q1W-E5-H0a"/>
+                                </connections>
+                            </textField>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="13" minValue="5" maxValue="25" continuous="NO" id="WUK-hr-nHF">
+                                <rect key="frame" x="18" y="96" width="284" height="23"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="sliderValueChanged:" destination="da1-FC-SIO" eventType="valueChanged" id="lei-Vo-x9r"/>
+                                </connections>
+                            </slider>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="center" id="wuo-7L-7ez">
+                                <rect key="frame" x="20" y="126" width="280" height="168"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <string key="text">Use the slider to set the strength of the key derivation algorithm. You get better security by setting it high, but the time necessary to encrypt (or decrypt) the database also increases. Tap the test button to see how long it would take to read (or write) the database on your device. Note: the interface will become unresponsive during the test.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="W3L-5x-kDA">
+                                <rect key="frame" x="20" y="353" width="280" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="Create database">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="disabled" title="Please set the passphrase">
+                                    <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="createDatabase:" destination="da1-FC-SIO" eventType="touchUpInside" id="CEM-Q8-8yE"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="YQu-0z-aul">
+                                <rect key="frame" x="20" y="302" width="280" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="Test encryption duration">
+                                    <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="selected">
+                                    <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="testHashStrength:" destination="da1-FC-SIO" eventType="touchUpInside" id="e49-K0-BYT"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" id="1hm-qg-MXX"/>
+                    <connections>
+                        <outlet property="createDatabase" destination="W3L-5x-kDA" id="Gjr-FU-6z8"/>
+                        <outlet property="hashUsedMemory" destination="WUK-hr-nHF" id="xEx-LB-W7u"/>
+                        <outlet property="password" destination="fG9-qm-pj1" id="d7h-6c-G6R"/>
+                        <outlet property="password2" destination="Wng-sU-nv6" id="pe5-0A-moQ"/>
+                        <outlet property="testEncryptionButton" destination="YQu-0z-aul" id="p5z-VA-HbG"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YDw-iJ-hbZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

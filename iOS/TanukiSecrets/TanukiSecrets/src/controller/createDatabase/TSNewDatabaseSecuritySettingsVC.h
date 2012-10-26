@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TSNewDatabaseSecuritySettingsVC : UIViewController
+#import "TSKeyboardDismissingViewController.h"
+
+@interface TSNewDatabaseSecuritySettingsVC : TSKeyboardDismissingViewController
 
 @end

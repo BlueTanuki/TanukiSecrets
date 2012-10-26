@@ -22,7 +22,7 @@
 
 @implementation TSSharedState
 
-@synthesize openDatabasePassword;
+@synthesize openDatabasePassword, openDatabaseMetadata, openDatabase;
 @synthesize instanceUID = _instanceUID;
 
 @synthesize dropboxWrapper = _dropboxWrapper;
