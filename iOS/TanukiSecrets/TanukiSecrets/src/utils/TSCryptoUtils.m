@@ -14,6 +14,7 @@
 #import <Security/Security.h>
 
 #import "TSStringUtils.h"
+#import "TSConstants.h"
 
 #define TS_SALT_BYTES_MIN 64
 #define TS_SALT_BYTES_MAX 128
@@ -109,10 +110,12 @@
 + (NSData *) tanukiHash:(NSString *) secret usingSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB
 {
 	int bufSizeMB = 13;
-	if (consumedMB < 5) {
-		NSLog (@"WARNING : the consumed memory is not allowed to be below 5MB, using default value of 13!");
-	}else if (consumedMB > 25) {
-		NSLog (@"WARNING : for performace reasons, the consumed memory is not allowed to be above 25MB, using default value of 13!");
+	if (consumedMB < TANUKI_HASH_MIN_MEMORY_MB) {
+		NSLog (@"WARNING : the consumed memory is not allowed to be below %dMB, using this minimum value instead of %d", TANUKI_HASH_MIN_MEMORY_MB, consumedMB);
+		bufSizeMB = TANUKI_HASH_MIN_MEMORY_MB;
+	}else if (consumedMB > TANUKI_HASH_MAX_MEMORY_MB) {
+		NSLog (@"WARNING : for performace reasons, the consumed memory is not allowed to be above %dMB, using this maximum value instead of %d", TANUKI_HASH_MAX_MEMORY_MB, consumedMB);
+		bufSizeMB = TANUKI_HASH_MAX_MEMORY_MB;
 	}else {
 		bufSizeMB = consumedMB;
 	}

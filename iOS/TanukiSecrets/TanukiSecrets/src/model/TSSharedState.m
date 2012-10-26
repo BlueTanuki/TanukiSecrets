@@ -22,8 +22,11 @@
 
 @implementation TSSharedState
 
-@synthesize instanceUID = _instanceUID, dropboxWrapper = _dropboxWrapper,
-iCloudWrapper = _iCloudWrapper;
+@synthesize openDatabasePassword;
+@synthesize instanceUID = _instanceUID;
+
+@synthesize dropboxWrapper = _dropboxWrapper;
+@synthesize iCloudWrapper = _iCloudWrapper;
 
 #pragma mark - singleton creation
 

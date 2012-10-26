@@ -33,5 +33,6 @@
 - (TSDatabaseWrapper *)iCloudWrapperForDelegate:(id<TSDatabaseWrapperDelegate>)delegate;
 
 @property(nonatomic, readonly) NSString *instanceUID;
+@property(nonatomic, strong) NSString *openDatabasePassword;
 
 @end

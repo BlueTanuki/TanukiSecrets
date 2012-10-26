@@ -183,7 +183,6 @@ databaseFilePaths;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	NSLog (@"Count called : %d", [self.remoteDatabaseUIDs count]);
 	return [self.remoteDatabaseUIDs count];
 }
 
