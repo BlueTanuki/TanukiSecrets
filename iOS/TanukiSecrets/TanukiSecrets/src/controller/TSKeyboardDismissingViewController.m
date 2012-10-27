@@ -21,11 +21,6 @@
 	return nil;
 }
 
-- (NSArray *)viewsThatNeedTapCallback
-{
-	return nil;
-}
-
 - (void)viewWasTapped:(UIView *)view
 {
 }
@@ -76,12 +71,6 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 		}
 		if (resignedFirstResponder == NO) {
 			[self outsideTapped:nil];
-		}
-	}
-	NSArray *extraViewsThatNeedTapCallback = [self viewsThatNeedTapCallback];
-	for (UIView *extraView in extraViewsThatNeedTapCallback) {
-		if (CGRectContainsPoint([extraView frame], tapLocation)) {
-			[self viewWasTapped:extraView];
 		}
 	}
 }

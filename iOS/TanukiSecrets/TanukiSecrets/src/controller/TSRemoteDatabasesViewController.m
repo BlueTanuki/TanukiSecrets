@@ -12,6 +12,7 @@
 #import "TSDatabaseMetadata.h"
 #import "TSIOUtils.h"
 #import "TSDateUtils.h"
+#import "TSUtils.h"
 
 @interface TSRemoteDatabasesViewController ()
 
@@ -56,7 +57,7 @@ databaseFilePaths;
 - (void)updateFinished
 {
 	self.working = NO;
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		UIBarButtonItem *refreshDropboxButton = [[UIBarButtonItem alloc]
 												 initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
 												 target:self
@@ -64,14 +65,14 @@ databaseFilePaths;
 		self.navigationItem.rightBarButtonItem = refreshDropboxButton;
 		[self.tableView reloadData];
 		[self refreshFinished];
-	});
+	}];
 }
 
 - (void)updateFailed
 {
 	self.working = NO;
 	self.remoteDatabaseUIDs = nil;
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		UIBarButtonItem *refreshDropboxButton = [[UIBarButtonItem alloc]
 												 initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
 												 target:self
@@ -79,7 +80,7 @@ databaseFilePaths;
 		self.navigationItem.rightBarButtonItem = refreshDropboxButton;
 		[self.tableView reloadData];
 		[self refreshFailed];
-	});
+	}];
 }
 
 - (void)refreshData:(id)sender
@@ -87,9 +88,9 @@ databaseFilePaths;
 	if (self.working == NO) {
 		self.remoteDatabaseUIDs = nil;
 		self.working = YES;
-		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		[TSUtils background:^{
 			[[self databaseWrapper] listDatabaseUids];
-		});
+		}];
 		UIActivityIndicatorView *busy = [[UIActivityIndicatorView alloc]
 										 initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 		[busy startAnimating];

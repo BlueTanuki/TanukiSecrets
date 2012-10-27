@@ -103,11 +103,6 @@
 	return [NSArray arrayWithObjects:self.name, self.description, nil];
 }
 
-- (NSArray *)viewsThatNeedTapCallback
-{
-	return [NSArray arrayWithObject:self.nextButton];
-}
-
 - (void)viewWasTapped:(UIView *)view
 {
 //	if (view == self.name) {
@@ -127,10 +122,6 @@
 		self.description.textColor = [UIColor lightGrayColor];
 	}
 	[self changeNextButtonStateIfNeeded];
-	if (view == self.nextButton) {
-		//only in ios5, in ios6 the button captures the tap
-		[self next:nil];
-	}
 }
 
 - (void)outsideTapped:(UIView *)viewThatLostTheKeyboard

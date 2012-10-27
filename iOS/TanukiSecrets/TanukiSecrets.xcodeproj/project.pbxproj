@@ -115,7 +115,7 @@
 		9F57C20C1617343C0085703E /* TSUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUtils.h; sourceTree = "<group>"; };
 		9F57C20D1617343E0085703E /* TSUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUtils.m; sourceTree = "<group>"; };
 		9F8E0367162837B60040662C /* TSDbStatusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDbStatusViewController.h; sourceTree = "<group>"; };
-		9F8E0368162837B60040662C /* TSDbStatusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDbStatusViewController.m; sourceTree = "<group>"; };
+		9F8E0368162837B60040662C /* TSDbStatusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TSDbStatusViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		9F8ED46115B98C6A00391EF8 /* TanukiSecrets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TanukiSecrets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F8ED46515B98C6A00391EF8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		9F8ED46715B98C6A00391EF8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -141,7 +141,7 @@
 		9F8ED4B215B9A0EB00391EF8 /* TSFilesystemTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSFilesystemTableViewController.h; sourceTree = "<group>"; };
 		9F8ED4B315B9A0EB00391EF8 /* TSFilesystemTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSFilesystemTableViewController.m; sourceTree = "<group>"; };
 		9F967744162055AE00C9182D /* TSiCloudWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSiCloudWrapper.h; sourceTree = "<group>"; };
-		9F967745162055AE00C9182D /* TSiCloudWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSiCloudWrapper.m; sourceTree = "<group>"; };
+		9F967745162055AE00C9182D /* TSiCloudWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TSiCloudWrapper.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		9F96775C162096C700C9182D /* TSUIDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUIDocument.h; sourceTree = "<group>"; };
 		9F96775D162096C700C9182D /* TSUIDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUIDocument.m; sourceTree = "<group>"; };
 		9F98D40C15F0CAB9001A2C82 /* TSCryptoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSCryptoUtils.h; sourceTree = "<group>"; };
@@ -156,9 +156,9 @@
 		9FC16204161F081700094E43 /* TSDatabaseWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDatabaseWrapper.m; sourceTree = "<group>"; };
 		9FC16206161F243300094E43 /* TSRemoteStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSRemoteStorage.h; sourceTree = "<group>"; };
 		9FCE97BB1631A288003FE67F /* TSLocalDatabasesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLocalDatabasesViewController.h; sourceTree = "<group>"; };
-		9FCE97BC1631A288003FE67F /* TSLocalDatabasesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLocalDatabasesViewController.m; sourceTree = "<group>"; };
+		9FCE97BC1631A288003FE67F /* TSLocalDatabasesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TSLocalDatabasesViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		9FCE97C41631BD2E003FE67F /* TSChooseCreationMethodViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSChooseCreationMethodViewController.h; sourceTree = "<group>"; };
-		9FCE97C51631BD2E003FE67F /* TSChooseCreationMethodViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSChooseCreationMethodViewController.m; sourceTree = "<group>"; };
+		9FCE97C51631BD2E003FE67F /* TSChooseCreationMethodViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TSChooseCreationMethodViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		9FCE97C71635B2E5003FE67F /* TSRemoteDatabasesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSRemoteDatabasesViewController.h; sourceTree = "<group>"; };
 		9FCE97C81635B2E5003FE67F /* TSRemoteDatabasesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSRemoteDatabasesViewController.m; sourceTree = "<group>"; };
 		9FCE97CA1635C14A003FE67F /* TSCreateDatabaseFromDropboxViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSCreateDatabaseFromDropboxViewController.h; sourceTree = "<group>"; };
@@ -208,7 +208,7 @@
 		9FF76E82160A160300613DA1 /* TSNotifierUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNotifierUtils.h; sourceTree = "<group>"; };
 		9FF76E83160A160700613DA1 /* TSNotifierUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSNotifierUtils.m; sourceTree = "<group>"; };
 		9FF76E85160A5ABA00613DA1 /* TSDropboxWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDropboxWrapper.h; sourceTree = "<group>"; };
-		9FF76E86160A5ABD00613DA1 /* TSDropboxWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDropboxWrapper.m; sourceTree = "<group>"; };
+		9FF76E86160A5ABD00613DA1 /* TSDropboxWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TSDropboxWrapper.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -796,7 +796,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TanukiSecrets/TanukiSecrets-Prefix.pch";
 				INFOPLIST_FILE = "TanukiSecrets/TanukiSecrets-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",
@@ -818,7 +818,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TanukiSecrets/TanukiSecrets-Prefix.pch";
 				INFOPLIST_FILE = "TanukiSecrets/TanukiSecrets-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",

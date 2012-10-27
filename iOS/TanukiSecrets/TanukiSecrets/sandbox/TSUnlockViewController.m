@@ -27,6 +27,7 @@
 #import "TSDatabaseWrapper.h"
 #import "TSDeviceUtils.h"
 #import "TSiCloudWrapper.h"
+#import "TSUtils.h"
 
 @interface TSUnlockViewController () <UITextFieldDelegate, TSDatabaseWrapperDelegate>
 
@@ -327,7 +328,7 @@ BOOL firstTimeSegueTriggered = NO;
 
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper uploadForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
 {
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		NSString *errorText = [NSString stringWithFormat:@"The database with id %@ was locked for writing by %@ (%@) at %@ [comment: %@]",
 							   databaseUid, databaseLock.writeLock.name, databaseLock.writeLock.uid, databaseLock.writeLock.date, databaseLock.writeLock.comment];
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Database locked!"
@@ -336,12 +337,12 @@ BOOL firstTimeSegueTriggered = NO;
 											  cancelButtonTitle:@"OK"
 											  otherButtonTitles:nil];
 		[alert show];
-	});
+	}];
 }
 
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper uploadForDatabase:(NSString *)databaseUid isStalledBecauseOfOptimisticLock:(TSDatabaseLock *)databaseLock
 {
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		NSString *warning = [NSString stringWithFormat:@"The database with id %@ has an optimistic lock written by %@ (%@) at %@ [comment: %@]. The optimistic lock is advisory and can be overriden. Proceed with upload and overwrite this optimistic lock?",
 							   databaseUid, databaseLock.optimisticLock.name, databaseLock.optimisticLock.uid, databaseLock.optimisticLock.date, databaseLock.optimisticLock.comment];
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Proceed with writing?"
@@ -350,7 +351,7 @@ BOOL firstTimeSegueTriggered = NO;
 											  cancelButtonTitle:@"NO"
 											  otherButtonTitles:@"YES", nil];
 		[alert show];
-	});
+	}];
 }
 
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedUploadingDatabase:(NSString *)databaseUid
@@ -370,7 +371,7 @@ BOOL firstTimeSegueTriggered = NO;
 
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper addingOptimisticLockForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
 {
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		if (databaseLock.writeLock == nil) {
 			NSString *errorText = [NSString stringWithFormat:@"The database with id %@ already has an optimistic lock set by %@ (%@) at %@ [comment: %@]",
 								   databaseUid, databaseLock.optimisticLock.name, databaseLock.optimisticLock.uid, databaseLock.optimisticLock.date, databaseLock.optimisticLock.comment];
@@ -390,7 +391,7 @@ BOOL firstTimeSegueTriggered = NO;
 												  otherButtonTitles:nil];
 			[alert show];
 		}
-	});
+	}];
 }
 
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedRemovingOptimisticLockForDatabase:(NSString *)databaseUid
@@ -405,7 +406,7 @@ BOOL firstTimeSegueTriggered = NO;
 
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper removingOptimisticLockForDatabase:(NSString *)databaseUid failedDueToDatabaseLock:(TSDatabaseLock *)databaseLock
 {
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		if (databaseLock.writeLock == nil) {
 			NSString *errorText = [NSString stringWithFormat:@"The database with id %@ already has an optimistic lock set by %@ (%@) at %@ [comment: %@]",
 								   databaseUid, databaseLock.optimisticLock.name, databaseLock.optimisticLock.uid, databaseLock.optimisticLock.date, databaseLock.optimisticLock.comment];
@@ -425,7 +426,7 @@ BOOL firstTimeSegueTriggered = NO;
 												  otherButtonTitles:nil];
 			[alert show];
 		}
-	});
+	}];
 }
 
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedCleanupForDatabase:(NSString *)databaseUid
@@ -552,7 +553,7 @@ BOOL firstTimeSegueTriggered = NO;
 
 - (IBAction)manyUpdatesWithBackups:(UIButton *)sender {
 	[TSNotifierUtils info:@"Doing many updates with backups..."];
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		BOOL ok = YES;
 		NSLog (@"**************** CREATE");
 		NSString *secret = @"TheTanukiSais...NI-PAH~!";
@@ -577,7 +578,7 @@ BOOL firstTimeSegueTriggered = NO;
 		}else {
 			[TSNotifierUtils error:@"ERROR while doing many things..."];
 		}
-	});
+	}];
 }
 
 - (void)updateTest:(TSDatabaseWrapper *)databaseWrapper
@@ -603,13 +604,13 @@ BOOL firstTimeSegueTriggered = NO;
 
 - (void)optiLock:(TSDatabaseWrapper *)databaseWrapper
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		[NSThread sleepForTimeInterval:2.5];
 		[TSNotifierUtils info:@"Before potential deadlock"];
 		[databaseWrapper addOptimisticLockForDatabase:self.reusedDatabaseMetadata.uid comment:@"The glass is half full!"];
 		[NSThread sleepForTimeInterval:2.5];
 		[TSNotifierUtils info:@"After potential deadlock"];
-	});
+	}];
 	[TSNotifierUtils info:@"Potential deadlocking code scheduled"];
 }
 
@@ -693,7 +694,7 @@ BOOL firstTimeSegueTriggered = NO;
 		UIStoryboard *sandboxStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
 		UIViewController *sandboxInitialViewController = [sandboxStoryboard instantiateInitialViewController];
 		sandboxInitialViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-		[self presentModalViewController:sandboxInitialViewController animated:YES];
+		[self presentViewController:sandboxInitialViewController animated:YES completion:nil];
 	}
 }
 

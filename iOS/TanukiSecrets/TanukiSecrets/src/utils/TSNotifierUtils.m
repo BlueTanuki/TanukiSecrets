@@ -9,26 +9,27 @@
 #import "TSNotifierUtils.h"
 
 #import "JSNotifier.h"
+#import "TSUtils.h"
 
 @implementation TSNotifierUtils
 
 + (void)info:(NSString *)text
 {
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:text];
 		jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
 		[jsn showFor:2.0];
-	});
+	}];
 	NSLog (@"[INFO] %@ [TSNotifierUtils]", text);
 }
 
 + (void)error:(NSString *)text
 {
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:text];
 		jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyX.png"]];
 		[jsn showFor:2.0];
-	});
+	}];
 	NSLog (@"[ERROR] %@ [TSNotifierUtils]", text);
 }
 

@@ -11,6 +11,7 @@
 #import "TSStringUtils.h"
 #import "TSUIDocument.h"
 #import "TSIOUtils.h"
+#import "TSUtils.h"
 
 @interface TSiCloudWrapper()
 
@@ -40,13 +41,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 - (void)refreshUbiquityContainerURL
 {
 	self.iCloudURL = nil;
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
 		NSURL *ubiquityContainerURL = [fileManager URLForUbiquityContainerIdentifier:nil];
 		if (ubiquityContainerURL != nil) {
 			self.iCloudURL = [ubiquityContainerURL URLByAppendingPathComponent:@"Documents"];
 		}
-	});
+	}];
 }
 
 #pragma mark - misc helper methods
@@ -151,7 +152,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	/*
 	 see Dropbox wrapper notes on dispatch_sysnc
 	 */
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		NSError *error;
 		NSFileCoordinator* fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
 		[fileCoordinator coordinateWritingItemAtURL:[self urlForRemoteCloudPath:remotePath]
@@ -207,14 +208,14 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					break;
 			}
 		}
-	});
+	}];
 }
 
 #pragma mark - iCloud callbacks
 
 - (void)iCloudFinishedGathering:(NSNotification *)notification
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		[self.iCloudQuery disableUpdates];
 		//	[self debugCloudQueryResult:NO];
 		NSUInteger resultCount = [self.iCloudQuery resultCount];
@@ -375,7 +376,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 				NSLog (@"ERROR : received iCloudFinishedGathering notification but was not expecting any results (current operation is %d)", self.operation);
 				break;
 		}
-	});
+	}];
 }
 
 #pragma mark - TSRemoteStorage
@@ -393,14 +394,14 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	if (self.iCloudQuery == nil) {
 		self.fileRemotePath = folderPath;
 		self.operation = LIST_FILES;
-		dispatch_async(dispatch_get_main_queue(), ^{
+		[TSUtils foreground:^{
 			[self startCloudQuery];
-		});
+		}];
 	}else {
 		NSLog (@"ERROR : cannot start a new iQuery before the previous one finishes.");
-		dispatch_async(dispatch_get_current_queue(), ^{
+		[TSUtils background:^{
 			[self.delegate listFilesInFolder:folderPath failedWithError:[TSStringUtils simpleError:@"another iQuery is still running"]];
-		});
+		}];
 	}
 }
 
@@ -409,10 +410,10 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	if (self.iCloudQuery == nil) {
 		self.operation = CHECK_CONFLICT_STATUS;
 		self.fileRemotePath = @"/";
-		dispatch_async(dispatch_get_main_queue(), ^{
+		[TSUtils foreground:^{
 			[self startCloudQuery];
 			NSLog (@"Started query.");
-		});
+		}];
 	}else {
 		NSLog (@"ERROR : cannot start a new iQuery before the previous one finishes.");
 	}
@@ -423,35 +424,35 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	if (self.iCloudQuery == nil) {
 		self.fileRemotePath = remotePath;
 		self.operation = ITEM_EXISTS;
-		dispatch_async(dispatch_get_main_queue(), ^{
+		[TSUtils foreground:^{
 			[self startCloudQuery];
-		});
+		}];
 	}else {
 		NSLog (@"ERROR : cannot start a new iQuery before the previous one finishes.");
-		dispatch_async(dispatch_get_current_queue(), ^{
+		[TSUtils background:^{
 			[self.delegate itemExistsAtPath:remotePath failedWithError:[TSStringUtils simpleError:@"another iQuery is still running"]];
-		});
+		}];
 	}
 }
 
 - (void)createFolder:(NSString *)folderPath
 {
 	//NOTE : createFolder is NO-OP, folder is automatically created when you upload the first file to it
-	dispatch_async(dispatch_get_current_queue(), ^{
+	[TSUtils background:^{
 		[self.delegate createdFolder:folderPath];
-	});
+	}];
 }
 
 - (void)deleteFolder:(NSString *)folderPath
 {
-//	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+//	[TSUtils background:^(void) {
 //		self.operation = DELETE_FOLDER;
 //		[self deleteItem:folderPath];
-//	});
+//	}];
 	//NOTE : since createFolder is a NO-OP, so is deleteFolder
-	dispatch_async(dispatch_get_current_queue(), ^{
+	[TSUtils background:^{
 		[self.delegate deletedFolder:folderPath];
-	});
+	}];
 }
 
 - (void)downloadFile:(NSString *)fileRemotePath andSaveLocallyAs:(NSString *)fileLocalPath
@@ -460,14 +461,14 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 		self.fileLocalPath = fileLocalPath;
 		self.fileRemotePath = fileRemotePath;
 		self.operation = DOWNLOAD_FILE;
-		dispatch_async(dispatch_get_main_queue(), ^{
+		[TSUtils foreground:^{
 			[self startCloudQuery];
-		});
+		}];
 	}else {
 		NSLog (@"ERROR : cannot start a new iQuery before the previous one finishes.");
-		dispatch_async(dispatch_get_current_queue(), ^{
+		[TSUtils background:^{
 			[self.delegate downloadFile:fileRemotePath failedWithError:[TSStringUtils simpleError:@"another iQuery is still running"]];
-		});
+		}];
 	}
 }
 
@@ -478,14 +479,14 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 		self.fileLocalPath = fileLocalPath;
 		self.fileRemotePath = fileRemotePath;
 		self.operation = UPLOAD_FILE;
-		dispatch_async(dispatch_get_main_queue(), ^{
+		[TSUtils foreground:^{
 			[self startCloudQuery];
-		});
+		}];
 	}else {
 		NSLog (@"ERROR : cannot start a new iQuery before the previous one finishes.");
-		dispatch_async(dispatch_get_current_queue(), ^{
+		[TSUtils background:^{
 			[self.delegate uploadFile:fileLocalPath failedWithError:[TSStringUtils simpleError:@"another iQuery is still running"]];
-		});
+		}];
 	}
 }
 
@@ -496,10 +497,10 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 
 - (void)deleteFile:(NSString *)fileRemotePath
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+	[TSUtils background:^(void) {
 		self.operation = DELETE_FILE;
 		[self deleteItem:fileRemotePath];
-	});
+	}];
 }
 
 - (void)renameFile:(NSString *)oldPath to:(NSString *)newPath
@@ -508,14 +509,14 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 		self.fileRemotePath = oldPath;
 		self.fileRemotePath2 = newPath;
 		self.operation = RENAME_FILE;
-		dispatch_async(dispatch_get_main_queue(), ^{
+		[TSUtils foreground:^{
 			[self startCloudQuery];
-		});
+		}];
 	}else {
 		NSLog (@"ERROR : cannot start a new iQuery before the previous one finishes.");
-		dispatch_async(dispatch_get_current_queue(), ^{
+		[TSUtils background:^{
 			[self.delegate renameFile:oldPath to:newPath failedWithError:[TSStringUtils simpleError:@"another iQuery is still running"]];
-		});
+		}];
 	}
 }
 

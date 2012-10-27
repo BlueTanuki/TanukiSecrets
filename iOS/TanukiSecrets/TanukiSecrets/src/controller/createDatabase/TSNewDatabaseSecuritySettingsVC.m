@@ -14,6 +14,7 @@
 #import "TSCryptoUtils.h"
 #import "TSNotifierUtils.h"
 #import "TSIOUtils.h"
+#import "TSUtils.h"
 
 @interface TSNewDatabaseSecuritySettingsVC ()
 
@@ -84,22 +85,30 @@
 
 - (void)doCreateDatabase
 {
-	NSString *secret = self.password.text;
-	if ([secret isEqualToString:self.password2.text] == NO) {
-		@throw @"Internal logic fail. Passwords do not match.";
-	}
 	TSSharedState *sharedState = [TSSharedState sharedState];
-	sharedState.openDatabaseMetadata.hashUsedMemory = (int)self.hashUsedMemory.value;
-	NSData *encryptedContent = [TSCryptoUtils tanukiEncryptDatabase:sharedState.openDatabase
-													 havingMetadata:sharedState.openDatabaseMetadata
-														usingSecret:secret];
-	if ([TSIOUtils saveDatabaseWithMetadata:sharedState.openDatabaseMetadata andEncryptedContent:encryptedContent]) {
-		NSNotification *notificatopn = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
-		[[NSNotificationCenter defaultCenter] postNotification:notificatopn];
-		[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
-	}else {
-		[TSNotifierUtils error:@"Local database writing failed"];
-	}
+//	self.createDatabase.titleLabel.text = [NSString stringWithFormat:@"Creating database %@", sharedState.openDatabaseMetadata.name];
+	self.createDatabase.enabled = NO;
+	self.createDatabase.titleLabel.textAlignment = NSTextAlignmentCenter;
+	self.createDatabase.titleLabel.text = [NSString stringWithFormat:@"Creating database %@", sharedState.openDatabaseMetadata.name];
+	[TSUtils background:^{
+		NSString *secret = self.password.text;
+		if ([secret isEqualToString:self.password2.text] == NO) {
+			@throw @"Internal logic fail. Passwords do not match.";
+		}
+		sharedState.openDatabaseMetadata.hashUsedMemory = (int)self.hashUsedMemory.value;
+		NSData *encryptedContent = [TSCryptoUtils tanukiEncryptDatabase:sharedState.openDatabase
+														 havingMetadata:sharedState.openDatabaseMetadata
+															usingSecret:secret];
+		if ([TSIOUtils saveDatabaseWithMetadata:sharedState.openDatabaseMetadata andEncryptedContent:encryptedContent]) {
+			[TSUtils foreground:^{
+				NSNotification *notificatopn = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
+				[[NSNotificationCenter defaultCenter] postNotification:notificatopn];
+				[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+			}];
+		}else {
+			[TSNotifierUtils error:@"Local database writing failed"];
+		}
+	}];
 }
 
 #pragma mark - TSKeyboardDismissingViewController callbacks
@@ -109,19 +118,9 @@
 	return [NSArray arrayWithObjects:self.password, self.password2, nil];
 }
 
-- (NSArray *)viewsThatNeedTapCallback
-{
-	return [NSArray arrayWithObjects:self.testEncryptionButton, self.createDatabase, nil];
-}
-
 - (void)viewWasTapped:(UIView *)view
 {
 	[self changeNextButtonStateIfNeeded];
-	if (view == self.testEncryptionButton) {
-		[self testHashStrength:nil];
-	}else if (view == self.createDatabase) {
-		[self createDatabase:nil];
-	}
 }
 
 - (void)outsideTapped:(UIView *)viewThatLostTheKeyboard
@@ -142,10 +141,14 @@
 }
 
 - (IBAction)testHashStrength:(id)sender {
+	NSDate *startTime = [NSDate date];
 	TSDatabaseMetadata *meta = [TSDatabaseMetadata newDatabaseNamed:@"test"];
 	meta.hashUsedMemory = self.hashUsedMemory.value;
 	TSDatabase *db = [[TSDatabase alloc] init];
 	[TSCryptoUtils tanukiEncryptDatabase:db havingMetadata:meta usingSecret:@"~NI-PAH!~"];
+	NSDate *endTime = [NSDate date];
+	NSTimeInterval encryptionTime = [endTime timeIntervalSinceDate:startTime];
+	[TSNotifierUtils info:[NSString stringWithFormat:@"Ecryption took about %d seconds.", (int)ceil(encryptionTime)]];
 }
 
 - (IBAction)sliderValueChanged:(id)sender {

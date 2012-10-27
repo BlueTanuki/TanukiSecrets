@@ -22,6 +22,7 @@
 #import "TSNotifierUtils.h"
 #import "TSDeviceUtils.h"
 #import "TSDateUtils.h"
+#import "TSUtils.h"
 
 @interface TSFilesystemTableViewController () <DBRestClientDelegate> {
 	NSMetadataQuery *iCloudQuery;
@@ -145,7 +146,7 @@
 
 - (void) removeCloudURL:(NSURL *)url
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
 		NSError *coordinationError;
 		[coordinator coordinateWritingItemAtURL:url options:NSFileCoordinatorWritingForDeleting error:&coordinationError byAccessor:^(NSURL *usedURL) {
@@ -158,7 +159,7 @@
 		if (coordinationError) {
 			NSLog(@"Synchronization error while deleting :: %@", [coordinationError debugDescription]);
 		}
-	});
+	}];
 }
 
 - (void) startCloudQuery

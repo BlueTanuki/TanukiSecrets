@@ -200,7 +200,7 @@ CGRect JSScreenBounds()
 - (void)hideIn:(float)seconds{
     
     __block JSNotifier *blockSelf = self;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC), dispatch_get_current_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         
         [blockSelf hide];
         

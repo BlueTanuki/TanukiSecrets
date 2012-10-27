@@ -17,4 +17,9 @@
 + (double)randomDouble;//[0, 1]
 + (double)randomDoubleBetween:(double)a and:(double)b;//[a, b]
 
+#pragma mark - GCD helpers
+
++ (void)background:(void (^)(void))block;
++ (void)foreground:(void (^)(void))block;
+
 @end

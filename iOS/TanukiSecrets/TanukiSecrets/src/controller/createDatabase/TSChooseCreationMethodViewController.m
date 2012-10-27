@@ -11,6 +11,7 @@
 #import <DropboxSDK/DropboxSDK.h>
 
 #import "TSConstants.h"
+#import "TSUtils.h"
 
 @interface TSChooseCreationMethodViewController ()
 
@@ -160,9 +161,9 @@
 {
 	NSLog (@"received dropbox was linked notification");
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		[self performSegueWithIdentifier:@"Dropbox" sender:nil];
-	});
+	}];
 }
 
 @end

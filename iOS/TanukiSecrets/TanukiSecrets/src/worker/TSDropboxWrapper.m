@@ -9,6 +9,7 @@
 #import "TSDropboxWrapper.h"
 
 #import "TSStringUtils.h"
+#import "TSUtils.h"
 
 @interface TSDropboxWrapper()
 
@@ -79,7 +80,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	 throw it on the system default priority queue and not make an effort to 
 	 remember on which thread the call was made and use that one.
 	 */
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		switch (self.operation) {
 			case UPLOAD_FILE:
 				[self.delegate uploadedFile:srcPath to:destPath];
@@ -90,13 +91,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					   srcPath, destPath, self.operation);
 				break;
 		}
-	});
+	}];
 //	self.operation = NONE;
 }
 
 - (void)restClient:(DBRestClient *)client uploadFileFailedWithError:(NSError *)error
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		switch (self.operation) {
 			case UPLOAD_FILE:
 				[self.delegate uploadFile:self.fileLocalPath failedWithError:error];
@@ -107,13 +108,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					   [error debugDescription], self.operation);
 				break;
 		}
-	});
+	}];
 //	self.operation = NONE;
 }
 
 - (void)restClient:(DBRestClient *)client loadedFile:(NSString *)destPath contentType:(NSString *)contentType metadata:(DBMetadata *)metadata
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		switch (self.operation) {
 			case DOWNLOAD_FILE:
 				[self.delegate downloadedFile:self.fileRemotePath havingRevision:metadata.rev to:destPath];
@@ -124,13 +125,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					   self.fileRemotePath, destPath, self.operation);
 				break;
 		}
-	});
+	}];
 //	self.operation = NONE;
 }
 
 - (void)restClient:(DBRestClient *)client loadFileFailedWithError:(NSError *)error
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		switch (self.operation) {
 			case DOWNLOAD_FILE:
 				[self.delegate downloadFile:self.fileRemotePath failedWithError:error];
@@ -141,13 +142,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					   [error debugDescription], self.operation);
 				break;
 		}
-	});
+	}];
 //	self.operation = NONE;
 }
 
 - (void)restClient:(DBRestClient *)client loadedMetadata:(DBMetadata *)metadata
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		switch (self.operation) {
 			case LIST_FILES: {
 				NSArray *filenames = [self filenameListFromMetadata:metadata];
@@ -172,13 +173,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					   self.fileRemotePath, self.operation);
 				break;
 		}
-	});
+	}];
 //	self.operation = NONE;
 }
 
 - (void)restClient:(DBRestClient *)client loadMetadataFailedWithError:(NSError *)error
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		switch (self.operation) {
 			case LIST_FILES:
 				[self.delegate listFilesInFolder:self.fileRemotePath failedWithError:error];
@@ -197,13 +198,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					   [error debugDescription], self.operation);
 				break;
 		}
-	});
+	}];
 //	self.operation = NONE;
 }
 
 - (void)restClient:(DBRestClient *)client createdFolder:(DBMetadata *)folder
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		switch (self.operation) {
 			case CREATE_FOLDER:
 				[self.delegate createdFolder:[folder path]];
@@ -214,13 +215,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					   [folder path], self.operation);
 				break;
 		}
-	});
+	}];
 //	self.operation = NONE;
 }
 
 - (void)restClient:(DBRestClient *)client createFolderFailedWithError:(NSError *)error
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		switch (self.operation) {
 			case CREATE_FOLDER:
 				[self.delegate createFolder:self.fileRemotePath failedWithError:error];
@@ -231,13 +232,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					   [error debugDescription], self.operation);
 				break;
 		}
-	});
+	}];
 //	self.operation = NONE;
 }
 
 - (void)restClient:(DBRestClient *)client movedPath:(NSString *)from_path to:(DBMetadata *)result
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		switch (self.operation) {
 			case RENAME_FILE:
 				[self.delegate renamedFile:from_path as:[result path]];
@@ -248,13 +249,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					   from_path, [result path], self.operation);
 				break;
 		}
-	});
+	}];
 //	self.operation = NONE;
 }
 
 - (void)restClient:(DBRestClient *)client movePathFailedWithError:(NSError *)error
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		switch (self.operation) {
 			case RENAME_FILE:
 				[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:error];
@@ -265,13 +266,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					   [error debugDescription], self.operation);
 				break;
 		}
-	});
+	}];
 //	self.operation = NONE;
 }
 
 - (void)restClient:(DBRestClient*)client deletedPath:(NSString *)path
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		switch (self.operation) {
 			case DELETE_FILE:
 				[self.delegate deletedFile:path];
@@ -286,13 +287,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					   path, self.operation);
 				break;
 		}
-	});
+	}];
 //	self.operation = NONE;
 }
 
 - (void)restClient:(DBRestClient*)client deletePathFailedWithError:(NSError*)error
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	[TSUtils background:^{
 		switch (self.operation) {
 			case DELETE_FILE:
 				[self.delegate deleteFile:self.fileRemotePath failedWithError:error];
@@ -307,7 +308,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 					   [error debugDescription], self.operation);
 				break;
 		}
-	});
+	}];
 //	self.operation = NONE;
 }
 
@@ -341,9 +342,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	 */
 	self.fileRemotePath = folderPath;
 	self.operation = LIST_FILES;
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		[self.dropboxRestClient loadMetadata:folderPath];
-	});
+	}];
 }
 
 - (void)itemExistsAtPath:(NSString *)remotePath
@@ -353,9 +354,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //	}
 	self.fileRemotePath = remotePath;
 	self.operation = ITEM_EXISTS;
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		[self.dropboxRestClient loadMetadata:remotePath];
-	});
+	}];
 }
 
 - (void)createFolder:(NSString *)folderPath
@@ -365,9 +366,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //	}
 	self.fileRemotePath = folderPath;
 	self.operation = CREATE_FOLDER;
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		[self.dropboxRestClient createFolder:folderPath];
-	});
+	}];
 }
 
 - (void)deleteFolder:(NSString *)folderPath
@@ -377,9 +378,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //	}
 	self.fileRemotePath = folderPath;
 	self.operation = DELETE_FOLDER;
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		[self.dropboxRestClient deletePath:folderPath];
-	});
+	}];
 }
 
 - (void)downloadFile:(NSString *)fileRemotePath andSaveLocallyAs:(NSString *)fileLocalPath
@@ -390,9 +391,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	self.fileLocalPath = fileLocalPath;
 	self.fileRemotePath = fileRemotePath;
 	self.operation = DOWNLOAD_FILE;
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		[self.dropboxRestClient loadFile:fileRemotePath intoPath:fileLocalPath];
-	});
+	}];
 }
 
 - (void)uploadFile:(NSString *)fileLocalPath toRemotePath:(NSString *)fileRemotePath overwritingRevision:(NSString *)revision
@@ -403,12 +404,12 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	self.operation = UPLOAD_FILE;
 	self.fileLocalPath = fileLocalPath;
 	self.fileRemotePath = fileRemotePath;
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		[self.dropboxRestClient uploadFile:[fileLocalPath lastPathComponent]
 									toPath:[fileRemotePath stringByDeletingLastPathComponent]
 							 withParentRev:revision
 								  fromPath:fileLocalPath];
-	});
+	}];
 }
 
 - (void)uploadFile:(NSString *)fileLocalPath toRemotePath:(NSString *)fileRemotePath
@@ -423,9 +424,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //	}
 	self.fileRemotePath = fileRemotePath;
 	self.operation = DELETE_FILE;
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		[self.dropboxRestClient deletePath:fileRemotePath];
-	});
+	}];
 }
 
 - (void)renameFile:(NSString *)oldPath to:(NSString *)newPath
@@ -436,9 +437,9 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	self.fileRemotePath = oldPath;
 	self.fileRemotePath2 = newPath;
 	self.operation = RENAME_FILE;
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		[self.dropboxRestClient moveFrom:oldPath toPath:newPath];
-	});
+	}];
 }
 
 @end

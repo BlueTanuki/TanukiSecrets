@@ -12,6 +12,7 @@
 #import "TSSharedState.h"
 #import "TSIOUtils.h"
 #import "TSNotifierUtils.h"
+#import "TSUtils.h"
 
 @interface TSDbStatusViewController () <TSDatabaseWrapperDelegate>
 
@@ -68,18 +69,18 @@
 {
 	if (self.localReady && self.dropboxReady && self.iCloudReady) {
 		self.working = NO;
-		dispatch_async(dispatch_get_main_queue(), ^{
+		[TSUtils foreground:^{
 			UIBarButtonItem *refreshDropboxButton = [[UIBarButtonItem alloc]
 													 initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
 													 target:self
 													 action:@selector(refreshData:)];
 			self.navigationItem.rightBarButtonItem = refreshDropboxButton;
 			[self.tableView reloadData];
-		});
+		}];
 	}else {
-		dispatch_async(dispatch_get_main_queue(), ^{
+		[TSUtils foreground:^{
 			[self.tableView reloadData];
-		});
+		}];
 	}
 }
 
@@ -105,17 +106,17 @@
 	if (self.working == NO) {
 		self.working = YES;
 		self.localReady = NO;
-		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		[TSUtils background:^{
 			[self refreshLocal];
-		});
+		}];
 		self.dropboxReady = NO;
-		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		[TSUtils background:^{
 			[self refreshDropbox];
-		});
+		}];
 		self.iCloudReady = NO;
-		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		[TSUtils background:^{
 			[self refreshICloud];
-		});
+		}];
 		UIActivityIndicatorView *busy = [[UIActivityIndicatorView alloc]
 										 initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 		[busy startAnimating];
@@ -450,23 +451,23 @@
 {
 	switch (indexPath.section) {
 		case 0: {
-			dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+			[TSUtils background:^{
 				[self debugStatusOfLocalDatabase:[self.localDatabaseUIDs objectAtIndex:indexPath.row]];
-			});
+			}];
 		}
 			break;
 			
 		case 1: {
-			dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+			[TSUtils background:^{
 				[self debugStatusOfDropboxDatabase:[self.dropboxDatabaseUIDs objectAtIndex:indexPath.row]];
-			});
+			}];
 		}
 			break;
 			
 		case 2: {
-			dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+			[TSUtils background:^{
 				[self debugStatusOfICloudDatabase:[self.iCloudDatabaseUIDs objectAtIndex:indexPath.row]];
-			});
+			}];
 		}
 			break;
 			

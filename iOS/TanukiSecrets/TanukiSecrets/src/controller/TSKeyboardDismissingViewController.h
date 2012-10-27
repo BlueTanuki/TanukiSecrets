@@ -17,9 +17,6 @@
 //Subclasses should return all the UIViews that need to keep the keyboard on screen.
 - (NSArray *)viewsThatNeedKeyboard;
 
-//idiotic workaround for differences between ios5 and ios6 : buttons in ios5 do not receive the tap if this controller is used.
-- (NSArray *)viewsThatNeedTapCallback;
-
 //callback for subclasses, one of the views that still need the keyboard was tapped
 - (void)viewWasTapped:(UIView *)view;
 

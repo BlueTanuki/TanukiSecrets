@@ -12,6 +12,7 @@
 #import "TSDatabaseMetadata.h"
 #import "TSDateUtils.h"
 #import "TSConstants.h"
+#import "TSUtils.h"
 
 @interface TSLocalDatabasesViewController ()
 
@@ -29,7 +30,7 @@
 
 - (void)reloadDatabaseList:(id)sender
 {
-	dispatch_async(dispatch_get_main_queue(), ^{
+	[TSUtils foreground:^{
 		_localDatabaseUIDs = [TSIOUtils listDatabaseUids];
 		if (_localDatabaseUIDs != nil) {
 			NSMutableArray *aux = [NSMutableArray arrayWithCapacity:[_localDatabaseUIDs count]];
@@ -40,7 +41,7 @@
 			self.databaseMetadataArray = [aux copy];
 		}
 		[self.tableView reloadData];
-	});
+	}];
 }
 
 #pragma mark - Override getters
@@ -169,7 +170,7 @@
 		UIStoryboard *sandboxStoryboard = [UIStoryboard storyboardWithName:@"Sandbox" bundle:nil];
 		UIViewController *sandboxInitialViewController = [sandboxStoryboard instantiateInitialViewController];
 		sandboxInitialViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-		[self presentModalViewController:sandboxInitialViewController animated:YES];
+		[self presentViewController:sandboxInitialViewController animated:YES completion:nil];
 	}
 }
 
