@@ -367,7 +367,7 @@
         <!--Navigation Controller-->
         <scene sceneID="gKS-Pe-LBA">
             <objects>
-                <navigationController toolbarHidden="NO" id="4cE-kc-Zx9" customClass="TSNavigationController" sceneMemberID="viewController">
+                <navigationController toolbarHidden="NO" id="4cE-kc-Zx9" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="weO-aY-pua">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>

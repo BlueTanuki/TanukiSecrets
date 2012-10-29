@@ -51,7 +51,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
 - (void)tap:(UITapGestureRecognizer *)gestureRecognizer {
 	CGPoint tapLocation = [gestureRecognizer locationInView:self.view];
-	NSLog (@"Tap %f %f", tapLocation.x, tapLocation.y);
+//	NSLog (@"Tap %f %f", tapLocation.x, tapLocation.y);
 	BOOL tappedInView = NO;
 	NSArray *viewsWithKeyboard = [self viewsThatNeedKeyboard];
 	for (UIView *viewWithKeyboard in viewsWithKeyboard) {

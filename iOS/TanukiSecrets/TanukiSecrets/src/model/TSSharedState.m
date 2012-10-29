@@ -12,6 +12,7 @@
 #import "TSUserDefaults.h"
 #import "TSDropboxWrapper.h"
 #import "TSiCloudWrapper.h"
+#import "TSNotifierUtils.h"
 
 @interface TSSharedState()
 
@@ -66,7 +67,7 @@
 		_dropboxWrapper = [TSDatabaseWrapper databaseWrapperWithWorker:worker];
 	}
 	if ([_dropboxWrapper busy] == YES) {
-		NSLog (@"dropboxWrapper instance is busy...");
+		[TSNotifierUtils error:@"dropboxWrapper instance is busy..."];
 		return nil;
 	}
 	_dropboxWrapper.delegate = delegate;
@@ -85,7 +86,7 @@
 		_iCloudWrapper = [TSDatabaseWrapper databaseWrapperWithWorker:worker];
 	}
 	if ([_iCloudWrapper busy] == YES) {
-		NSLog (@"iCloudWrapper instance is busy...");
+		[TSNotifierUtils error:@"iCloudWrapper instance is busy..."];
 		return nil;
 	}
 	_iCloudWrapper.delegate = delegate;

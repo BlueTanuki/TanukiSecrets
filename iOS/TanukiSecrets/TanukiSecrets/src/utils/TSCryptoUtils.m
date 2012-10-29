@@ -261,6 +261,10 @@
 					  usingSecret:(NSString *)secret
 {
 	NSData *unencryptedDatabase = [database toData];
+//	NSLog (@"unencrypted : %@", [unencryptedDatabase debugDescription]);
+//	NSLog (@"unencrypted string : %@", [[NSString alloc] initWithBytes:[unencryptedDatabase bytes]
+//		   length:[unencryptedDatabase length]
+//		   encoding:NSUTF8StringEncoding]);
 	
 	NSData *salt = [self randomDataOfVariableLengthMinimum:TS_SALT_BYTES_MIN maximum:TS_SALT_BYTES_MAX];
 	databaseMetadata.salt = salt;
@@ -270,7 +274,9 @@
 	}
 	databaseMetadata.version.checksum = [TSStringUtils hexStringFromData:[self sha512:unencryptedDatabase]];
 	
-	return [self tanukiEncrypt:unencryptedDatabase usingSecret:secret andSalt:salt consumingMemory:databaseMetadata.hashUsedMemory];
+	NSData *encryptedDatabase = [self tanukiEncrypt:unencryptedDatabase usingSecret:secret andSalt:salt consumingMemory:databaseMetadata.hashUsedMemory];
+//	NSLog (@"encrypted : %@", [encryptedDatabase debugDescription]);
+	return encryptedDatabase;
 }
 
 + (TSDatabase *)tanukiDecryptDatabase:(NSData *)encryptedData
@@ -278,7 +284,12 @@
 						  usingSecret:(NSString *)secret
 					   ignoreChecksum:(BOOL)ignoreChecksum
 {
+//	NSLog (@"encrypted : %@", [encryptedData debugDescription]);
 	NSData *data = [self tanukiDecrypt:encryptedData usingSecret:secret andSalt:databaseMetadata.salt consumingMemory:databaseMetadata.hashUsedMemory];
+//	NSLog (@"unencrypted : %@", [data debugDescription]);
+//	NSLog (@"unencrypted string : %@", [[NSString alloc] initWithBytes:[data bytes]
+//																length:[data length]
+//															  encoding:NSUTF8StringEncoding]);
 	if (data == nil) {
 		NSLog (@"ERROR : decrypt database %@ failed!", databaseMetadata.uid);
 		return nil;

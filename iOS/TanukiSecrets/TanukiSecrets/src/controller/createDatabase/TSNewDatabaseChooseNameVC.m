@@ -13,6 +13,7 @@
 #import "TSNotifierUtils.h"
 #import "TSIOUtils.h"
 #import "TSSharedState.h"
+#import "TSDBItem.h"
 
 #define DESCRIPTION_PLACEHOLDER_TEXT @"(optional) Enter a short description for this database."
 
@@ -152,7 +153,8 @@
 - (IBAction)next:(id)sender {
 	TSSharedState *sharedState = [TSSharedState sharedState];
 	sharedState.openDatabaseMetadata = [TSDatabaseMetadata newDatabaseNamed:[TSStringUtils trim:self.name.text]];
-	if ([TSStringUtils isNotBlank:self.description.text]) {
+	sharedState.openDatabase = [TSDatabase emptyDatabase];
+	if (([TSStringUtils isNotBlank:self.description.text]) && ([DESCRIPTION_PLACEHOLDER_TEXT isEqualToString:self.description.text] == NO)) {
 		sharedState.openDatabaseMetadata.description = [TSStringUtils trim:self.description.text];
 	}
 	[self performSegueWithIdentifier:@"next" sender:nil];
