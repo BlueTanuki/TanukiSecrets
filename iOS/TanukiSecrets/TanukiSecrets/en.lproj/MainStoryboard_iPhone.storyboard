@@ -71,6 +71,8 @@
                                 <action selector="switchToSandboxStoryboard:" destination="12" id="Ics-Jv-wSu"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="T9a-jX-WkJ"/>
+                        <barButtonItem image="settings_small.png" style="plain" id="40T-tE-Kp2"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Choose database" id="36">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="WJd-h9-3S2">
@@ -528,6 +530,9 @@
             <point key="canvasLocation" x="-3657" y="-78"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="settings_small.png" width="20" height="20"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
