@@ -18,6 +18,10 @@
 		9F1463D81600D3AA00EA03D6 /* TSVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463D71600D3AA00EA03D6 /* TSVersion.m */; };
 		9F1463DB1600D49400EA03D6 /* TSLocalMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463DA1600D49400EA03D6 /* TSLocalMetadata.m */; };
 		9F1463E11600DF7A00EA03D6 /* TSAuthor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463E01600DF7A00EA03D6 /* TSAuthor.m */; };
+		9F321261163EE07700123E72 /* TSUnlockDatabaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F321260163EE07700123E72 /* TSUnlockDatabaseViewController.m */; };
+		9F321267163EF4FB00123E72 /* OpenDatabaseStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F321266163EF4FB00123E72 /* OpenDatabaseStoryboard_iPhone.storyboard */; };
+		9F3215EF163F06F900123E72 /* sync.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F3215EC163F06F900123E72 /* sync.png */; };
+		9F3215F0163F06F900123E72 /* sync@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F3215ED163F06F900123E72 /* sync@2x.png */; };
 		9F57C20A16146E420085703E /* TSBackupUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57C20916146E420085703E /* TSBackupUtils.m */; };
 		9F57C20E161734400085703E /* TSUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57C20D1617343E0085703E /* TSUtils.m */; };
 		9F8E0369162837B60040662C /* TSDbStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E0368162837B60040662C /* TSDbStatusViewController.m */; };
@@ -29,8 +33,6 @@
 		9F8ED47615B98C6A00391EF8 /* TSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED47515B98C6A00391EF8 /* TSAppDelegate.m */; };
 		9F8ED47915B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F8ED47715B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard */; };
 		9F8ED47C15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F8ED47A15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard */; };
-		9F8ED47F15B98C6A00391EF8 /* TSMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED47E15B98C6A00391EF8 /* TSMasterViewController.m */; };
-		9F8ED48215B98C6A00391EF8 /* TSDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8ED48115B98C6A00391EF8 /* TSDetailViewController.m */; };
 		9F8ED48A15B98C6A00391EF8 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED48915B98C6A00391EF8 /* SenTestingKit.framework */; };
 		9F8ED48B15B98C6A00391EF8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46515B98C6A00391EF8 /* UIKit.framework */; };
 		9F8ED48C15B98C6A00391EF8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8ED46715B98C6A00391EF8 /* Foundation.framework */; };
@@ -41,7 +43,6 @@
 		9F96775E162096C700C9182D /* TSUIDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F96775D162096C700C9182D /* TSUIDocument.m */; };
 		9F98D40E15F0CAB9001A2C82 /* TSCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98D40D15F0CAB9001A2C82 /* TSCryptoUtils.m */; };
 		9F98D41115F0CCB3001A2C82 /* TSStringUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98D41015F0CCB3001A2C82 /* TSStringUtils.m */; };
-		9F98D41715F7B137001A2C82 /* iPadSandbox.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F98D41615F7B137001A2C82 /* iPadSandbox.storyboard */; };
 		9F9D868E15CBFDF60066BC04 /* SMXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */; };
 		9F9D869115CC14CA0066BC04 /* Sandbox.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */; };
 		9FC16205161F081700094E43 /* TSDatabaseWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC16204161F081700094E43 /* TSDatabaseWrapper.m */; };
@@ -107,6 +108,11 @@
 		9F1463DA1600D49400EA03D6 /* TSLocalMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLocalMetadata.m; sourceTree = "<group>"; };
 		9F1463DF1600DF7A00EA03D6 /* TSAuthor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSAuthor.h; sourceTree = "<group>"; };
 		9F1463E01600DF7A00EA03D6 /* TSAuthor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSAuthor.m; sourceTree = "<group>"; };
+		9F32125F163EE07700123E72 /* TSUnlockDatabaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUnlockDatabaseViewController.h; sourceTree = "<group>"; };
+		9F321260163EE07700123E72 /* TSUnlockDatabaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUnlockDatabaseViewController.m; sourceTree = "<group>"; };
+		9F321266163EF4FB00123E72 /* OpenDatabaseStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = OpenDatabaseStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		9F3215EC163F06F900123E72 /* sync.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sync.png; sourceTree = "<group>"; };
+		9F3215ED163F06F900123E72 /* sync@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync@2x.png"; sourceTree = "<group>"; };
 		9F57C20816146E420085703E /* TSBackupUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSBackupUtils.h; sourceTree = "<group>"; };
 		9F57C20916146E420085703E /* TSBackupUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSBackupUtils.m; sourceTree = "<group>"; };
 		9F57C20C1617343C0085703E /* TSUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUtils.h; sourceTree = "<group>"; };
@@ -125,10 +131,6 @@
 		9F8ED47515B98C6A00391EF8 /* TSAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TSAppDelegate.m; sourceTree = "<group>"; };
 		9F8ED47815B98C6A00391EF8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		9F8ED47B15B98C6A00391EF8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
-		9F8ED47D15B98C6A00391EF8 /* TSMasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TSMasterViewController.h; sourceTree = "<group>"; };
-		9F8ED47E15B98C6A00391EF8 /* TSMasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TSMasterViewController.m; sourceTree = "<group>"; };
-		9F8ED48015B98C6A00391EF8 /* TSDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TSDetailViewController.h; sourceTree = "<group>"; };
-		9F8ED48115B98C6A00391EF8 /* TSDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TSDetailViewController.m; sourceTree = "<group>"; };
 		9F8ED48815B98C6A00391EF8 /* TanukiSecretsTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TanukiSecretsTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F8ED48915B98C6A00391EF8 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		9F8ED49115B98C6A00391EF8 /* TanukiSecretsTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TanukiSecretsTests-Info.plist"; sourceTree = "<group>"; };
@@ -145,7 +147,6 @@
 		9F98D40D15F0CAB9001A2C82 /* TSCryptoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSCryptoUtils.m; sourceTree = "<group>"; };
 		9F98D40F15F0CCB3001A2C82 /* TSStringUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSStringUtils.h; sourceTree = "<group>"; };
 		9F98D41015F0CCB3001A2C82 /* TSStringUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSStringUtils.m; sourceTree = "<group>"; };
-		9F98D41615F7B137001A2C82 /* iPadSandbox.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = iPadSandbox.storyboard; sourceTree = "<group>"; };
 		9F9D868C15CBFDF60066BC04 /* SMXMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXMLDocument.h; sourceTree = "<group>"; };
 		9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXMLDocument.m; sourceTree = "<group>"; };
 		9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Sandbox.storyboard; sourceTree = "<group>"; };
@@ -300,6 +301,15 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		9F32126D163F011700123E72 /* img */ = {
+			isa = PBXGroup;
+			children = (
+				9F3215EC163F06F900123E72 /* sync.png */,
+				9F3215ED163F06F900123E72 /* sync@2x.png */,
+			);
+			path = img;
+			sourceTree = "<group>";
+		};
 		9F8ED45615B98C6900391EF8 = {
 			isa = PBXGroup;
 			children = (
@@ -335,6 +345,7 @@
 		9F8ED46B15B98C6A00391EF8 /* TanukiSecrets */ = {
 			isa = PBXGroup;
 			children = (
+				9F32126D163F011700123E72 /* img */,
 				9F1463E61600EB0800EA03D6 /* src */,
 				9FEC4DCB15C29847008B18D5 /* lib */,
 				9F8ED4B015B9A0AC00391EF8 /* sandbox */,
@@ -349,7 +360,6 @@
 			children = (
 				9F026A18160B61C90097BED4 /* Default-568h@2x.png */,
 				9F8ED46E15B98C6A00391EF8 /* InfoPlist.strings */,
-				9F98D41615F7B137001A2C82 /* iPadSandbox.storyboard */,
 				9F8ED47115B98C6A00391EF8 /* main.m */,
 				9F8ED47A15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard */,
 				9F8ED47715B98C6A00391EF8 /* MainStoryboard_iPhone.storyboard */,
@@ -359,6 +369,7 @@
 				9FEC4DC515C18107008B18D5 /* TanukiSecrets.entitlements */,
 				9F8ED47415B98C6A00391EF8 /* TSAppDelegate.h */,
 				9F8ED47515B98C6A00391EF8 /* TSAppDelegate.m */,
+				9F321266163EF4FB00123E72 /* OpenDatabaseStoryboard_iPhone.storyboard */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -412,10 +423,6 @@
 			isa = PBXGroup;
 			children = (
 				9FCE97C31631BCD2003FE67F /* createDatabase */,
-				9F8ED47D15B98C6A00391EF8 /* TSMasterViewController.h */,
-				9F8ED47E15B98C6A00391EF8 /* TSMasterViewController.m */,
-				9F8ED48015B98C6A00391EF8 /* TSDetailViewController.h */,
-				9F8ED48115B98C6A00391EF8 /* TSDetailViewController.m */,
 				9FCE97BB1631A288003FE67F /* TSLocalDatabasesViewController.h */,
 				9FCE97BC1631A288003FE67F /* TSLocalDatabasesViewController.m */,
 				9FCE97C71635B2E5003FE67F /* TSRemoteDatabasesViewController.h */,
@@ -424,6 +431,8 @@
 				9FCE97CE1635D23D003FE67F /* TSLinkWithDropboxViewController.m */,
 				9FCE97FE163A7342003FE67F /* TSKeyboardDismissingViewController.h */,
 				9FCE97FF163A7346003FE67F /* TSKeyboardDismissingViewController.m */,
+				9F32125F163EE07700123E72 /* TSUnlockDatabaseViewController.h */,
+				9F321260163EE07700123E72 /* TSUnlockDatabaseViewController.m */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -585,8 +594,10 @@
 				9FEC4DD615C298E7008B18D5 /* NotifyX.png in Resources */,
 				9FEC4DD715C298E7008B18D5 /* NotifyX@2x.png in Resources */,
 				9F9D869115CC14CA0066BC04 /* Sandbox.storyboard in Resources */,
-				9F98D41715F7B137001A2C82 /* iPadSandbox.storyboard in Resources */,
 				9F026A19160B61C90097BED4 /* Default-568h@2x.png in Resources */,
+				9F321267163EF4FB00123E72 /* OpenDatabaseStoryboard_iPhone.storyboard in Resources */,
+				9F3215EF163F06F900123E72 /* sync.png in Resources */,
+				9F3215F0163F06F900123E72 /* sync@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -623,8 +634,6 @@
 			files = (
 				9F8ED47215B98C6A00391EF8 /* main.m in Sources */,
 				9F8ED47615B98C6A00391EF8 /* TSAppDelegate.m in Sources */,
-				9F8ED47F15B98C6A00391EF8 /* TSMasterViewController.m in Sources */,
-				9F8ED48215B98C6A00391EF8 /* TSDetailViewController.m in Sources */,
 				9F8ED4B415B9A0EB00391EF8 /* TSFilesystemTableViewController.m in Sources */,
 				9FEC4DCF15C29894008B18D5 /* JSNotifier.m in Sources */,
 				9FEC4E0915C93F0D008B18D5 /* TSUnlockViewController.m in Sources */,
@@ -666,6 +675,7 @@
 				9FCE97EE1639602B003FE67F /* TSNewDatabaseChooseNameVC.m in Sources */,
 				9FCE97FD163A721A003FE67F /* TSNewDatabaseSecuritySettingsVC.m in Sources */,
 				9FCE9800163A734B003FE67F /* TSKeyboardDismissingViewController.m in Sources */,
+				9F321261163EE07700123E72 /* TSUnlockDatabaseViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

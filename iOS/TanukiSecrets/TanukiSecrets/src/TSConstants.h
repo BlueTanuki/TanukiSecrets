@@ -25,5 +25,6 @@
 
 #define TS_NOTIFICATION_DROPBOX_WAS_LINKED @"TSDropboxWasLinkedNotification"
 #define TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED @"TSLocalDatabaseListChanged"
+#define TS_NOTIFICATION_DATABASE_WAS_UNLOCKED_SUCCESSFULLY @"TSDatabaseWasUnlockedSuccessfully"
 
 #endif

@@ -13,6 +13,10 @@
 #import "TSDateUtils.h"
 #import "TSConstants.h"
 #import "TSUtils.h"
+#import "TSSharedState.h"
+#import "TSNotifierUtils.h"
+#import "TSUnlockViewController.h"
+#import "TSDeviceUtils.h"
 
 @interface TSLocalDatabasesViewController ()
 
@@ -128,13 +132,12 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    TSDatabaseMetadata *databaseMetadata = [self.databaseMetadataArray objectAtIndex:indexPath.row];
+	TSSharedState *sharedState = [TSSharedState sharedState];
+	sharedState.openDatabaseMetadata = databaseMetadata;
+	sharedState.openDatabase = nil;
+	sharedState.openDatabasePassword = nil;
+	[self performSegueWithIdentifier:@"openDatabase" sender:nil];
 }
 
 #pragma mark - listeners
@@ -146,15 +149,36 @@
 												 selector:@selector(localDatabaseListChanged:)
 													 name:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED
 												   object:nil];
+	}else if ([[segue identifier] isEqualToString:@"openDatabase"]) {
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(databaseWasUnlockedSuccessfully:)
+													 name:TS_NOTIFICATION_DATABASE_WAS_UNLOCKED_SUCCESSFULLY
+												   object:nil];
 	}
 	[super prepareForSegue:segue sender:sender];
 }
 
 - (void)localDatabaseListChanged:(NSNotification *)notification
 {
-	NSLog (@"received localDatabaseListChanged notification");
+//	NSLog (@"received localDatabaseListChanged notification");
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[self reloadDatabaseList:nil];
+}
+
+- (void)databaseWasUnlockedSuccessfully:(NSNotification *)notification
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	UIStoryboard *openDatabaseStoryboard = nil;
+	if ([TSDeviceUtils isIPhone]) {
+		openDatabaseStoryboard = [UIStoryboard storyboardWithName:@"OpenDatabaseStoryboard_iPhone" bundle:nil];
+	}
+	if (openDatabaseStoryboard) {
+		UIViewController *initialViewController = [openDatabaseStoryboard instantiateInitialViewController];
+		initialViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+		[self presentViewController:initialViewController animated:YES completion:nil];
+	}else {
+		[TSNotifierUtils error:@"NOT YET IMPLEMENTED"];
+	}
 }
 
 - (IBAction)switchToSandboxStoryboard:(id)sender {

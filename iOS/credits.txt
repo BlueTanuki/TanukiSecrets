@@ -9,4 +9,7 @@ Using components/libraries :
  * JSNotifier: unobtrusive gui notifications. https://github.com/jonahsiegle/JSNotifier
 	Apache License, Version 2.0 http://www.apache.org/licenses/LICENSE-2.0 - Jonah Siegle
 	+ contributions by stevewilford that were not included in the main branch https://github.com/stevewilford/JSNotifier
- * 
+	+ own changes/fixes
+ * icon set from TWG blog, Creative Commons Attribution-Share Alike license 
+	http://creativecommons.org/licenses/by-sa/3.0/
+	http://blog.twg.ca/2010/11/retina-display-icon-set/

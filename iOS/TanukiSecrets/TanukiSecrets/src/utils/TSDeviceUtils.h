@@ -14,4 +14,7 @@
 
 + (BOOL) isRunningInSimulator;
 
++ (BOOL) isIPad;
++ (BOOL) isIPhone;
+
 @end

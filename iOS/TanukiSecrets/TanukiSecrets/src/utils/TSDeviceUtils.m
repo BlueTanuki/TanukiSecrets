@@ -26,4 +26,14 @@
 #endif
 }
 
++ (BOOL)isIPad
+{
+	return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
+}
+
++ (BOOL)isIPhone
+{
+	return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone;
+}
+
 @end
