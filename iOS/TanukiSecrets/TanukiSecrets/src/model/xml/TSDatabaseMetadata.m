@@ -10,6 +10,7 @@
 
 #import "TSXMLUtils.h"
 #import "TSStringUtils.h"
+#import "TSConstants.h"
 
 #define TS_XML_DB_META_TAG_NAME @"tsdbMetadata"
 #define TS_XML_DB_META_UID_TAG_NAME @"uid"
@@ -104,6 +105,7 @@ hashUsedMemory = _hashUsedMemory;
 	ret.name = name;
 	ret.version = [TSVersion newVersion];
 	ret.createdBy = [TSAuthor authorFromCurrentDevice];
+	ret.hashUsedMemory = TANUKI_HASH_DEFAULT_MEMORY_MB;
 	return ret;
 }
 

@@ -109,7 +109,7 @@
  */
 + (NSData *) tanukiHash:(NSString *) secret usingSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB
 {
-	int bufSizeMB = 13;
+	int bufSizeMB = TANUKI_HASH_DEFAULT_MEMORY_MB;
 	if (consumedMB < TANUKI_HASH_MIN_MEMORY_MB) {
 		NSLog (@"WARNING : the consumed memory is not allowed to be below %dMB, using this minimum value instead of %d", TANUKI_HASH_MIN_MEMORY_MB, consumedMB);
 		bufSizeMB = TANUKI_HASH_MIN_MEMORY_MB;
@@ -178,6 +178,18 @@
 	return ret;
 }
 
++ (NSData *)tanukiEncryptKey:(TSDatabaseMetadata *)databaseMetadata usingSecret:(NSString *)secret
+{
+	NSData *salt = [self randomDataOfVariableLengthMinimum:TS_SALT_BYTES_MIN maximum:TS_SALT_BYTES_MAX];
+	databaseMetadata.salt = salt;
+	return [self tanukiHash:secret usingSalt:salt consumingMemory:databaseMetadata.hashUsedMemory];
+}
+
++ (NSData *)tanukiDecryptKey:(TSDatabaseMetadata *)databaseMetadata usingSecret:(NSString *)secret
+{
+	return [self tanukiHash:secret usingSalt:databaseMetadata.salt consumingMemory:databaseMetadata.hashUsedMemory];
+}
+
 #pragma mark - Encryption
 
 + (NSData *)aesCbcWithPaddingEncrypt:(NSData *)data usingKey:(NSData *)key andIV:(NSData *)iv
@@ -220,16 +232,14 @@
 	return decryptedData;
 }
 
-+ (NSData *)tanukiEncrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB
++ (NSData *)tanukiEncrypt:(NSData *)data usingKey:(NSData *)key andSalt:(NSData *)salt
 {	
-	NSData *key = [self tanukiHash:secret usingSalt:salt consumingMemory:consumedMB];
 	NSData *iv = [self md5:salt];
 	return [self aesCbcWithPaddingEncrypt:data usingKey:key andIV:iv];
 }
 
-+ (NSData *)tanukiDecrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB
++ (NSData *)tanukiDecrypt:(NSData *)data usingKey:(NSData *)key andSalt:(NSData *)salt
 {	
-	NSData *key = [self tanukiHash:secret usingSalt:salt consumingMemory:consumedMB];
 	NSData *iv = [self md5:salt];
 	return [self aesCbcWithPaddingDecrypt:data usingKey:key andIV:iv];
 }
@@ -258,7 +268,7 @@
 
 + (NSData *)tanukiEncryptDatabase:(TSDatabase *)database
 				   havingMetadata:(TSDatabaseMetadata *)databaseMetadata
-					  usingSecret:(NSString *)secret
+						 usingKey:(NSData *)key
 {
 	NSData *unencryptedDatabase = [database toData];
 //	NSLog (@"unencrypted : %@", [unencryptedDatabase debugDescription]);
@@ -266,26 +276,23 @@
 //		   length:[unencryptedDatabase length]
 //		   encoding:NSUTF8StringEncoding]);
 	
-	NSData *salt = [self randomDataOfVariableLengthMinimum:TS_SALT_BYTES_MIN maximum:TS_SALT_BYTES_MAX];
-	databaseMetadata.salt = salt;
-	
 	if (databaseMetadata.version == nil) {
 		databaseMetadata.version = [TSVersion newVersion];
 	}
 	databaseMetadata.version.checksum = [TSStringUtils hexStringFromData:[self sha512:unencryptedDatabase]];
 	
-	NSData *encryptedDatabase = [self tanukiEncrypt:unencryptedDatabase usingSecret:secret andSalt:salt consumingMemory:databaseMetadata.hashUsedMemory];
-//	NSLog (@"encrypted : %@", [encryptedDatabase debugDescription]);
+	NSData *encryptedDatabase = [self tanukiEncrypt:unencryptedDatabase usingKey:key andSalt:databaseMetadata.salt];
+	//	NSLog (@"encrypted : %@", [encryptedDatabase debugDescription]);
 	return encryptedDatabase;
 }
 
 + (TSDatabase *)tanukiDecryptDatabase:(NSData *)encryptedData
 					   havingMetadata:(TSDatabaseMetadata *)databaseMetadata
-						  usingSecret:(NSString *)secret
+							 usingKey:(NSData *)key
 					   ignoreChecksum:(BOOL)ignoreChecksum
 {
 //	NSLog (@"encrypted : %@", [encryptedData debugDescription]);
-	NSData *data = [self tanukiDecrypt:encryptedData usingSecret:secret andSalt:databaseMetadata.salt consumingMemory:databaseMetadata.hashUsedMemory];
+	NSData *data = [self tanukiDecrypt:encryptedData usingKey:key andSalt:databaseMetadata.salt];
 //	NSLog (@"unencrypted : %@", [data debugDescription]);
 //	NSLog (@"unencrypted string : %@", [[NSString alloc] initWithBytes:[data bytes]
 //																length:[data length]
@@ -307,9 +314,9 @@
 
 + (TSDatabase *)tanukiDecryptDatabase:(NSData *)encryptedData
 					   havingMetadata:(TSDatabaseMetadata *)databaseMetadata
-						  usingSecret:(NSString *)secret
+							 usingKey:(NSData *)key
 {
-	return [self tanukiDecryptDatabase:encryptedData havingMetadata:databaseMetadata usingSecret:secret ignoreChecksum:NO];
+	return [self tanukiDecryptDatabase:encryptedData havingMetadata:databaseMetadata usingKey:key ignoreChecksum:NO];
 }
 
 @end

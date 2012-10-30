@@ -538,9 +538,10 @@ BOOL firstTimeSegueTriggered = NO;
 	TSDatabase *database = [self testDatabaseWithEncryptedItemUsingSecret:secret];
 	TSDatabaseMetadata *metadata = [self testDatabaseMetadata];
 	[TSNotifierUtils info:@"Writing local database"];
+	NSData *encryptKey = [TSCryptoUtils tanukiEncryptKey:metadata usingSecret:secret];
 	NSData *encryptedContent = [TSCryptoUtils tanukiEncryptDatabase:database
 													 havingMetadata:metadata
-														usingSecret:secret];
+														usingKey:encryptKey];
 	if ([TSIOUtils saveDatabaseWithMetadata:metadata andEncryptedContent:encryptedContent]) {
 		[TSNotifierUtils info:@"Uploading database to Dropbox"];
 		[self.dropboxWrapper uploadDatabaseWithUid:metadata.uid];
@@ -684,17 +685,20 @@ BOOL firstTimeSegueTriggered = NO;
 }
 
 - (IBAction)switchToMainStoryboard:(id)sender {
-	NSNotification *notificatopn = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
-	[[NSNotificationCenter defaultCenter] postNotification:notificatopn];
+	NSNotification *notificaton = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
 	if (self.presentingViewController) {
 		NSLog (@"Storyboard switch by dismissing self");
-		[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+		[self.presentingViewController dismissViewControllerAnimated:YES completion:^{
+			[[NSNotificationCenter defaultCenter] postNotification:notificaton];
+		}];
 	}else {
 		NSLog (@"Storyboard switch by modally presenting other");
 		UIStoryboard *sandboxStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
 		UIViewController *sandboxInitialViewController = [sandboxStoryboard instantiateInitialViewController];
 		sandboxInitialViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-		[self presentViewController:sandboxInitialViewController animated:YES completion:nil];
+		[self presentViewController:sandboxInitialViewController animated:YES completion:^{
+			[[NSNotificationCenter defaultCenter] postNotification:notificaton];
+		}];
 	}
 }
 

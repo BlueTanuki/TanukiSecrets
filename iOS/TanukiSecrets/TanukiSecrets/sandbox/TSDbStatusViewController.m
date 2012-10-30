@@ -185,11 +185,14 @@
 {
 	if ([TSIOUtils deleteDatabase:databaseUid]) {
 		[TSNotifierUtils info:@"Local database deleted."];
-		int64_t delayInSeconds = 1.0;
+		NSLog (@"before dispatch_after");
+		int64_t delayInSeconds = 5;
 		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
 		dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+			NSLog (@"inside dispatch_after");
 			[self refreshData:nil];
 		});
+		NSLog (@"after dispatch_after");
 	}else {
 		[TSNotifierUtils error:@"Failed to delete local database."];
 	}

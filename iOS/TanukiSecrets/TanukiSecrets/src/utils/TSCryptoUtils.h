@@ -28,14 +28,20 @@
 
 + (NSData *) tanukiHash:(NSString *)secret usingSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB;
 
+//generates the salt and sets the metadata property, returns the key
++ (NSData *) tanukiEncryptKey:(TSDatabaseMetadata *)databaseMetadata usingSecret:(NSString *)secret;
+//uses the salt from the metadata to compute and return the key
++ (NSData *) tanukiDecryptKey:(TSDatabaseMetadata *)databaseMetadata usingSecret:(NSString *)secret;
+
 #pragma mark - Encryption
 
 + (NSData *) aesCbcWithPaddingEncrypt:(NSData *)data usingKey:(NSData *)key andIV:(NSData *)iv;
 + (NSData *) aesCbcWithPaddingDecrypt:(NSData *)data usingKey:(NSData *)key andIV:(NSData *)iv;
 
-+ (NSData *) tanukiEncrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB;
-+ (NSData *) tanukiDecrypt:(NSData *)data usingSecret:(NSString *)secret andSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB;
++ (NSData *) tanukiEncrypt:(NSData *)data usingKey:(NSData *)key andSalt:(NSData *)salt;
++ (NSData *) tanukiDecrypt:(NSData *)data usingKey:(NSData *)key andSalt:(NSData *)salt;
 
+//NOTE: much weaker encryption than the database, uses md5(secret) as key
 + (NSString *) tanukiEncryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
 					  usingSecret:(NSString *)secret;
 + (NSString *) tanukiDecryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
@@ -44,15 +50,15 @@
 ///generates salt, computes checksum, returns encrypted database ready to be written to file
 + (NSData *) tanukiEncryptDatabase:(TSDatabase *)database
 					havingMetadata:(TSDatabaseMetadata *)databaseMetadata
-					   usingSecret:(NSString *)secret;
+						  usingKey:(NSData *)key;
 
 + (TSDatabase *) tanukiDecryptDatabase:(NSData *)encryptedData
 						havingMetadata:(TSDatabaseMetadata *)databaseMetadata
-						   usingSecret:(NSString *)secret
+							  usingKey:(NSData *)key
 						ignoreChecksum:(BOOL)ignoreChecksum;
 
 + (TSDatabase *) tanukiDecryptDatabase:(NSData *)encryptedData
 						havingMetadata:(TSDatabaseMetadata *)databaseMetadata
-						   usingSecret:(NSString *)secret;
+							  usingKey:(NSData *)key;
 
 @end

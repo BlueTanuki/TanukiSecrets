@@ -100,9 +100,11 @@
 			@throw @"Internal logic fail. Passwords do not match.";
 		}
 		sharedState.openDatabaseMetadata.hashUsedMemory = (int)self.hashUsedMemory.value;
+		sharedState.openDatabasePassword = secret;
+		NSData *encryptKey = [TSCryptoUtils tanukiDecryptKey:sharedState.openDatabaseMetadata usingSecret:sharedState.openDatabasePassword];
 		NSData *encryptedContent = [TSCryptoUtils tanukiEncryptDatabase:sharedState.openDatabase
 														 havingMetadata:sharedState.openDatabaseMetadata
-															usingSecret:secret];
+															usingKey:encryptKey];
 		if ([TSIOUtils saveDatabaseWithMetadata:sharedState.openDatabaseMetadata andEncryptedContent:encryptedContent]) {
 			sharedState.openDatabasePassword = secret;
 			[TSUtils foreground:^{
@@ -151,7 +153,8 @@
 	TSDatabaseMetadata *meta = [TSDatabaseMetadata newDatabaseNamed:@"test"];
 	meta.hashUsedMemory = self.hashUsedMemory.value;
 	TSDatabase *db = [[TSDatabase alloc] init];
-	[TSCryptoUtils tanukiEncryptDatabase:db havingMetadata:meta usingSecret:@"~NI-PAH!~"];
+	NSData *encryptKey = [TSCryptoUtils tanukiEncryptKey:meta usingSecret:@"~NI-PAH!~"];
+	[TSCryptoUtils tanukiEncryptDatabase:db havingMetadata:meta usingKey:encryptKey];
 	NSDate *endTime = [NSDate date];
 	NSTimeInterval encryptionTime = [endTime timeIntervalSinceDate:startTime];
 	[TSNotifierUtils info:[NSString stringWithFormat:@"Ecryption took about %d seconds.", (int)ceil(encryptionTime)]];

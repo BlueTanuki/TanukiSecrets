@@ -385,9 +385,9 @@
 	NSData *fileContent = [self demoFileContent];
 	
 	NSLog(@"Encrypting...");
+	NSData *encryptKey = [TSCryptoUtils tanukiHash:@"TheTanukiSais...NI-PAH~!" usingSalt:salt consumingMemory:13];
 	NSData *encryptedData = [TSCryptoUtils tanukiEncrypt:fileContent 
-									 usingSecret:@"TheTanukiSais...NI-PAH~!" andSalt:salt
-							 consumingMemory:13];
+									 usingKey:encryptKey andSalt:salt];
 	NSLog(@"Encrypt finished.");
 	
 //	NSLog(@"Encrypt-decrypt test for |%@|", fileContent);

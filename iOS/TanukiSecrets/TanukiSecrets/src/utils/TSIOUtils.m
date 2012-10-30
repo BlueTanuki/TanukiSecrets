@@ -441,25 +441,31 @@
 
 #pragma mark - complex operations
 
-+ (BOOL)saveDatabase:(TSDatabase *)database havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret
++ (BOOL)saveDatabase:(TSDatabase *)database havingMetadata:(TSDatabaseMetadata *)metadata usingKey:(NSData *)encryptKey
 {
 	NSData *encryptedContent = [TSCryptoUtils tanukiEncryptDatabase:database
 													 havingMetadata:metadata
-														usingSecret:secret];
+														usingKey:encryptKey];
 	NSString *databaseFilePath = [self databaseFilePath:metadata.uid];
 	if ([self isRegularFile:databaseFilePath]) {
-//		NSLog (@"Database already exists, will try to create a backup.");
+		//		NSLog (@"Database already exists, will try to create a backup.");
 		if ([self createBackupFor:metadata.uid] == NO) {
 			NSLog (@"Failed to create backup, aborting save.");
 			return NO;
 		}
 	}else {
-//		NSLog (@"Database does not exists, no backup needed.");
+		//		NSLog (@"Database does not exists, no backup needed.");
 	}
 	if (metadata.createdBy == nil) {
 		metadata.createdBy = [TSAuthor authorFromCurrentDevice];
 	}
 	return [self saveDatabaseWithMetadata:metadata andEncryptedContent:encryptedContent];
+}
+
++ (BOOL)saveDatabase:(TSDatabase *)database havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret
+{
+	NSData *encryptKey = [TSCryptoUtils tanukiEncryptKey:metadata usingSecret:secret];
+	return [self saveDatabase:database havingMetadata:metadata usingKey:encryptKey];
 }
 
 + (TSDatabaseMetadata *)loadDatabaseMetadataFromFile:(NSString *)filePath
@@ -477,14 +483,25 @@
 	return [self loadDatabaseMetadataFromFile:[self metadataFilePath:databaseUid]];
 }
 
-+ (TSDatabase *)loadDatabaseFromFile:(NSString *)encryptedFilePath havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret
++ (TSDatabase *)loadDatabaseFromFile:(NSString *)encryptedFilePath havingMetadata:(TSDatabaseMetadata *)metadata usingKey:(NSData *)decryptKey
 {
 	NSData *encryptedData = [NSData dataWithContentsOfFile:encryptedFilePath];
 	if (encryptedData == nil) {
 		NSLog (@"Failed to read content of file %@", encryptedFilePath);
 		return nil;
 	}
-	return [TSCryptoUtils tanukiDecryptDatabase:encryptedData havingMetadata:metadata usingSecret:secret];
+	return [TSCryptoUtils tanukiDecryptDatabase:encryptedData havingMetadata:metadata usingKey:decryptKey];
+}
+
++ (TSDatabase *)loadDatabaseFromFile:(NSString *)encryptedFilePath havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret
+{
+	NSData *decryptKey = [TSCryptoUtils tanukiDecryptKey:metadata usingSecret:secret];
+	return [self loadDatabaseFromFile:encryptedFilePath havingMetadata:metadata usingKey:decryptKey];
+}
+
++ (TSDatabase *)loadDatabase:(NSString *)databaseUid havingMetadata:(TSDatabaseMetadata *)metadata usingKey:(NSData *)decryptKey
+{
+	return [self loadDatabaseFromFile:[self databaseFilePath:databaseUid] havingMetadata:metadata usingKey:decryptKey];
 }
 
 + (TSDatabase *)loadDatabase:(NSString *)databaseUid havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret

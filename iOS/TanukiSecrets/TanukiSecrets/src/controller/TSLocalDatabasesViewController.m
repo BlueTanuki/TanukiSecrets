@@ -57,6 +57,11 @@
 	if (openDatabaseStoryboard) {
 		UIViewController *initialViewController = [openDatabaseStoryboard instantiateInitialViewController];
 		initialViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+		[[TSSharedState sharedState] startPreparingNextEncryptKey];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(databaseWasLockedSuccessfully:)
+													 name:TS_NOTIFICATION_DATABASE_WAS_LOCKED_SUCCESSFULLY
+												   object:nil];
 		[self presentViewController:initialViewController animated:YES completion:nil];
 	}else {
 		[TSNotifierUtils error:@"NOT YET IMPLEMENTED"];
@@ -187,7 +192,15 @@
 - (void)databaseWasUnlockedSuccessfully:(NSNotification *)notification
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[TSUtils foreground:^{[self performNavigationToOpenDatabaseStoryboard];}];
+	[TSUtils foreground:^{
+		[self performNavigationToOpenDatabaseStoryboard];
+	}];
+}
+
+- (void)databaseWasLockedSuccessfully:(NSNotification *)notification
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	[self reloadDatabaseList:nil];
 }
 
 - (IBAction)switchToSandboxStoryboard:(id)sender {

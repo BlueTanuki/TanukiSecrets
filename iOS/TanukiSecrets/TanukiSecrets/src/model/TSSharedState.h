@@ -39,4 +39,14 @@
 @property(nonatomic, strong) TSDatabaseMetadata *openDatabaseMetadata;
 @property(nonatomic, strong) TSDatabase *openDatabase;
 
+//WARNING : preparing the next encryption key overwrites openDatabaseMetadata.salt
+//if for some reason the database needs to be re-decrypted, the metadata needs to be re-read also
+//WARNING : always check before requesting the encrypt key (it may not be ready)
+//NOTE : invoke this manually when opening the database and when changing the password
+//WARNING: do NOT request the encryption except when actually needed, generating the next key burns a lot of cpu and memory
+//a new invocation is automatically made when the encrypt key is requested
+- (void)startPreparingNextEncryptKey;
+- (BOOL)encryptKeyReady;
+- (NSData *)encryptKey;
+
 @end

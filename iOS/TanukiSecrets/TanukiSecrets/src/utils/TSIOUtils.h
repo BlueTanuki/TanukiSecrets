@@ -52,11 +52,17 @@
  3. (over)writes the database files [sets a default value for the createdBy if it is nil]
  */
 + (BOOL)saveDatabase:(TSDatabase *)database havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret;
+//the preferred way of saving the database, the encrypt key MUST correspond to the current metadata.salt(!!!)
++ (BOOL)saveDatabase:(TSDatabase *)database havingMetadata:(TSDatabaseMetadata *)metadata usingKey:(NSData *)encryptKey;
 
 + (TSDatabaseMetadata *)loadDatabaseMetadata:(NSString *)databaseUid;
 + (TSDatabaseMetadata *)loadDatabaseMetadataFromFile:(NSString *)filePath;
 + (TSDatabase *)loadDatabase:(NSString *)databaseUid havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret;
+//the preferred way of loading the database, the decrypt key MUST correspond to the current metadata.salt(!!!)
++ (TSDatabase *)loadDatabase:(NSString *)databaseUid havingMetadata:(TSDatabaseMetadata *)metadata usingKey:(NSData *)decryptKey;
 + (TSDatabase *)loadDatabaseFromFile:(NSString *)encryptedFilePath havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret;
+//the preferred way of loading the database, the decrypt key MUST correspond to the current metadata.salt(!!!)
++ (TSDatabase *)loadDatabaseFromFile:(NSString *)encryptedFilePath havingMetadata:(TSDatabaseMetadata *)metadata usingKey:(NSData *)decryptKey;
 
 + (TSDatabaseLock *)loadDatabaseLockFromFile:(NSString *)filePath;
 

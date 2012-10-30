@@ -13,11 +13,17 @@
 #import "TSDropboxWrapper.h"
 #import "TSiCloudWrapper.h"
 #import "TSNotifierUtils.h"
+#import "TSCryptoUtils.h"
+#import "TSUtils.h"
 
 @interface TSSharedState()
 
 @property(nonatomic, readonly) TSDatabaseWrapper *dropboxWrapper;
 @property(nonatomic, readonly) TSDatabaseWrapper *iCloudWrapper;
+
+@property(nonatomic, assign) BOOL nextEncryptKeyReady;
+@property(nonatomic, assign) BOOL nextEncryptKeyGenerationInProgress;
+@property(nonatomic, strong) NSData *nextEncryptKey;
 
 @end
 
@@ -28,6 +34,8 @@
 
 @synthesize dropboxWrapper = _dropboxWrapper;
 @synthesize iCloudWrapper = _iCloudWrapper;
+
+@synthesize nextEncryptKey, nextEncryptKeyGenerationInProgress, nextEncryptKeyReady;
 
 #pragma mark - singleton creation
 
@@ -92,6 +100,58 @@
 	_iCloudWrapper.delegate = delegate;
 	[(TSiCloudWrapper *)_iCloudWrapper.worker refreshUbiquityContainerURL];
 	return _iCloudWrapper;
+}
+
+#pragma mark - prepare the next encryption key in the background
+
+- (void)startPreparingNextEncryptKey
+{
+	if (self.nextEncryptKeyGenerationInProgress) {
+		NSLog (@"[INTERNAL LOGIC ERROR] next encrypt key is already being generated");
+		return;
+	}
+	if ((self.openDatabase == nil) || (self.openDatabasePassword == nil)) {
+		NSLog (@"[INTERNAL LOGIC ERROR] next encrypt key cannot be generated before both metadata and password for the open database are set");
+		return;
+	}
+	self.nextEncryptKeyGenerationInProgress = YES;
+	self.nextEncryptKeyReady = NO;
+	int64_t delayInSeconds = 0.5;
+	dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+	dispatch_after(popTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void){
+//		NSLog (@"next encryption key generation starting");
+		self.nextEncryptKey = [TSCryptoUtils tanukiEncryptKey:self.openDatabaseMetadata usingSecret:self.openDatabasePassword];
+		self.nextEncryptKeyGenerationInProgress = NO;
+		self.nextEncryptKeyReady = YES;
+//		NSLog (@"next encryption key generation finished");
+	});
+//	NSLog (@"next encryption key generation scheduled");
+}
+
+- (BOOL)encryptKeyReady
+{
+	if (self.nextEncryptKeyReady) {
+		return YES;
+	}
+	if (self.nextEncryptKeyGenerationInProgress) {
+		return NO;
+	}
+	NSLog (@"[INTERNAL LOGIC ERROR] next encrypt key is neither ready nor being generated, starting to generate it now");
+	[self startPreparingNextEncryptKey];
+	return NO;
+}
+
+- (NSData *)encryptKey {
+	if (self.nextEncryptKeyReady) {
+		NSData *ret = self.nextEncryptKey;
+		[self startPreparingNextEncryptKey];
+		return ret;
+	}
+	NSLog (@"[INTERNAL LOGIC ERROR] encrypt key was called without checking if it is ready, returning nil");
+	if (self.nextEncryptKeyGenerationInProgress == NO) {
+		[self startPreparingNextEncryptKey];
+	}
+	return nil;
 }
 
 @end

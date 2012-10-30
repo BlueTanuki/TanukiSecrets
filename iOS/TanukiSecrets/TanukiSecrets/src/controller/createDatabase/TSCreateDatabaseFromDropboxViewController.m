@@ -104,9 +104,10 @@
 	NSString *databaseFilePath = [self.databaseFilePaths objectAtIndex:indexPath.row];
 	if ([TSIOUtils moveFile:databaseFilePath to:[TSIOUtils databaseFilePath:databaseUid]]) {
 		if ([TSIOUtils moveFile:metadataFilePath to:[TSIOUtils metadataFilePath:databaseUid]]) {
-			NSNotification *notificatopn = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
-			[[NSNotificationCenter defaultCenter] postNotification:notificatopn];
-			[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+			[self.presentingViewController dismissViewControllerAnimated:YES completion:^{
+				NSNotification *notificaton = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
+				[[NSNotificationCenter defaultCenter] postNotification:notificaton];
+			}];
 		}else {
 			[TSNotifierUtils error:@"Failed (metadata rename)"];
 		}
