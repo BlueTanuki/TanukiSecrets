@@ -142,7 +142,7 @@
 	}
 }
 
-#pragma mark - listeners
+#pragma mark - events
 
 - (IBAction)cancel:(id)sender {
 	[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];

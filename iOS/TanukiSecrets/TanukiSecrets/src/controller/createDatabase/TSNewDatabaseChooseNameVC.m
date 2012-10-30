@@ -77,8 +77,8 @@
 			[self.nextButton addTarget:self action:@selector(next:) forControlEvents:UIControlEventTouchUpInside];
 		}else {
 			self.nextButton.enabled = NO;
-			self.nextButton.titleLabel.text = @"Name already used";
 			self.nextButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+			self.nextButton.titleLabel.text = @"Name already used";
 		}
 	}else {
 		self.nextButton.enabled = NO;

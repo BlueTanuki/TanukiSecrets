@@ -48,6 +48,21 @@
 	}];
 }
 
+- (void)performNavigationToOpenDatabaseStoryboard
+{
+	UIStoryboard *openDatabaseStoryboard = nil;
+	if ([TSDeviceUtils isIPhone]) {
+		openDatabaseStoryboard = [UIStoryboard storyboardWithName:@"OpenDatabaseStoryboard_iPhone" bundle:nil];
+	}
+	if (openDatabaseStoryboard) {
+		UIViewController *initialViewController = [openDatabaseStoryboard instantiateInitialViewController];
+		initialViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+		[self presentViewController:initialViewController animated:YES completion:nil];
+	}else {
+		[TSNotifierUtils error:@"NOT YET IMPLEMENTED"];
+	}
+}
+
 #pragma mark - Override getters
 
 - (NSArray *)localDatabaseUIDs
@@ -140,7 +155,7 @@
 	[self performSegueWithIdentifier:@"openDatabase" sender:nil];
 }
 
-#pragma mark - listeners
+#pragma mark - events
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -163,22 +178,16 @@
 //	NSLog (@"received localDatabaseListChanged notification");
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[self reloadDatabaseList:nil];
+	TSSharedState *sharedState = [TSSharedState sharedState];
+	if ((sharedState.openDatabaseMetadata != nil) && (sharedState.openDatabase != nil) && (sharedState.openDatabasePassword != nil)) {
+		[TSUtils foreground:^{[self performNavigationToOpenDatabaseStoryboard];}];
+	}
 }
 
 - (void)databaseWasUnlockedSuccessfully:(NSNotification *)notification
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	UIStoryboard *openDatabaseStoryboard = nil;
-	if ([TSDeviceUtils isIPhone]) {
-		openDatabaseStoryboard = [UIStoryboard storyboardWithName:@"OpenDatabaseStoryboard_iPhone" bundle:nil];
-	}
-	if (openDatabaseStoryboard) {
-		UIViewController *initialViewController = [openDatabaseStoryboard instantiateInitialViewController];
-		initialViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-		[self presentViewController:initialViewController animated:YES completion:nil];
-	}else {
-		[TSNotifierUtils error:@"NOT YET IMPLEMENTED"];
-	}
+	[TSUtils foreground:^{[self performNavigationToOpenDatabaseStoryboard];}];
 }
 
 - (IBAction)switchToSandboxStoryboard:(id)sender {

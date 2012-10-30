@@ -42,16 +42,20 @@
 
 - (void)changeNextButtonStateIfNeeded
 {
+	NSLog (@"change state called");
 	if (([TSStringUtils isNotBlank:self.password.text]) && ([TSStringUtils isNotBlank:self.password2.text])) {
 		if ([self.password.text isEqualToString:self.password2.text]) {
 			self.createDatabase.enabled = YES;
+			NSLog (@"passwords match");
 		}else {
 			self.createDatabase.enabled = NO;
-			self.createDatabase.titleLabel.text = @"Passphrase missmatch";
 			self.createDatabase.titleLabel.textAlignment = NSTextAlignmentCenter;
+			self.createDatabase.titleLabel.text = @"Passphrase missmatch";
+			NSLog (@"missmatched passwords");
 		}
 	}else {
 		self.createDatabase.enabled = NO;
+		NSLog (@"password missing");
 	}
 }
 
@@ -100,10 +104,12 @@
 														 havingMetadata:sharedState.openDatabaseMetadata
 															usingSecret:secret];
 		if ([TSIOUtils saveDatabaseWithMetadata:sharedState.openDatabaseMetadata andEncryptedContent:encryptedContent]) {
+			sharedState.openDatabasePassword = secret;
 			[TSUtils foreground:^{
-				NSNotification *notificatopn = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
-				[[NSNotificationCenter defaultCenter] postNotification:notificatopn];
-				[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+				[self.presentingViewController dismissViewControllerAnimated:YES completion:^{
+					NSNotification *notificatopn = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
+					[[NSNotificationCenter defaultCenter] postNotification:notificatopn];
+				}];
 			}];
 		}else {
 			[TSNotifierUtils error:@"Local database writing failed"];

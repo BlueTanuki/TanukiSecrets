@@ -338,7 +338,7 @@
     return YES;
 }
 
-#pragma mark - Listeners
+#pragma mark - events
 
 - (void)notificationCenterCallback:(NSNotification *)notification
 {
