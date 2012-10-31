@@ -23,8 +23,8 @@
 + (NSData *) sha512:(NSData *)bytes;
 + (NSData *) sha512text:(NSString *)string;
 
-+ (NSData *) md5:(NSData *)bytes;
-+ (NSData *) md5text:(NSString *)string;
++ (NSData *) firstHalfOfSha256:(NSData *)bytes;
++ (NSData *) firstHalfOfSha256text:(NSString *)string;
 
 + (NSData *) tanukiHash:(NSString *)secret usingSalt:(NSData *)salt consumingMemory:(NSInteger)consumedMB;
 
@@ -41,7 +41,7 @@
 + (NSData *) tanukiEncrypt:(NSData *)data usingKey:(NSData *)key andSalt:(NSData *)salt;
 + (NSData *) tanukiDecrypt:(NSData *)data usingKey:(NSData *)key andSalt:(NSData *)salt;
 
-//NOTE: much weaker encryption than the database, uses md5(secret) as key
+//NOTE: much weaker encryption than the database, uses firstHalfOfSha256(secret) as key
 + (NSString *) tanukiEncryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
 					  usingSecret:(NSString *)secret;
 + (NSString *) tanukiDecryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId

@@ -47,7 +47,7 @@ public class Decrypt {
 	}
 	
 	public static void decryptAllTSMs (String[] args) throws Exception {
-		File baseFolder = new File ("/Users/lucian/Dropbox/Apps/Tanuki Secrets");
+		File baseFolder = new File ("/Users/lucian/Dropbox/Apps/TanukiSecrets");
 		for (File file : baseFolder.listFiles ()) {
 			if (file.getName ().endsWith (".tsm")) {
 				DbMetadata dbMetadata = XMLUtils.loadDbMetadata (file);

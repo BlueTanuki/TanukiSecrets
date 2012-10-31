@@ -1,6 +1,7 @@
 package bluetanuki.tanukisecrets.common.crypto;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -153,6 +154,11 @@ public class HashFunctions {
 		long end = System.currentTimeMillis ();
 		LOGGER.info ("tanukiHash took " + (end - start) + " milliseconds");
 		return ret;
+	}
+	
+	public static byte[] firstHalfOfSha256 (byte[] data) {
+		byte[] sha256 = DigestUtils.sha256 (data);
+		return Arrays.copyOf (sha256, 16);
 	}
 
 }

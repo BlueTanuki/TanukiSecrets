@@ -26,7 +26,7 @@ public class OpensslDecryptHelper {
 		String secret = args[0];
 		byte[] salt = Hex.decodeHex (args[1].toCharArray ());
 		byte[] key = HashFunctions.tanukiHash (secret, salt, new Integer (args[2]));
-		byte[] iv = DigestUtils.md5 (salt);
+		byte[] iv = HashFunctions.firstHalfOfSha256 (salt);
 		
 		String keyString = Hex.encodeHexString (key);
 		String ivString = Hex.encodeHexString (iv);

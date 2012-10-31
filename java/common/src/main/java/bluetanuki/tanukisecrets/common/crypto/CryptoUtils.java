@@ -55,13 +55,13 @@ public class CryptoUtils {
 	
 	public static byte[] tanukiDecrypt (byte[] encrypted, String secret, byte[] salt, Integer consumedMemoryMB) throws Exception {
 		byte[] key = HashFunctions.tanukiHash (secret, salt, consumedMemoryMB);
-		byte[] iv = DigestUtils.md5 (salt);
+		byte[] iv = HashFunctions.firstHalfOfSha256 (salt);
 		return decryptAesCbcWithPadding (encrypted, key, iv);
 	}
 	
 	public static byte[] tanukiDecryptField (byte[] encrypted, String secret, String patentItemId) throws Exception {
-		byte[] key = DigestUtils.md5 (secret.getBytes ("UTF-8"));
-		byte[] iv = DigestUtils.md5 (patentItemId.getBytes ("UTF-8"));
+		byte[] key = HashFunctions.firstHalfOfSha256 (secret.getBytes ("UTF-8"));
+		byte[] iv = HashFunctions.firstHalfOfSha256 (patentItemId.getBytes ("UTF-8"));
 		return decryptAesCbcWithPadding (encrypted, key, iv);
 	}
 	

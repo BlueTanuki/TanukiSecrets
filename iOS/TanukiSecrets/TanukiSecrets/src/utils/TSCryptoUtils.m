@@ -56,17 +56,17 @@
 	return [self sha512:bytes];
 }
 
-+ (NSData *) md5:(NSData *) bytes
++ (NSData *)firstHalfOfSha256:(NSData *)bytes
 {
-	unsigned char hash[CC_MD5_DIGEST_LENGTH];
-	CC_MD5([bytes bytes], [bytes length], hash);
-	return [NSData dataWithBytes:hash length:CC_MD5_DIGEST_LENGTH];
+	unsigned char hash[CC_SHA256_DIGEST_LENGTH];//32-byte
+	CC_SHA256([bytes bytes], [bytes length], hash);
+	return [NSData dataWithBytes:hash length:CC_MD5_DIGEST_LENGTH];//16-byte, first half
 }
 
-+ (NSData *) md5text:(NSString *) string
++(NSData *)firstHalfOfSha256text:(NSString *)string
 {
 	NSData *bytes = [string dataUsingEncoding:NSUTF8StringEncoding];
-	return [self md5:bytes];
+	return [self firstHalfOfSha256:bytes];
 }
 
 + (NSData *) tanukiHashXX:(NSString *) secret usingSalt:(NSData *)salt
@@ -234,21 +234,21 @@
 
 + (NSData *)tanukiEncrypt:(NSData *)data usingKey:(NSData *)key andSalt:(NSData *)salt
 {	
-	NSData *iv = [self md5:salt];
+	NSData *iv = [self firstHalfOfSha256:salt];
 	return [self aesCbcWithPaddingEncrypt:data usingKey:key andIV:iv];
 }
 
 + (NSData *)tanukiDecrypt:(NSData *)data usingKey:(NSData *)key andSalt:(NSData *)salt
 {	
-	NSData *iv = [self md5:salt];
+	NSData *iv = [self firstHalfOfSha256:salt];
 	return [self aesCbcWithPaddingDecrypt:data usingKey:key andIV:iv];
 }
 
 + (NSString *)tanukiEncryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
 					 usingSecret:(NSString *)secret
 {
-	NSData *key = [self md5text:secret];
-	NSData *iv = [self md5text:itemId];
+	NSData *key = [self firstHalfOfSha256text:secret];
+	NSData *iv = [self firstHalfOfSha256text:itemId];
 	NSData *filedValueBytes = [fieldValue dataUsingEncoding:NSUTF8StringEncoding];
 	NSData *encryptedFieldValue = [self aesCbcWithPaddingEncrypt:filedValueBytes usingKey:key andIV:iv];
 	return [TSStringUtils hexStringFromData:encryptedFieldValue];
@@ -257,8 +257,8 @@
 + (NSString *)tanukiDecryptField:(NSString *)fieldValue belongingToItem:(NSString *)itemId
 					usingSecret:(NSString *)secret
 {
-	NSData *key = [self md5text:secret];
-	NSData *iv = [self md5text:itemId];
+	NSData *key = [self firstHalfOfSha256text:secret];
+	NSData *iv = [self firstHalfOfSha256text:itemId];
 	NSData *filedValueBytes = [TSStringUtils dataFromHexString:fieldValue];
 	NSData *decryptedFieldValue = [self aesCbcWithPaddingDecrypt:filedValueBytes usingKey:key andIV:iv];
 	return [[NSString alloc] initWithBytes:[decryptedFieldValue bytes]
