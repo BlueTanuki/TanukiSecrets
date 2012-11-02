@@ -687,12 +687,12 @@ BOOL firstTimeSegueTriggered = NO;
 - (IBAction)switchToMainStoryboard:(id)sender {
 	NSNotification *notificaton = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
 	if (self.presentingViewController) {
-		NSLog (@"Storyboard switch by dismissing self");
+//		NSLog (@"Storyboard switch by dismissing self");
 		[self.presentingViewController dismissViewControllerAnimated:YES completion:^{
 			[[NSNotificationCenter defaultCenter] postNotification:notificaton];
 		}];
 	}else {
-		NSLog (@"Storyboard switch by modally presenting other");
+//		NSLog (@"Storyboard switch by modally presenting other");
 		UIStoryboard *sandboxStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
 		UIViewController *sandboxInitialViewController = [sandboxStoryboard instantiateInitialViewController];
 		sandboxInitialViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;

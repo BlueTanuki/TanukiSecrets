@@ -209,10 +209,10 @@
 												 name:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED
 											   object:nil];
 	if (self.presentingViewController) {
-		NSLog (@"Storyboard switch by dismissing self");
+//		NSLog (@"Storyboard switch by dismissing self");
 		[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 	}else {
-		NSLog (@"Storyboard switch by modally presenting other");
+//		NSLog (@"Storyboard switch by modally presenting other");
 		UIStoryboard *sandboxStoryboard = [UIStoryboard storyboardWithName:@"Sandbox" bundle:nil];
 		UIViewController *sandboxInitialViewController = [sandboxStoryboard instantiateInitialViewController];
 		sandboxInitialViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;

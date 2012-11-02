@@ -23,6 +23,61 @@
 //	NSLog (@"will enter background");
 //}
 
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 2;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+	if (section == 0) {
+		return @"Allow access to your account?";
+	}
+	return nil;
+}
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+{
+	if (section == 0) {
+		return @"Before using any Dropbox features, you must grant TanukiSecrets access to your Dropbox account. "
+		"This application does not access any of your existing files, you only need to grant permission "
+		"to a separate folder where all the necessary files will be kept. You will have full access to these files, "
+		"but you should only edit them through this application. Please press the 'Link With Dropbox' button "
+		"to begin this one-time process that will link TanukiSecrets with your Dropbox account.";
+	}
+	return nil;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+	if (section == 1) {
+		return 1;
+	}
+	return 0;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    
+	cell.textLabel.text = @"Link With Dropbox";
+	cell.textLabel.textAlignment = NSTextAlignmentCenter;
+    
+    return cell;
+}
+
+#pragma mark - Table view delegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if (![[DBSession sharedSession] isLinked]) {
+        [[DBSession sharedSession] linkFromController:self];
+    }
+}
+
+#pragma mark - events
+
 - (void)sessionWasLinked
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -55,12 +110,6 @@
 												 name:UIApplicationDidBecomeActiveNotification
 											   object:nil];
 	}
-}
-
-- (IBAction)link:(id)sender {
-	if (![[DBSession sharedSession] isLinked]) {
-        [[DBSession sharedSession] linkFromController:self];
-    }
 }
 
 - (IBAction)cancel:(id)sender {

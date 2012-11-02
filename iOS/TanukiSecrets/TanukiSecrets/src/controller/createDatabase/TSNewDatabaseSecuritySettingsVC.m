@@ -42,20 +42,20 @@
 
 - (void)changeNextButtonStateIfNeeded
 {
-	NSLog (@"change state called");
+//	NSLog (@"change state called");
 	if (([TSStringUtils isNotBlank:self.password.text]) && ([TSStringUtils isNotBlank:self.password2.text])) {
 		if ([self.password.text isEqualToString:self.password2.text]) {
 			self.createDatabase.enabled = YES;
-			NSLog (@"passwords match");
+//			NSLog (@"passwords match");
 		}else {
 			self.createDatabase.enabled = NO;
 			self.createDatabase.titleLabel.textAlignment = NSTextAlignmentCenter;
 			self.createDatabase.titleLabel.text = @"Passphrase missmatch";
-			NSLog (@"missmatched passwords");
+//			NSLog (@"missmatched passwords");
 		}
 	}else {
 		self.createDatabase.enabled = NO;
-		NSLog (@"password missing");
+//		NSLog (@"password missing");
 	}
 }
 

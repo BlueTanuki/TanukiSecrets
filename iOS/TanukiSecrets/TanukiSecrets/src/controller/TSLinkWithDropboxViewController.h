@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TSLinkWithDropboxViewController : UIViewController
+@interface TSLinkWithDropboxViewController : UITableViewController
 
 @end
