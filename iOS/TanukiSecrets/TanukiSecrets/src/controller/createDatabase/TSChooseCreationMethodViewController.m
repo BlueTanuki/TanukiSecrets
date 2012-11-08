@@ -90,6 +90,7 @@
 	switch (indexPath.section) {
 		case 0:
 			[self performSegueWithIdentifier:@"newDatabase" sender:nil];
+//			[self performSegueWithIdentifier:@"newDatabaseUgly" sender:nil];
 			break;
 			
 		case 1:
