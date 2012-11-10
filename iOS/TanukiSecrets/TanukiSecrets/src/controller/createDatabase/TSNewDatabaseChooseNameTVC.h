@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-#import "TSKeyboardDismissingTableViewController.h"
+#import "TSSelectiveTapCallbackTableViewController.h"
 
-@interface TSNewDatabaseChooseNameTVC : TSKeyboardDismissingTableViewController
+@interface TSNewDatabaseChooseNameTVC : TSSelectiveTapCallbackTableViewController
 
 @end

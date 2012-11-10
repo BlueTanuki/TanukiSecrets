@@ -16,6 +16,7 @@
 
 @interface TSNewDatabaseChooseNameTVC ()
 
+@property (weak, nonatomic) IBOutlet UITableViewCell *nameCell;
 @property (nonatomic, strong) IBOutlet UITextField *nameTextField;
 @property (weak, nonatomic) IBOutlet UITableViewCell *nextCell;
 @property (weak, nonatomic) IBOutlet UILabel *nextCellLabel;
@@ -75,10 +76,15 @@
 
 #pragma mark - view lifecycle
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
-	[super viewWillAppear:animated];
+	[super viewDidAppear:animated];
 	[self.nameTextField becomeFirstResponder];
+}
+
+-(void) viewWillDisappear:(BOOL)animated {
+	[self.nameTextField resignFirstResponder];
+    [super viewWillDisappear:animated];
 }
 
 #pragma mark - events
@@ -95,34 +101,41 @@
 	[self performSegueWithIdentifier:@"next" sender:nil];
 }
 
-#pragma mark - TSKeyboardDismissingViewController callbacks
-
-- (NSArray *)viewsThatNeedKeyboard
-{
-	return [NSArray arrayWithObject:self.nameTextField];
-}
+#pragma mark - TSSelectiveTapCallbackTableViewController callbacks
 
 - (NSArray *)viewsThatNeedTapCallback
 {
-	return [NSArray arrayWithObject:self.nextCell];
+	//NOTE : text fields are responders, but have fucked up coordinates, so detect tap on cell!!!
+	return [NSArray arrayWithObjects:self.nameCell, self.nextCell, nil];
 }
 
 - (void)viewWasTapped:(UIView *)view
 {
-	//	if (view == self.name) {
-	//		NSLog (@"name was tapped");
-	//	}else if (view == self.description) {
-	//		NSLog (@"description was tapped");
-	//	}else {
-	//		NSLog (@"phantom view was tapped :: %@", [view debugDescription]);
-	//	}
-	[self changeNextCellLabelIfNeeded];
+//	if (view == self.nameCell) {
+//		NSLog (@"name was tapped");
+//		NSLog (@"%d %d", [self.nameTextField isFirstResponder], [self.nameTextField isFirstResponder] == NO);
+//	}else if (view == self.nextCell) {
+//		NSLog (@"next was tapped");
+//	}else {
+//		NSLog (@"phantom view was tapped :: %@", [view debugDescription]);
+//	}
  	if ((view == self.nextCell) && (self.nextCellLabel.enabled == YES)){
+		NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:1];
+		[[self tableView] selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
 		[self next:nil];
 	}
+//	NSLog (@"%d %d", [self.nameTextField isFirstResponder], [self.nameTextField isFirstResponder] == NO);
+	if ((view == self.nameCell) && ([self.nameTextField isFirstResponder] == NO)) {
+		[self.nameTextField becomeFirstResponder];
+//		NSLog (@"%d %d", [self.nameTextField isFirstResponder], [self.nameTextField isFirstResponder] == NO);
+	}
+	if (view != self.nameCell) {
+		[self.nameTextField resignFirstResponder];
+	}
+	[self changeNextCellLabelIfNeeded];
 }
 
-- (void)outsideTapped:(UIView *)viewThatLostTheKeyboard
+- (void)outsideTapped
 {
 	//	if (viewThatLostTheKeyboard == self.name) {
 	//		NSLog (@"outside tapped, name lost keyboard");
@@ -133,6 +146,7 @@
 	//	}else {
 	//		NSLog (@"outside tapped, keyboard was not lost");
 	//	}
+	[self.nameTextField resignFirstResponder];
 	[self changeNextCellLabelIfNeeded];
 }
 
@@ -145,6 +159,6 @@
 //	[TSNotifierUtils error:@"not implemented"];
 //	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 //}
-// -- DOES NOT work well together with TSKeyboardDismissingTableViewController code
+// -- DOES NOT work well together with TSSelectiveTapCallbackTableViewController code
 
 @end

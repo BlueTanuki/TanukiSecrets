@@ -626,6 +626,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="SqP-TV-qqA"/>
                     <connections>
+                        <outlet property="nameCell" destination="QRz-hY-xrL" id="Cb1-Ji-Fhv"/>
                         <outlet property="nameTextField" destination="MKI-Pq-1ba" id="aqK-Dp-Rc6"/>
                         <outlet property="nextCell" destination="suL-UE-8VO" id="7ZM-Qa-Po5"/>
                         <outlet property="nextCellLabel" destination="RJn-7d-X1T" id="fTb-eg-bAw"/>
@@ -690,7 +691,7 @@
                                 </cells>
                             </tableViewSection>
                             <tableViewSection id="6b3-Lq-zwq">
-                                <string key="footerTitle">Use the slider to set the strength of the key derivation algorithm. You get better security by setting it high, but may experience longer waiting times for certain actions (rarely). Tap the test button to see how long this would take on your device. Note: the interface will be unresponsive during the test.</string>
+                                <string key="footerTitle">Use the slider to set the strength of the key derivation algorithm. You get better security by setting it high, but may experience longer waiting times for certain actions (rarely). Tap the test button to see how long this would take on your device. Note: the interface may be unresponsive during the test.</string>
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="bwx-WN-up4">
                                         <rect key="frame" x="0.0" y="170" width="320" height="46"/>
@@ -767,8 +768,11 @@
                         <outlet property="createDatabaseCell" destination="AMt-7V-3hp" id="mqZ-rK-pYj"/>
                         <outlet property="createDatabaseCellLabel" destination="Bg6-tg-I30" id="vks-Of-nOA"/>
                         <outlet property="hashUsedMemorySlider" destination="dhc-Pr-WtF" id="uqJ-Wf-mh4"/>
+                        <outlet property="passwordCell" destination="MCV-SF-QX5" id="ELQ-hu-c7T"/>
                         <outlet property="passwordTextField" destination="BuC-ni-t78" id="Roa-2K-JCE"/>
                         <outlet property="testEncryptionCell" destination="FG7-y6-Dzq" id="qb3-lj-6U5"/>
+                        <outlet property="testEncryptionCellLabel" destination="p9s-xG-ENt" id="4xW-kZ-HGH"/>
+                        <outlet property="verifyPasswordCell" destination="ZJO-Ze-xAq" id="7gx-sx-q3I"/>
                         <outlet property="verifyPasswordTextField" destination="Wgb-8C-94M" id="vGz-2F-GR2"/>
                     </connections>
                 </tableViewController>

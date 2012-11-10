@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 BlueTanuki. All rights reserved.
 //
 
-#import "TSKeyboardDismissingTableViewController.h"
+#import "TSSelectiveTapCallbackTableViewController.h"
 
-@interface TSNewDatabaseSecuritySettingsTVC : TSKeyboardDismissingTableViewController
+@interface TSNewDatabaseSecuritySettingsTVC : TSSelectiveTapCallbackTableViewController
 
 @end

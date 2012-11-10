@@ -38,7 +38,7 @@
 		9F3216281642A74200123E72 /* browse.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F3216261642A74100123E72 /* browse.png */; };
 		9F3216291642A74200123E72 /* browse@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F3216271642A74200123E72 /* browse@2x.png */; };
 		9F32162D1642AB7800123E72 /* TSDBGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F32162C1642AB7800123E72 /* TSDBGroupViewController.m */; };
-		9F5459E81649634B0011F6FC /* TSKeyboardDismissingTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5459E71649634B0011F6FC /* TSKeyboardDismissingTableViewController.m */; };
+		9F5459E81649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5459E71649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.m */; };
 		9F5459EC1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5459EB1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.m */; };
 		9F57C20A16146E420085703E /* TSBackupUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57C20916146E420085703E /* TSBackupUtils.m */; };
 		9F57C20E161734400085703E /* TSUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57C20D1617343E0085703E /* TSUtils.m */; };
@@ -152,8 +152,8 @@
 		9F3216271642A74200123E72 /* browse@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "browse@2x.png"; sourceTree = "<group>"; };
 		9F32162B1642AB7800123E72 /* TSDBGroupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDBGroupViewController.h; sourceTree = "<group>"; };
 		9F32162C1642AB7800123E72 /* TSDBGroupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDBGroupViewController.m; sourceTree = "<group>"; };
-		9F5459E61649634B0011F6FC /* TSKeyboardDismissingTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSKeyboardDismissingTableViewController.h; sourceTree = "<group>"; };
-		9F5459E71649634B0011F6FC /* TSKeyboardDismissingTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSKeyboardDismissingTableViewController.m; sourceTree = "<group>"; };
+		9F5459E61649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSSelectiveTapCallbackTableViewController.h; sourceTree = "<group>"; };
+		9F5459E71649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSSelectiveTapCallbackTableViewController.m; sourceTree = "<group>"; };
 		9F5459EA1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNewDatabaseChooseNameTVC.h; sourceTree = "<group>"; };
 		9F5459EB1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSNewDatabaseChooseNameTVC.m; sourceTree = "<group>"; };
 		9F57C20816146E420085703E /* TSBackupUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSBackupUtils.h; sourceTree = "<group>"; };
@@ -504,8 +504,8 @@
 				9F321260163EE07700123E72 /* TSUnlockDatabaseViewController.m */,
 				9F32161B164054FB00123E72 /* TSInfoViewController.h */,
 				9F32161C164054FC00123E72 /* TSInfoViewController.m */,
-				9F5459E61649634B0011F6FC /* TSKeyboardDismissingTableViewController.h */,
-				9F5459E71649634B0011F6FC /* TSKeyboardDismissingTableViewController.m */,
+				9F5459E61649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.h */,
+				9F5459E71649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.m */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -533,14 +533,14 @@
 				9FCE97CB1635C14A003FE67F /* TSCreateDatabaseFromDropboxViewController.m */,
 				9FCE97D51636D132003FE67F /* TSCreateDatabaseFromICloudViewController.h */,
 				9FCE97D61636D133003FE67F /* TSCreateDatabaseFromICloudViewController.m */,
-				9FCE97EC16396029003FE67F /* TSNewDatabaseChooseNameVC.h */,
-				9FCE97ED1639602A003FE67F /* TSNewDatabaseChooseNameVC.m */,
-				9FCE97FB163A7217003FE67F /* TSNewDatabaseSecuritySettingsVC.h */,
-				9FCE97FC163A7219003FE67F /* TSNewDatabaseSecuritySettingsVC.m */,
 				9F5459EA1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.h */,
 				9F5459EB1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.m */,
+				9FCE97EC16396029003FE67F /* TSNewDatabaseChooseNameVC.h */,
+				9FCE97ED1639602A003FE67F /* TSNewDatabaseChooseNameVC.m */,
 				9F10A8A4164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.h */,
 				9F10A8A5164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.m */,
+				9FCE97FB163A7217003FE67F /* TSNewDatabaseSecuritySettingsVC.h */,
+				9FCE97FC163A7219003FE67F /* TSNewDatabaseSecuritySettingsVC.m */,
 			);
 			path = createDatabase;
 			sourceTree = "<group>";
@@ -769,7 +769,7 @@
 				9F321606163F10DC00123E72 /* TSTabBarController.m in Sources */,
 				9F32161D164054FD00123E72 /* TSInfoViewController.m in Sources */,
 				9F32162D1642AB7800123E72 /* TSDBGroupViewController.m in Sources */,
-				9F5459E81649634B0011F6FC /* TSKeyboardDismissingTableViewController.m in Sources */,
+				9F5459E81649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.m in Sources */,
 				9F5459EC1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.m in Sources */,
 				9F10A8A6164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.m in Sources */,
 			);

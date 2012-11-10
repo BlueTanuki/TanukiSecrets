@@ -18,24 +18,34 @@
 @interface TSNewDatabaseSecuritySettingsTVC ()
 
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
+@property (weak, nonatomic) IBOutlet UITableViewCell *passwordCell;
 @property (weak, nonatomic) IBOutlet UITextField *verifyPasswordTextField;
+@property (weak, nonatomic) IBOutlet UITableViewCell *verifyPasswordCell;
 @property (weak, nonatomic) IBOutlet UISlider *hashUsedMemorySlider;
 @property (weak, nonatomic) IBOutlet UITableViewCell *createDatabaseCell;
 @property (weak, nonatomic) IBOutlet UILabel *createDatabaseCellLabel;
 @property (weak, nonatomic) IBOutlet UITableViewCell *testEncryptionCell;
+@property (weak, nonatomic) IBOutlet UILabel *testEncryptionCellLabel;
 
 @end
 
 @implementation TSNewDatabaseSecuritySettingsTVC
 
-@synthesize passwordTextField, verifyPasswordTextField, hashUsedMemorySlider;
+@synthesize passwordTextField, passwordCell, verifyPasswordTextField, verifyPasswordCell, hashUsedMemorySlider;
+@synthesize createDatabaseCell, createDatabaseCellLabel, testEncryptionCell, testEncryptionCellLabel;
 
 #pragma mark - view lifecycle
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
-	[super viewWillAppear:animated];
+	[super viewDidAppear:animated];
 	[self.passwordTextField becomeFirstResponder];
+}
+
+-(void) viewWillDisappear:(BOOL)animated {
+	[self.passwordTextField resignFirstResponder];
+	[self.verifyPasswordTextField resignFirstResponder];
+    [super viewWillDisappear:animated];
 }
 
 #pragma mark - worker methods
@@ -170,31 +180,58 @@
 	}
 }
 
-#pragma mark - TSKeyboardDismissingViewController callbacks
-
-- (NSArray *)viewsThatNeedKeyboard
-{
-	return [NSArray arrayWithObjects:self.passwordTextField, self.verifyPasswordTextField, nil];
-}
+#pragma mark - TSSelectiveTapCallbackTableViewController callbacks
 
 - (NSArray *)viewsThatNeedTapCallback
 {
-	return [NSArray arrayWithObjects:self.testEncryptionCell, self.createDatabaseCell, nil];
+	return [NSArray arrayWithObjects:self.passwordCell, self.verifyPasswordCell,
+			self.testEncryptionCell, self.createDatabaseCell, nil];
 }
 
 - (void)viewWasTapped:(UIView *)view
 {
+//	NSLog (@"tapped in view %@", [view debugDescription]);
+//	NSLog (@"%d %d", [passwordTextField isFirstResponder], [verifyPasswordCell isFirstResponder]);
 	[self changeCreateDatabaseCellLabelIfNeeded];
- 	if (view == self.testEncryptionCell) {
-		[self testHashStrength:nil];
+ 	if ((view == self.testEncryptionCell) && (self.testEncryptionCellLabel.enabled == YES)) {
+		self.testEncryptionCellLabel.enabled = NO;
+		NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:2];
+		[[self tableView] selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+		[[self tableView] setNeedsDisplay];
+		[TSUtils background:^{
+			[self testHashStrength:nil];
+			[TSUtils foreground:^{
+				[[self tableView] deselectRowAtIndexPath:indexPath animated:YES];
+				self.testEncryptionCellLabel.enabled = YES;
+			}];
+		}];
 	}
  	if ((view == self.createDatabaseCell) && (self.createDatabaseCellLabel.enabled == YES)){
+		NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:3];
+		[[self tableView] selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
 		[self createDatabase:nil];
+		[[self tableView] deselectRowAtIndexPath:indexPath animated:NO];
+	}
+	if ((view == self.passwordCell) && ([self.passwordTextField isFirstResponder] == NO)) {
+		[self.verifyPasswordTextField resignFirstResponder];
+		[self.passwordTextField becomeFirstResponder];
+//		NSLog (@"Password hit, and it received focus");
+	}
+	if ((view == self.verifyPasswordCell) && ([self.verifyPasswordTextField isFirstResponder] == NO)) {
+		[self.passwordTextField resignFirstResponder];
+		[self.verifyPasswordTextField becomeFirstResponder];
+//		NSLog (@"Verify password hit, and it received focus");
+	}
+	if ((view != self.passwordCell) && (view != self.verifyPasswordCell)) {
+		[self.passwordTextField resignFirstResponder];
+		[self.verifyPasswordTextField resignFirstResponder];
 	}
 }
 
-- (void)outsideTapped:(UIView *)viewThatLostTheKeyboard
+- (void)outsideTapped
 {
+	[self.passwordTextField resignFirstResponder];
+	[self.verifyPasswordTextField resignFirstResponder];
 	[self changeCreateDatabaseCellLabelIfNeeded];
 }
 
