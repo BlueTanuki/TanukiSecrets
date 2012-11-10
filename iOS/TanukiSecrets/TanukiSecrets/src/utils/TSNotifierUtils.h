@@ -13,4 +13,8 @@
 + (void)info:(NSString *)text;
 + (void)error:(NSString *)text;
 
++ (void)infoAtTopOfScreen:(NSString *)text;
++ (void)errorAtTopOfScreen:(NSString *)text;
+
+
 @end

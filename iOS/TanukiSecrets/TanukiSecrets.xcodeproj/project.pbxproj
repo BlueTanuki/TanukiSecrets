@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9F026A19160B61C90097BED4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F026A18160B61C90097BED4 /* Default-568h@2x.png */; };
 		9F026A1C160B76180097BED4 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F026A1B160B76180097BED4 /* DropboxSDK.framework */; };
 		9F10A8A6164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F10A8A5164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.m */; };
 		9F1463BA15FE342000EA03D6 /* TSSharedState.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463B915FE342000EA03D6 /* TSSharedState.m */; };
@@ -19,6 +18,9 @@
 		9F1463D81600D3AA00EA03D6 /* TSVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463D71600D3AA00EA03D6 /* TSVersion.m */; };
 		9F1463DB1600D49400EA03D6 /* TSLocalMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463DA1600D49400EA03D6 /* TSLocalMetadata.m */; };
 		9F1463E11600DF7A00EA03D6 /* TSAuthor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463E01600DF7A00EA03D6 /* TSAuthor.m */; };
+		9F17067E164E7E89005BA586 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F17067B164E7E89005BA586 /* Default-568h@2x.png */; };
+		9F17067F164E7E89005BA586 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F17067C164E7E89005BA586 /* Default.png */; };
+		9F170680164E7E89005BA586 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F17067D164E7E89005BA586 /* Default@2x.png */; };
 		9F321261163EE07700123E72 /* TSUnlockDatabaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F321260163EE07700123E72 /* TSUnlockDatabaseViewController.m */; };
 		9F321267163EF4FB00123E72 /* OpenDatabaseStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F321266163EF4FB00123E72 /* OpenDatabaseStoryboard_iPhone.storyboard */; };
 		9F3215FD163F0E7800123E72 /* settings_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F3215F7163F0E7800123E72 /* settings_small.png */; };
@@ -106,7 +108,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		9F026A18160B61C90097BED4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		9F026A1B160B76180097BED4 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DropboxSDK.framework; sourceTree = "<group>"; };
 		9F10A8A4164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNewDatabaseSecuritySettingsTVC.h; sourceTree = "<group>"; };
 		9F10A8A5164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSNewDatabaseSecuritySettingsTVC.m; sourceTree = "<group>"; };
@@ -129,6 +130,9 @@
 		9F1463DA1600D49400EA03D6 /* TSLocalMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLocalMetadata.m; sourceTree = "<group>"; };
 		9F1463DF1600DF7A00EA03D6 /* TSAuthor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSAuthor.h; sourceTree = "<group>"; };
 		9F1463E01600DF7A00EA03D6 /* TSAuthor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSAuthor.m; sourceTree = "<group>"; };
+		9F17067B164E7E89005BA586 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		9F17067C164E7E89005BA586 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		9F17067D164E7E89005BA586 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		9F32125F163EE07700123E72 /* TSUnlockDatabaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSUnlockDatabaseViewController.h; sourceTree = "<group>"; };
 		9F321260163EE07700123E72 /* TSUnlockDatabaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSUnlockDatabaseViewController.m; sourceTree = "<group>"; };
 		9F321266163EF4FB00123E72 /* OpenDatabaseStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = OpenDatabaseStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
@@ -345,9 +349,20 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		9F17067A164E7E70005BA586 /* screenshot */ = {
+			isa = PBXGroup;
+			children = (
+				9F17067B164E7E89005BA586 /* Default-568h@2x.png */,
+				9F17067C164E7E89005BA586 /* Default.png */,
+				9F17067D164E7E89005BA586 /* Default@2x.png */,
+			);
+			path = screenshot;
+			sourceTree = "<group>";
+		};
 		9F32126D163F011700123E72 /* img */ = {
 			isa = PBXGroup;
 			children = (
+				9F17067A164E7E70005BA586 /* screenshot */,
 				9F7CF56F1642CC75005E0756 /* folder-blue_open.png */,
 				9F3216261642A74100123E72 /* browse.png */,
 				9F3216271642A74200123E72 /* browse@2x.png */,
@@ -426,7 +441,6 @@
 		9F8ED46C15B98C6A00391EF8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				9F026A18160B61C90097BED4 /* Default-568h@2x.png */,
 				9F8ED46E15B98C6A00391EF8 /* InfoPlist.strings */,
 				9F8ED47115B98C6A00391EF8 /* main.m */,
 				9F8ED47A15B98C6A00391EF8 /* MainStoryboard_iPad.storyboard */,
@@ -671,7 +685,6 @@
 				9FEC4DD615C298E7008B18D5 /* NotifyX.png in Resources */,
 				9FEC4DD715C298E7008B18D5 /* NotifyX@2x.png in Resources */,
 				9F9D869115CC14CA0066BC04 /* Sandbox.storyboard in Resources */,
-				9F026A19160B61C90097BED4 /* Default-568h@2x.png in Resources */,
 				9F321267163EF4FB00123E72 /* OpenDatabaseStoryboard_iPhone.storyboard in Resources */,
 				9F3215FD163F0E7800123E72 /* settings_small.png in Resources */,
 				9F3215FE163F0E7800123E72 /* settings_small@2x.png in Resources */,
@@ -688,6 +701,9 @@
 				9F3216281642A74200123E72 /* browse.png in Resources */,
 				9F3216291642A74200123E72 /* browse@2x.png in Resources */,
 				9F7CF5701642CC76005E0756 /* folder-blue_open.png in Resources */,
+				9F17067E164E7E89005BA586 /* Default-568h@2x.png in Resources */,
+				9F17067F164E7E89005BA586 /* Default.png in Resources */,
+				9F170680164E7E89005BA586 /* Default@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,7 +11,7 @@
 #import "TSDatabaseWrapper.h"
 
 /**
- TableViewController that should be used as base class for The various places 
+ TableViewController that should be used as base class for the various places 
  where a list of remotely stored databases are presented.
  This class cannot be used as is, and subclasses must at least implement the 
  getter for the TSDatabaseWrapper instance that is used by this class.

@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TSUnlockDatabaseViewController : UIViewController
+#import "TSSelectiveTapCallbackTableViewController.h"
+
+@interface TSUnlockDatabaseViewController : TSSelectiveTapCallbackTableViewController
 
 @end

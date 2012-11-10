@@ -33,4 +33,24 @@
 	NSLog (@"[ERROR] %@ [TSNotifierUtils]", text);
 }
 
++ (void)infoAtTopOfScreen:(NSString *)text
+{
+	[TSUtils foreground:^{
+		JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:text position:JSNotifierPositionTop];
+		jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyCheck.png"]];
+		[jsn showFor:2.0];
+	}];
+	NSLog (@"[INFO] %@ [TSNotifierUtils]", text);
+}
+
++ (void)errorAtTopOfScreen:(NSString *)text
+{
+	[TSUtils foreground:^{
+		JSNotifier *jsn = [[JSNotifier alloc] initWithTitle:text position:JSNotifierPositionTop];
+		jsn.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NotifyX.png"]];
+		[jsn showFor:2.0];
+	}];
+	NSLog (@"[ERROR] %@ [TSNotifierUtils]", text);
+}
+
 @end

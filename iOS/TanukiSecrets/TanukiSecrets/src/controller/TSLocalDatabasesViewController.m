@@ -119,6 +119,7 @@
 		return @"Tap the name of the database you want to open.";
 	}
 	return @"You do not have any databases at the moment. Tap the add button to begin the guided database creation process.";
+//	return @"Please wait, the list of your existing databases is loading...";//for launch images
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
