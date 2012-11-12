@@ -14,6 +14,4 @@
 
 @property(nonatomic, weak) TSDBGroup *group;
 
-+ (TSDBGroupViewController *)viewControllerForGroup:(TSDBGroup *)group;
-
 @end

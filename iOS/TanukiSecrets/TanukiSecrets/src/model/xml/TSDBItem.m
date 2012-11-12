@@ -135,6 +135,17 @@ tags = _tags, fields = _fields, defaultFieldName = _defaultFieldName;
 	}
 }
 
+- (TSDBItemField *)fieldNamed:(NSString *)fieldName
+{
+	//highly suboptimal but who cares, items will have <10 fields anyway
+	for (TSDBItemField *itemField in self.fields) {
+		if ([itemField.name isEqualToString:fieldName]) {
+			return itemField;
+		}
+	}
+	return nil;
+}
+
 #pragma mark - factory
 
 + (TSDBItem *)itemNamed:(NSString *)name

@@ -13,6 +13,9 @@
 #import "TSStringUtils.h"
 #import "TSNotifierUtils.h"
 #import "TSSharedState.h"
+#import "TSDBGroup.h"
+#import "TSDBItem.h"
+#import "TSDBItemField.h"
 
 @interface TSNewDatabaseChooseNameTVC ()
 

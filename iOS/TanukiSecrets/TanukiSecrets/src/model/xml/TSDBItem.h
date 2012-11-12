@@ -32,6 +32,7 @@
 - (TSDBItem *)createTemplate;
 
 - (void) addField:(TSDBItemField *)field;
+- (TSDBItemField *)fieldNamed:(NSString *)fieldName;
 
 + (TSDBItem *)itemNamed:(NSString *)name;
 

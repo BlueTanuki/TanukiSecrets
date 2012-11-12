@@ -11,6 +11,10 @@
 #import "TSSharedState.h"
 #import "TSDBGroup.h"
 #import "TSDBItem.h"
+#import "TSDBItemField.h"
+#import "TSStringUtils.h"
+#import "TSNotifierUtils.h"
+#import "TSCryptoUtils.h"
 
 @interface TSDBGroupViewController ()
 
@@ -18,23 +22,20 @@
 
 @implementation TSDBGroupViewController
 
-@synthesize group;
+@synthesize group = _group;
 
-#pragma mark - initailization
+#pragma mark - override getters
 
-+ (TSDBGroupViewController *)viewControllerForGroup:(TSDBGroup *)group
+- (TSDBGroup *)group
 {
-	TSDBGroupViewController *ret = [[TSDBGroupViewController alloc] init];
-	ret.group = group;
-	return ret;
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-	if (self.group == nil) {
-		self.group = [TSSharedState sharedState].openDatabase.root;
+	if (_group == nil) {
+		_group = [TSSharedState sharedState].openDatabase.root;
+		if (_group == nil) {
+			NSLog (@"FATAL : TSDBGroupViewController reached, but cannot access the root group of the currently open database");
+			@throw @"internal failure";
+		}
 	}
+	return _group;
 }
 
 #pragma mark - Table view data source
@@ -59,71 +60,96 @@
 	return [self.group.items count];
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+{
+	if (((self.group.subgroups == nil) || ([self.group.subgroups count] <= 0)) &&
+		((self.group.items == nil) || ([self.group.items count] <= 0))) {
+		return @"This group does not contain any items. Tap the add button to create a new item or subgroup here.";
+	}
+	return nil;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    
 	if ((indexPath.section == 0) && (self.group.subgroups != nil) && ([self.group.subgroups count] > 0)) {
-		cell.imageView.image = [UIImage imageNamed:@"folder-blue_open.png"];
+		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+		
+		cell.imageView.image = [UIImage imageNamed:@"folder.png"];
 		TSDBGroup *subgroup = [self.group.subgroups objectAtIndex:indexPath.row];
 		cell.textLabel.text = subgroup.name;
+		if ((subgroup.subgroups == nil) || ([subgroup.subgroups count] <= 0)) {
+			if ((subgroup.items == nil) || ([subgroup.items count] <= 0)) {
+				cell.detailTextLabel.text = @"Empty";
+			}else {
+				cell.detailTextLabel.text = [NSString stringWithFormat:@"%d item(s)", [subgroup.items count]];
+			}
+		}else {
+			if ((subgroup.items == nil) || ([subgroup.items count] <= 0)) {
+				cell.detailTextLabel.text = [NSString stringWithFormat:@"%d subgroup(s)", [subgroup.subgroups count]];
+			}else {
+				cell.detailTextLabel.text = [NSString stringWithFormat:@"%d subgroup(s), %d item(s)", [subgroup.subgroups count], [subgroup.items count]];
+			}
+		}
+		
+		return cell;
+	}else {
+		TSDBItem *item = [self.group.items objectAtIndex:indexPath.row];
+		
+		if ([TSStringUtils isBlank:item.defaultFieldName]) {
+			UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+			
+			cell.imageView.image = [UIImage imageNamed:@"file.png"];
+			cell.textLabel.text = item.name;
+			cell.detailTextLabel.text = @"TBD";
+			
+			return cell;
+		}else {
+			UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CellWithButton" forIndexPath:indexPath];
+			
+			UILabel *label = (UILabel *)[cell viewWithTag:1];
+			label.text = item.name;
+			label = (UILabel *)[cell viewWithTag:2];
+			label.text = @"TBD";
+			
+			return cell;
+		}
 	}
-    // Configure the cell...
     
-    return cell;
 }
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
+ 	NSLog (@"row selection triggered :: %d / %d", indexPath.section, indexPath.row);
+   // Navigation logic may go here. Create and push another view controller.
     /*
      <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
      // ...
      // Pass the selected object to the new view controller.
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
+}
+
+- (IBAction)quickCopy:(id)sender {
+	NSLog (@"%@ :: %@", [sender class], [sender debugDescription]);
+	UIButton *button = (UIButton *)sender;
+	NSLog (@"%@ :: %@", [button.superview class], [button.superview debugDescription]);
+	NSLog (@"%@ :: %@", [button.superview.superview class], [button.superview.superview debugDescription]);
+	UITableViewCell *cell = (UITableViewCell *)button.superview.superview;
+	NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+ 	NSLog (@"QuickCopy triggered :: %d / %d", indexPath.section, indexPath.row);
+	
+	UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+	TSDBItem *item = [self.group.items objectAtIndex:indexPath.row];
+	NSString *fieldName = item.defaultFieldName;
+	TSDBItemField *itemField = [item fieldNamed:fieldName];
+	if (itemField.encrypted) {
+		pasteboard.string = [TSCryptoUtils tanukiDecryptField:itemField.value belongingToItem:item.name usingSecret:[[TSSharedState sharedState] openDatabasePassword]];
+	}else {
+		pasteboard.string = itemField.value;
+	}
+	[TSNotifierUtils info:[NSString stringWithFormat:@"%@ copied", fieldName]];
 }
 
 @end

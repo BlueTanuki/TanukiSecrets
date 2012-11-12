@@ -14,6 +14,11 @@
 #import "TSCryptoUtils.h"
 #import "TSIOUtils.h"
 #import "TSNotifierUtils.h"
+#import "TSDBGroup.h"
+#import "TSDBItem.h"
+#import "TSDBItemField.h"
+
+#define DEMO_DATABASE_CONTENT 1
 
 @interface TSNewDatabaseSecuritySettingsTVC ()
 
@@ -95,6 +100,36 @@
 	return NO;
 }
 
+- (TSDatabase *)demoDatabase:(NSString *)secret
+{
+	TSDatabase *ret = [TSDatabase emptyDatabase];
+	TSDBGroup *demoSubgroup = [TSDBGroup groupNamed:@"test group"];
+	TSDBItem *demoSubgroupItem = [TSDBItem itemNamed:@"item in subgroup"];
+	[demoSubgroupItem addField:[TSDBItemField fieldWithName:@"url" andValue:@"http://www.youtube.com/watch?v=oHg5SJYRHA0"]];
+	[demoSubgroupItem setDefaultFieldName:@"url"];
+	[demoSubgroup addItem:demoSubgroupItem];
+	[ret.root addSubgroup:demoSubgroup];
+	TSDBItem *demoItem = [TSDBItem itemNamed:@"test item"];
+	[demoItem addField:[TSDBItemField fieldWithName:@"username" andValue:@"name"]];
+	[demoItem addField:[TSDBItemField fieldWithName:@"password" andValue:@"word"]];
+	[demoItem setDefaultFieldName:@"password"];
+	[ret.root addItem:demoItem];
+	demoItem = [TSDBItem itemNamed:@"no quick copy"];
+	[demoItem addField:[TSDBItemField fieldWithName:@"comment" andValue:@"bla bla bla..."]];
+	[ret.root addItem:demoItem];
+	demoItem = [TSDBItem itemNamed:@"borg"];
+	[demoItem addField:[TSDBItemField fieldWithName:@"catch phrase" andValue:@"resistence is futile"]];
+	[demoItem setDefaultFieldName:@"catch phrase"];
+	[ret.root addItem:demoItem];
+	demoItem = [TSDBItem itemNamed:@"encrypted"];
+	NSString *encryptedValue = [TSCryptoUtils tanukiEncryptField:@"himitsu desu" belongingToItem:demoItem.name usingSecret:secret];
+	[demoItem addField:[TSDBItemField encryptedFieldWithName:@"big secret" andValue:encryptedValue]];
+	[demoItem setDefaultFieldName:@"big secret"];
+	[ret.root addItem:demoItem];
+	return ret;
+}
+
+
 - (void)doCreateDatabase
 {
 	TSSharedState *sharedState = [TSSharedState sharedState];
@@ -107,6 +142,9 @@
 		}
 		sharedState.openDatabaseMetadata.hashUsedMemory = (int)self.hashUsedMemorySlider.value;
 		sharedState.openDatabasePassword = secret;
+		if (DEMO_DATABASE_CONTENT) {
+			sharedState.openDatabase = [self demoDatabase:secret];
+		}
 		NSData *encryptKey = [TSCryptoUtils tanukiDecryptKey:sharedState.openDatabaseMetadata usingSecret:sharedState.openDatabasePassword];
 		NSData *encryptedContent = [TSCryptoUtils tanukiEncryptDatabase:sharedState.openDatabase
 														 havingMetadata:sharedState.openDatabaseMetadata
