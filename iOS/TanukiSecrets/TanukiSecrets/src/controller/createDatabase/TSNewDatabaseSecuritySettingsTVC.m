@@ -145,7 +145,7 @@
 		if (DEMO_DATABASE_CONTENT) {
 			sharedState.openDatabase = [self demoDatabase:secret];
 		}
-		NSData *encryptKey = [TSCryptoUtils tanukiDecryptKey:sharedState.openDatabaseMetadata usingSecret:sharedState.openDatabasePassword];
+		NSData *encryptKey = [TSCryptoUtils tanukiEncryptKey:sharedState.openDatabaseMetadata usingSecret:sharedState.openDatabasePassword];
 		NSData *encryptedContent = [TSCryptoUtils tanukiEncryptDatabase:sharedState.openDatabase
 														 havingMetadata:sharedState.openDatabaseMetadata
 															   usingKey:encryptKey];
@@ -153,8 +153,8 @@
 			sharedState.openDatabasePassword = secret;
 			[TSUtils foreground:^{
 				[self.presentingViewController dismissViewControllerAnimated:YES completion:^{
-					NSNotification *notificatopn = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
-					[[NSNotificationCenter defaultCenter] postNotification:notificatopn];
+					NSNotification *notification = [NSNotification notificationWithName:TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED object:nil];
+					[[NSNotificationCenter defaultCenter] postNotification:notification];
 				}];
 			}];
 		}else {

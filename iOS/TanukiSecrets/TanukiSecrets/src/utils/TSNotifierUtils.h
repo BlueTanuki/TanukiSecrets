@@ -16,5 +16,4 @@
 + (void)infoAtTopOfScreen:(NSString *)text;
 + (void)errorAtTopOfScreen:(NSString *)text;
 
-
 @end

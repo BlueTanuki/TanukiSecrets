@@ -81,12 +81,12 @@
 - (void)sessionWasLinked
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	int64_t delayInSeconds = 1.5;
+	int64_t delayInSeconds = 2;
 	dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
 	dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
 		[[self presentingViewController] dismissViewControllerAnimated:YES completion:^{
-			NSNotification *notificatopn = [NSNotification notificationWithName:TS_NOTIFICATION_DROPBOX_WAS_LINKED object:nil];
-			[[NSNotificationCenter defaultCenter] postNotification:notificatopn];
+			NSNotification *notification = [NSNotification notificationWithName:TS_NOTIFICATION_DROPBOX_WAS_LINKED object:nil];
+			[[NSNotificationCenter defaultCenter] postNotification:notification];
 		}];
 	});
 }

@@ -58,9 +58,10 @@
 	return _iCloudWrapper;
 }
 
-- (NSString *)secret
+- (NSString *)secret:(NSString *)databaseName
 {
-	return @"TheTanukiSais...NI-PAH~!";
+//	return @"TheTanukiSais...NI-PAH~!";
+	return databaseName;
 }
 
 #pragma mark - worker methods
@@ -145,7 +146,7 @@
 	NSString *metadataPath = [TSIOUtils metadataFilePath:databaseUId];
 	TSDatabaseMetadata *metadata = [TSIOUtils loadDatabaseMetadataFromFile:metadataPath];
 	NSString *databasePath = [TSIOUtils databaseFilePath:databaseUId];
-	TSDatabase *database = [TSIOUtils loadDatabaseFromFile:databasePath havingMetadata:metadata usingSecret:[self secret]];
+	TSDatabase *database = [TSIOUtils loadDatabaseFromFile:databasePath havingMetadata:metadata usingSecret:[self secret:metadata.name]];
 	[self debugStatusOfDatabase:database havingMetadata:metadata];
 	[TSNotifierUtils info:@"local database info dumpded to log"];
 	NSArray *backupIDs = [TSIOUtils backupIdsForDatabase:databaseUId];
@@ -155,7 +156,7 @@
 			metadataPath = [TSIOUtils metadataFilePath:databaseUId forBackup:backupID];
 			metadata = [TSIOUtils loadDatabaseMetadataFromFile:metadataPath];
 			databasePath = [TSIOUtils databaseFilePath:databaseUId forBackup:backupID];
-			database = [TSIOUtils loadDatabaseFromFile:databasePath havingMetadata:metadata usingSecret:[self secret]];
+			database = [TSIOUtils loadDatabaseFromFile:databasePath havingMetadata:metadata usingSecret:[self secret:metadata.name]];
 			NSLog (@"*** *** Backup %@ of database %@", backupID, databaseUId);
 			[self debugStatusOfDatabase:database havingMetadata:metadata];
 			[TSNotifierUtils info:@"local backup info dumpded to log"];
@@ -232,7 +233,7 @@
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedDownloadingDatabase:(NSString *)databaseUid andSavedMetadataFileAs:(NSString *)metadataFilePath andDatabaseFileAs:(NSString *)databaseFilePath
 {
 	TSDatabaseMetadata *metadata = [TSIOUtils loadDatabaseMetadataFromFile:metadataFilePath];
-	TSDatabase *database = [TSIOUtils loadDatabaseFromFile:databaseFilePath havingMetadata:metadata usingSecret:[self secret]];
+	TSDatabase *database = [TSIOUtils loadDatabaseFromFile:databaseFilePath havingMetadata:metadata usingSecret:[self secret:metadata.name]];
 	[self debugStatusOfDatabase:database havingMetadata:metadata];
 	[TSNotifierUtils info:@"remote database info dumpded to log"];
 	[databaseWrapper listBackupIdsForDatabase:databaseUid];
@@ -263,7 +264,7 @@
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper finishedDownloadingBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid andSavedMetadataFileAs:(NSString *)metadataFilePath andDatabaseFileAs:(NSString *)databaseFilePath
 {
 	TSDatabaseMetadata *metadata = [TSIOUtils loadDatabaseMetadataFromFile:metadataFilePath];
-	TSDatabase *database = [TSIOUtils loadDatabaseFromFile:databaseFilePath havingMetadata:metadata usingSecret:[self secret]];
+	TSDatabase *database = [TSIOUtils loadDatabaseFromFile:databaseFilePath havingMetadata:metadata usingSecret:[self secret:metadata.name]];
 	[self debugStatusOfDatabase:database havingMetadata:metadata];
 	[TSNotifierUtils info:@"remote backup info dumpded to log"];
 	self.toBePrintedBackupIdsIndex = self.toBePrintedBackupIdsIndex + 1;
@@ -278,7 +279,7 @@
 - (void)databaseWrapper:(TSDatabaseWrapper *)databaseWrapper deletedDatabase:(NSString *)databaseUid
 {
 	[TSNotifierUtils info:@"Delete database finished..."];
-	int64_t delayInSeconds = 5.0;
+	int64_t delayInSeconds = 5;
 	dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
 	dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
 		[self refreshData:nil];

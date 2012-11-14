@@ -38,6 +38,8 @@
 @property(nonatomic, copy) NSString *openDatabasePassword;
 @property(nonatomic, strong) TSDatabaseMetadata *openDatabaseMetadata;
 @property(nonatomic, strong) TSDatabase *openDatabase;
+@property(nonatomic, weak) TSDBGroup *currentGroup;
+@property(nonatomic, weak) TSDBItem *currentItem;
 
 //WARNING : preparing the next encryption key overwrites openDatabaseMetadata.salt
 //if for some reason the database needs to be re-decrypted, the metadata needs to be re-read also

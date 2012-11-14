@@ -22,4 +22,8 @@
 + (void)background:(void (^)(void))block;
 + (void)foreground:(void (^)(void))block;
 
+#pragma mark - presenting various reusable dialogs
+
++ (void)notifyEncryptionKeyIsNotReady;
+
 @end

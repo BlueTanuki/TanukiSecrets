@@ -75,8 +75,8 @@
 				sharedState.openDatabase = database;
 				sharedState.openDatabasePassword = secret;
 				[self.presentingViewController dismissViewControllerAnimated:YES completion:^{
-					NSNotification *notificatopn = [NSNotification notificationWithName:TS_NOTIFICATION_DATABASE_WAS_UNLOCKED_SUCCESSFULLY object:nil];
-					[[NSNotificationCenter defaultCenter] postNotification:notificatopn];
+					NSNotification *notification = [NSNotification notificationWithName:TS_NOTIFICATION_DATABASE_WAS_UNLOCKED_SUCCESSFULLY object:nil];
+					[[NSNotificationCenter defaultCenter] postNotification:notification];
 				}];
 			}else {
 				self.statusText = [NSString stringWithFormat:@"Unlock failed! Please enter the correct passphrase for database %@", metadata.name];

@@ -9,6 +9,9 @@
 #ifndef TanukiSecrets_TSConstants_h
 #define TanukiSecrets_TSConstants_h
 
+#define TS_DEV_DEBUG_ALL 0
+#define TS_DEV_DEBUG_SELECTIVE 0
+
 #define TS_INSTANCE_UID_KEY @"TS_INSTANCE_UID_KEY"
 
 #define TS_FILE_SUFFIX_DATABASE @".ts"
@@ -18,6 +21,7 @@
 #define TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER @".bak"
 
 #define TS_NUMBER_OF_LOCAL_BACKUPS 25
+#define TS_LOCAL_BACKUPS_AUTOCLEAN_THRESHOLD 41
 #define TS_NUMBER_OF_REMOTE_BACKUPS 3
 
 #define TANUKI_HASH_MIN_MEMORY_MB 5
@@ -28,5 +32,6 @@
 #define TS_NOTIFICATION_LOCAL_DATABASE_LIST_CHANGED @"TSLocalDatabaseListChanged"
 #define TS_NOTIFICATION_DATABASE_WAS_UNLOCKED_SUCCESSFULLY @"TSDatabaseWasUnlockedSuccessfully"
 #define TS_NOTIFICATION_DATABASE_WAS_LOCKED_SUCCESSFULLY @"TSDatabaseWasLockedSuccessfully"
+#define TS_NOTIFICATION_OPEN_DATABASE_CONTENT_CHANGED @"TSOpenDatabaseContentChangedNotification"
 
 #endif

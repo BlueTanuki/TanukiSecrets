@@ -11,6 +11,8 @@
 #import "TSConstants.h"
 #import "TSCryptoUtils.h"
 #import "TSBackupUtils.h"
+#import "TSConstants.h"
+#import "TSStringUtils.h"
 
 @interface TSIOUtils ()
 
@@ -314,6 +316,13 @@
 		NSString *metadataFilePath = [self metadataFilePath:metadata.uid];
 		if ([fileManager createFileAtPath:metadataFilePath contents:[metadata toData] attributes:nil] == YES) {
 //			NSLog (@"Wrote file %@", metadataFilePath);
+			if (TS_DEV_DEBUG_ALL) {
+				NSData *metadataBytes = [metadata toData];
+				NSLog (@"wrote database with encrypted content %@ and metadata %@", [content debugDescription],
+					   [[NSString alloc] initWithBytes:[metadataBytes bytes]
+												length:[metadataBytes length]
+											  encoding:NSUTF8StringEncoding]);
+			}
 			return YES;
 		}
 		NSLog(@"Failed to write local file for database metadata");
@@ -382,6 +391,11 @@
 		NSString *metadataFilePath = [self metadataFilePath:databaseUid];
 		NSString *metadataBackupFilename = [TSBackupUtils metadataBackupFileName:backupId];
 		if ([self copyFileFromPath:metadataFilePath toFolder:backupsFolder andRenameTo:metadataBackupFilename]) {
+			NSArray *backups = [self backupIdsForDatabase:databaseUid];
+			if ([backups count] > TS_LOCAL_BACKUPS_AUTOCLEAN_THRESHOLD) {
+				NSLog (@"Number of local backups reached %d. Autoclean triggered.", [backups count]);
+				[self deleteOldBackupsFor:databaseUid];
+			}
 			return YES;
 		}
 		NSLog(@"Failed to create backup %@ for metadata file of database %@", backupId, databaseUid);
@@ -398,7 +412,7 @@
 	NSArray *fileNames = [self listFilesForDirectory:backupsFolder filenameOnly:YES];
 //	NSLog (@"Before cleanup : %@", fileNames);
 	
-	NSArray *retainedFiles = [TSBackupUtils retainOnly: TS_NUMBER_OF_LOCAL_BACKUPS backups:fileNames];
+	NSArray *retainedFiles = [TSBackupUtils retainOnly:TS_NUMBER_OF_LOCAL_BACKUPS backups:fileNames];
 //	NSLog (@"Retained files : %@", retainedFiles);
 	for (NSString *filename in fileNames) {
 		if ([retainedFiles containsObject:filename] == NO) {

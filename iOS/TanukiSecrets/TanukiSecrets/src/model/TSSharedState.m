@@ -29,7 +29,7 @@
 
 @implementation TSSharedState
 
-@synthesize openDatabasePassword, openDatabaseMetadata, openDatabase;
+@synthesize openDatabasePassword, openDatabaseMetadata, openDatabase, currentGroup;
 @synthesize instanceUID = _instanceUID;
 
 @synthesize dropboxWrapper = _dropboxWrapper;
@@ -116,16 +116,22 @@
 	}
 	self.nextEncryptKeyGenerationInProgress = YES;
 	self.nextEncryptKeyReady = NO;
-	int64_t delayInSeconds = 0.5;
+	int64_t delayInSeconds = 2;
 	dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
 	dispatch_after(popTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void){
-//		NSLog (@"next encryption key generation starting");
+		if (TS_DEV_DEBUG_ALL) {
+			NSLog (@"next encryption key generation starting");
+		}
 		self.nextEncryptKey = [TSCryptoUtils tanukiEncryptKey:self.openDatabaseMetadata usingSecret:self.openDatabasePassword];
 		self.nextEncryptKeyGenerationInProgress = NO;
 		self.nextEncryptKeyReady = YES;
-//		NSLog (@"next encryption key generation finished");
+		if (TS_DEV_DEBUG_ALL) {
+			NSLog (@"next encryption key generation finished");
+		}
 	});
-//	NSLog (@"next encryption key generation scheduled");
+	if (TS_DEV_DEBUG_ALL) {
+		NSLog (@"next encryption key generation scheduled");
+	}
 }
 
 - (BOOL)encryptKeyReady

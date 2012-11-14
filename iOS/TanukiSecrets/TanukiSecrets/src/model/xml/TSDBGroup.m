@@ -85,11 +85,10 @@
 
 - (NSString *)uniqueGlobalId
 {
-	NSString *parentUid = @"";
-	if (self.parent != nil) {
-		parentUid = [self.parent uniqueGlobalId];
+	if (self.parent == nil) {
+		return @"/";
 	}
-	return [parentUid stringByAppendingPathComponent:self.name];
+	return [[self.parent uniqueGlobalId] stringByAppendingPathComponent:self.name];
 }
 
 - (void)addItem:(TSDBItem *)item
