@@ -23,7 +23,8 @@
 @property(nonatomic, strong) NSMutableArray *tags;//of NSString
 
 @property(nonatomic, strong) NSMutableArray *fields;//of TSDBItemField
-@property(nonatomic, strong) NSString *defaultFieldName;//can be nil(?)
+@property(nonatomic, strong) NSString *quickCopyFieldName;//can be nil
+@property(nonatomic, strong) NSString *subtitleFieldName;//can be nil
 
 //string uniquely identifying this field inside the database
 - (NSString *)uniqueGlobalId;
@@ -35,5 +36,7 @@
 - (TSDBItemField *)fieldNamed:(NSString *)fieldName;
 
 + (TSDBItem *)itemNamed:(NSString *)name;
+
++ (NSArray *)systemTemplates;//of TSDBItem
 
 @end

@@ -54,6 +54,15 @@
 	return [self sharedState].instanceUID;
 }
 
+static NSArray *_userTemplates = nil;
++ (NSArray *)userTemplates {
+	if (_userTemplates == nil) {
+		[TSNotifierUtils error:@"user templates not implemented"];
+		_userTemplates = [NSArray array];
+	}
+	return _userTemplates;
+}
+
 - (NSString *)instanceUID
 {
 	if (_instanceUID == nil) {

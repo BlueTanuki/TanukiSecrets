@@ -28,6 +28,8 @@
 //convenience method (if the caller does not need an instance for anything else)
 + (NSString *)instanceUID;
 
++ (NSArray *)userTemplates;//of TSDBItem
+
 + (TSDatabaseWrapper *)dropboxWrapperForDelegate:(id<TSDatabaseWrapperDelegate>)delegate;
 - (TSDatabaseWrapper *)dropboxWrapperForDelegate:(id<TSDatabaseWrapperDelegate>)delegate;
 

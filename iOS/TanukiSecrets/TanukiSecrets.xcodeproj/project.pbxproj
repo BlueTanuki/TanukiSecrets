@@ -48,6 +48,8 @@
 		9F49203C165184BB00B80E0A /* fileClipboard@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F492038165184BB00B80E0A /* fileClipboard@2x.png */; };
 		9F4920481652D05B00B80E0A /* TSModalDialogDismissingTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4920471652D05A00B80E0A /* TSModalDialogDismissingTableViewController.m */; };
 		9F49204C1652D7B800B80E0A /* TSNewGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F49204B1652D7B800B80E0A /* TSNewGroupViewController.m */; };
+		9F492053165557D000B80E0A /* TSNewItemChooseNameTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F492052165557D000B80E0A /* TSNewItemChooseNameTVC.m */; };
+		9F492057165560AC00B80E0A /* TSNewItemChooseTypeTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F492056165560AB00B80E0A /* TSNewItemChooseTypeTVC.m */; };
 		9F5459E81649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5459E71649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.m */; };
 		9F5459EC1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5459EB1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.m */; };
 		9F57C20A16146E420085703E /* TSBackupUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57C20916146E420085703E /* TSBackupUtils.m */; };
@@ -173,6 +175,10 @@
 		9F4920471652D05A00B80E0A /* TSModalDialogDismissingTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSModalDialogDismissingTableViewController.m; sourceTree = "<group>"; };
 		9F49204A1652D7B800B80E0A /* TSNewGroupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNewGroupViewController.h; sourceTree = "<group>"; };
 		9F49204B1652D7B800B80E0A /* TSNewGroupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSNewGroupViewController.m; sourceTree = "<group>"; };
+		9F492051165557D000B80E0A /* TSNewItemChooseNameTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNewItemChooseNameTVC.h; sourceTree = "<group>"; };
+		9F492052165557D000B80E0A /* TSNewItemChooseNameTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSNewItemChooseNameTVC.m; sourceTree = "<group>"; };
+		9F492055165560AB00B80E0A /* TSNewItemChooseTypeTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNewItemChooseTypeTVC.h; sourceTree = "<group>"; };
+		9F492056165560AB00B80E0A /* TSNewItemChooseTypeTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSNewItemChooseTypeTVC.m; sourceTree = "<group>"; };
 		9F5459E61649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSSelectiveTapCallbackTableViewController.h; sourceTree = "<group>"; };
 		9F5459E71649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSSelectiveTapCallbackTableViewController.m; sourceTree = "<group>"; };
 		9F5459EA1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNewDatabaseChooseNameTVC.h; sourceTree = "<group>"; };
@@ -420,6 +426,10 @@
 			children = (
 				9F49204A1652D7B800B80E0A /* TSNewGroupViewController.h */,
 				9F49204B1652D7B800B80E0A /* TSNewGroupViewController.m */,
+				9F492051165557D000B80E0A /* TSNewItemChooseNameTVC.h */,
+				9F492052165557D000B80E0A /* TSNewItemChooseNameTVC.m */,
+				9F492055165560AB00B80E0A /* TSNewItemChooseTypeTVC.h */,
+				9F492056165560AB00B80E0A /* TSNewItemChooseTypeTVC.m */,
 			);
 			path = createEntities;
 			sourceTree = "<group>";
@@ -828,6 +838,8 @@
 				9F10A8A6164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.m in Sources */,
 				9F4920481652D05B00B80E0A /* TSModalDialogDismissingTableViewController.m in Sources */,
 				9F49204C1652D7B800B80E0A /* TSNewGroupViewController.m in Sources */,
+				9F492053165557D000B80E0A /* TSNewItemChooseNameTVC.m in Sources */,
+				9F492057165560AC00B80E0A /* TSNewItemChooseTypeTVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

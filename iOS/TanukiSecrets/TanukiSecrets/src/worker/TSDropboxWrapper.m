@@ -82,7 +82,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	 */
 	[TSUtils background:^{
 		switch (self.operation) {
-			case UPLOAD_FILE:
+			case TSRemoteStorageOperation_UPLOAD_FILE:
 				[self.delegate uploadedFile:srcPath to:destPath];
 				break;
 				
@@ -99,7 +99,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 {
 	[TSUtils background:^{
 		switch (self.operation) {
-			case UPLOAD_FILE:
+			case TSRemoteStorageOperation_UPLOAD_FILE:
 				[self.delegate uploadFile:self.fileLocalPath failedWithError:error];
 				break;
 				
@@ -116,7 +116,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 {
 	[TSUtils background:^{
 		switch (self.operation) {
-			case DOWNLOAD_FILE:
+			case TSRemoteStorageOperation_DOWNLOAD_FILE:
 				[self.delegate downloadedFile:self.fileRemotePath havingRevision:metadata.rev to:destPath];
 				break;
 				
@@ -133,7 +133,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 {
 	[TSUtils background:^{
 		switch (self.operation) {
-			case DOWNLOAD_FILE:
+			case TSRemoteStorageOperation_DOWNLOAD_FILE:
 				[self.delegate downloadFile:self.fileRemotePath failedWithError:error];
 				break;
 				
@@ -150,7 +150,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 {
 	[TSUtils background:^{
 		switch (self.operation) {
-			case LIST_FILES: {
+			case TSRemoteStorageOperation_LIST_FILES: {
 				NSArray *filenames = [self filenameListFromMetadata:metadata];
 				if (filenames != nil) {
 					[self.delegate listFilesInFolder:self.fileRemotePath finished:filenames];
@@ -160,7 +160,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 			}
 				break;
 				
-			case ITEM_EXISTS:
+			case TSRemoteStorageOperation_ITEM_EXISTS:
 				if ([metadata isDeleted] == YES) {
 					[self.delegate itemAtPath:self.fileRemotePath exists:NO andIsFolder:[metadata isDirectory]];
 				}else {
@@ -181,11 +181,11 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 {
 	[TSUtils background:^{
 		switch (self.operation) {
-			case LIST_FILES:
+			case TSRemoteStorageOperation_LIST_FILES:
 				[self.delegate listFilesInFolder:self.fileRemotePath failedWithError:error];
 				break;
 				
-			case ITEM_EXISTS:
+			case TSRemoteStorageOperation_ITEM_EXISTS:
 				if ([error code] == 404) {
 					[self.delegate itemAtPath:self.fileRemotePath exists:NO andIsFolder:NO];
 				}else {
@@ -206,7 +206,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 {
 	[TSUtils background:^{
 		switch (self.operation) {
-			case CREATE_FOLDER:
+			case TSRemoteStorageOperation_CREATE_FOLDER:
 				[self.delegate createdFolder:[folder path]];
 				break;
 				
@@ -223,7 +223,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 {
 	[TSUtils background:^{
 		switch (self.operation) {
-			case CREATE_FOLDER:
+			case TSRemoteStorageOperation_CREATE_FOLDER:
 				[self.delegate createFolder:self.fileRemotePath failedWithError:error];
 				break;
 				
@@ -240,7 +240,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 {
 	[TSUtils background:^{
 		switch (self.operation) {
-			case RENAME_FILE:
+			case TSRemoteStorageOperation_RENAME_FILE:
 				[self.delegate renamedFile:from_path as:[result path]];
 				break;
 				
@@ -257,7 +257,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 {
 	[TSUtils background:^{
 		switch (self.operation) {
-			case RENAME_FILE:
+			case TSRemoteStorageOperation_RENAME_FILE:
 				[self.delegate renameFile:self.fileRemotePath to:self.fileRemotePath2 failedWithError:error];
 				break;
 				
@@ -274,11 +274,11 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 {
 	[TSUtils background:^{
 		switch (self.operation) {
-			case DELETE_FILE:
+			case TSRemoteStorageOperation_DELETE_FILE:
 				[self.delegate deletedFile:path];
 				break;
 				
-			case DELETE_FOLDER:
+			case TSRemoteStorageOperation_DELETE_FOLDER:
 				[self.delegate deletedFolder:path];
 				break;
 				
@@ -295,11 +295,11 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 {
 	[TSUtils background:^{
 		switch (self.operation) {
-			case DELETE_FILE:
+			case TSRemoteStorageOperation_DELETE_FILE:
 				[self.delegate deleteFile:self.fileRemotePath failedWithError:error];
 				break;
 				
-			case DELETE_FOLDER:
+			case TSRemoteStorageOperation_DELETE_FOLDER:
 				[self.delegate deleteFolder:self.fileRemotePath failedWithError:error];
 				break;
 				
@@ -341,7 +341,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	 upsideDown orientation and thought it is a good idea to disable support for it inside UIViewController.
 	 */
 	self.fileRemotePath = folderPath;
-	self.operation = LIST_FILES;
+	self.operation = TSRemoteStorageOperation_LIST_FILES;
 	[TSUtils foreground:^{
 		[self.dropboxRestClient loadMetadata:folderPath];
 	}];
@@ -353,7 +353,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //		NSLog (@"WARNING : item exists at path called while another operation (%d) is in progress", self.operation);
 //	}
 	self.fileRemotePath = remotePath;
-	self.operation = ITEM_EXISTS;
+	self.operation = TSRemoteStorageOperation_ITEM_EXISTS;
 	[TSUtils foreground:^{
 		[self.dropboxRestClient loadMetadata:remotePath];
 	}];
@@ -365,7 +365,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //		NSLog (@"WARNING : create folder called while another operation (%d) is in progress", self.operation);
 //	}
 	self.fileRemotePath = folderPath;
-	self.operation = CREATE_FOLDER;
+	self.operation = TSRemoteStorageOperation_CREATE_FOLDER;
 	[TSUtils foreground:^{
 		[self.dropboxRestClient createFolder:folderPath];
 	}];
@@ -377,7 +377,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //		NSLog (@"WARNING : delete folder called while another operation (%d) is in progress", self.operation);
 //	}
 	self.fileRemotePath = folderPath;
-	self.operation = DELETE_FOLDER;
+	self.operation = TSRemoteStorageOperation_DELETE_FOLDER;
 	[TSUtils foreground:^{
 		[self.dropboxRestClient deletePath:folderPath];
 	}];
@@ -390,7 +390,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //	}
 	self.fileLocalPath = fileLocalPath;
 	self.fileRemotePath = fileRemotePath;
-	self.operation = DOWNLOAD_FILE;
+	self.operation = TSRemoteStorageOperation_DOWNLOAD_FILE;
 	[TSUtils foreground:^{
 		[self.dropboxRestClient loadFile:fileRemotePath intoPath:fileLocalPath];
 	}];
@@ -401,7 +401,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //	if (self.operation != NONE) {
 //		NSLog (@"WARNING : upload file called while another operation (%d) is in progress", self.operation);
 //	}
-	self.operation = UPLOAD_FILE;
+	self.operation = TSRemoteStorageOperation_UPLOAD_FILE;
 	self.fileLocalPath = fileLocalPath;
 	self.fileRemotePath = fileRemotePath;
 	[TSUtils foreground:^{
@@ -423,7 +423,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //		NSLog (@"WARNING : delete file called while another operation (%d) is in progress", self.operation);
 //	}
 	self.fileRemotePath = fileRemotePath;
-	self.operation = DELETE_FILE;
+	self.operation = TSRemoteStorageOperation_DELETE_FILE;
 	[TSUtils foreground:^{
 		[self.dropboxRestClient deletePath:fileRemotePath];
 	}];
@@ -436,7 +436,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //	}
 	self.fileRemotePath = oldPath;
 	self.fileRemotePath2 = newPath;
-	self.operation = RENAME_FILE;
+	self.operation = TSRemoteStorageOperation_RENAME_FILE;
 	[TSUtils foreground:^{
 		[self.dropboxRestClient moveFrom:oldPath toPath:newPath];
 	}];

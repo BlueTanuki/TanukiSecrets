@@ -38,16 +38,16 @@
 @end
 
 typedef enum {
-//	NONE,
-	LIST_FILES,
-	ITEM_EXISTS,
-	CREATE_FOLDER,
-	DELETE_FOLDER,
-	DOWNLOAD_FILE,
-	UPLOAD_FILE,
-	DELETE_FILE,
-	RENAME_FILE,
-	CHECK_CONFLICT_STATUS
+//	TSRemoteStorageOperation_NONE,
+	TSRemoteStorageOperation_LIST_FILES,
+	TSRemoteStorageOperation_ITEM_EXISTS,
+	TSRemoteStorageOperation_CREATE_FOLDER,
+	TSRemoteStorageOperation_DELETE_FOLDER,
+	TSRemoteStorageOperation_DOWNLOAD_FILE,
+	TSRemoteStorageOperation_UPLOAD_FILE,
+	TSRemoteStorageOperation_DELETE_FILE,
+	TSRemoteStorageOperation_RENAME_FILE,
+	TSRemoteStorageOperation_CHECK_CONFLICT_STATUS
 } TSRemoteStorageOperation;
 
 @protocol TSRemoteStorage <NSObject>

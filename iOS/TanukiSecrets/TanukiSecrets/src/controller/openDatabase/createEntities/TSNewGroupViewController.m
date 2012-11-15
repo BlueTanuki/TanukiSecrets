@@ -27,11 +27,11 @@
 
 @implementation TSNewGroupViewController
 
-@synthesize nameTextField, createGroupCellLabel, createGroupCell;
+@synthesize nameTextField, nameCell, createGroupCellLabel, createGroupCell;
 
 #pragma mark - worker methods
 
-- (BOOL)databaseNameIsValid
+- (BOOL)groupNameIsValid
 {
 	NSString *wantedName = [TSStringUtils trim:self.nameTextField.text];
 	TSDBGroup *currentGroup = [TSSharedState sharedState].currentGroup;
@@ -43,10 +43,10 @@
 	return YES;
 }
 
-- (void)changeNextCellLabelIfNeeded
+- (void)changeCreateGroupCellLabelIfNeeded
 {
 	if ([TSStringUtils isNotBlank:self.nameTextField.text]) {
-		if ([self databaseNameIsValid]) {
+		if ([self groupNameIsValid]) {
 			self.createGroupCellLabel.enabled = YES;
 			self.createGroupCellLabel.text = @"Create group";
 		}else {
@@ -107,7 +107,7 @@
 
 - (IBAction)nameEditingEnded:(id)sender {
 	[self.nameTextField resignFirstResponder];
-	[self changeNextCellLabelIfNeeded];
+	[self changeCreateGroupCellLabelIfNeeded];
 	if (self.createGroupCellLabel.enabled == YES) {
 		[self createGroup:nil];
 	}
@@ -134,13 +134,13 @@
 	if (view != self.nameCell) {
 		[self.nameTextField resignFirstResponder];
 	}
-	[self changeNextCellLabelIfNeeded];
+	[self changeCreateGroupCellLabelIfNeeded];
 }
 
 - (void)outsideTapped
 {
 	[self.nameTextField resignFirstResponder];
-	[self changeNextCellLabelIfNeeded];
+	[self changeCreateGroupCellLabelIfNeeded];
 }
 
 @end

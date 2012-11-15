@@ -284,7 +284,7 @@
                     <connections>
                         <segue destination="cim-sy-PCw" kind="push" identifier="Dropbox" id="aKr-UI-VEj"/>
                         <segue destination="0wf-ss-xag" kind="push" identifier="iCloud" id="ln2-3Z-Brp"/>
-                        <segue destination="MM5-pa-NdQ" kind="push" identifier="newDatabaseUgly" id="09b-yq-sek"/>
+                        <segue destination="MM5-pa-NdQ" kind="push" identifier="newDatabaseUglyDeprecated" id="09b-yq-sek"/>
                         <segue destination="Ecn-J9-JdE" kind="modal" identifier="LinkWithDropbox" id="dBc-dP-rCs"/>
                         <segue destination="fGY-yA-y3y" kind="push" identifier="newDatabase" id="Maj-dE-s4O"/>
                     </connections>
@@ -580,10 +580,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
-                            <tableViewSection footerTitle="Please choose a passphrase for your new database" id="UlO-g7-OQH">
+                            <tableViewSection headerTitle="Passphrase" footerTitle="Please choose a passphrase for your new database" id="UlO-g7-OQH">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="MCV-SF-QX5">
-                                        <rect key="frame" x="0.0" y="10" width="320" height="45"/>
+                                        <rect key="frame" x="0.0" y="46" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -603,7 +603,7 @@
                                         </view>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="ZJO-Ze-xAq">
-                                        <rect key="frame" x="0.0" y="55" width="320" height="45"/>
+                                        <rect key="frame" x="0.0" y="91" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="0.0" width="300" height="43"/>
@@ -624,11 +624,11 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection id="6b3-Lq-zwq">
-                                <string key="footerTitle">Use the slider to set the strength of the key derivation algorithm. You get better security by setting it high, but may experience longer waiting times for certain actions (rarely). Tap the test button to see how long this would take on your device. Note: the interface may be unresponsive during the test.</string>
+                            <tableViewSection headerTitle="Security level" id="6b3-Lq-zwq">
+                                <string key="footerTitle">Use the slider to set the strength of the key derivation algorithm. You get better security by setting it high, but may experience longer waiting times for certain actions (rarely). Tap the test button to see how long this would take on your device. </string>
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="bwx-WN-up4">
-                                        <rect key="frame" x="0.0" y="170" width="320" height="46"/>
+                                        <rect key="frame" x="0.0" y="232" width="320" height="46"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -650,7 +650,7 @@
                             <tableViewSection id="5Dh-zh-lZN">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="FG7-y6-Dzq">
-                                        <rect key="frame" x="0.0" y="400" width="320" height="46"/>
+                                        <rect key="frame" x="0.0" y="424" width="320" height="46"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -672,7 +672,7 @@
                             <tableViewSection id="OQg-Kk-wDB">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="AMt-7V-3hp">
-                                        <rect key="frame" x="0.0" y="466" width="320" height="46"/>
+                                        <rect key="frame" x="0.0" y="490" width="320" height="46"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>

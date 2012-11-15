@@ -168,7 +168,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //														 [self.delegate deletedFolder:remotePath];
 //														 break;
 														 
-													 case DELETE_FILE:
+													 case TSRemoteStorageOperation_DELETE_FILE:
 														 [self.delegate deletedFile:remotePath];
 														 break;
 														 
@@ -182,7 +182,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //														 [self.delegate deleteFolder:remotePath failedWithError:error2];
 //														 break;
 														 
-													 case DELETE_FILE:
+													 case TSRemoteStorageOperation_DELETE_FILE:
 														 [self.delegate deleteFile:remotePath failedWithError:error2];
 														 break;
 														 
@@ -199,7 +199,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 //					[self.delegate deleteFolder:remotePath failedWithError:error];
 //					break;
 					
-				case DELETE_FILE:
+				case TSRemoteStorageOperation_DELETE_FILE:
 					[self.delegate deleteFile:remotePath failedWithError:error];
 					break;
 					
@@ -229,13 +229,13 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 		[self stopCloudQuery];
 		
 		switch (self.operation) {
-			case LIST_FILES: {
+			case TSRemoteStorageOperation_LIST_FILES: {
 				NSArray *filenames = [self filenamesOfFirstLevelDescendantsFor:self.fileRemotePath fromRecursiveListing:itemURLs];
 				[self.delegate listFilesInFolder:self.fileRemotePath finished:filenames];
 			}
 				break;
 				
-			case ITEM_EXISTS: {
+			case TSRemoteStorageOperation_ITEM_EXISTS: {
 				NSString *path = [[self urlForRemoteCloudPath:self.fileRemotePath] path];
 				BOOL isDirectory = NO;
 				BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory];
@@ -243,7 +243,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 			}
 				break;
 				
-			case DOWNLOAD_FILE: {
+			case TSRemoteStorageOperation_DOWNLOAD_FILE: {
 				NSURL *url = [self urlForRemoteCloudPath:self.fileRemotePath];
 				BOOL isDirectory;
 				BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:[url path] isDirectory:&isDirectory];
@@ -271,7 +271,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 			}
 				break;
 				
-			case UPLOAD_FILE: {
+			case TSRemoteStorageOperation_UPLOAD_FILE: {
 				NSURL *url = [self urlForRemoteCloudPath:self.fileRemotePath];
 				NSString *path = [url path];
 				BOOL isDirectory;
@@ -294,7 +294,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 			}
 				break;
 				
-			case RENAME_FILE: {
+			case TSRemoteStorageOperation_RENAME_FILE: {
 				//not sure how to properly implement this in a single step, so doing it in two steps
 				NSURL *oldURL = [self urlForRemoteCloudPath:self.fileRemotePath];
 				if ([[NSFileManager defaultManager] fileExistsAtPath:[oldURL path]]) {
@@ -362,7 +362,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 			}
 				break;
 				
-			case CHECK_CONFLICT_STATUS: {
+			case TSRemoteStorageOperation_CHECK_CONFLICT_STATUS: {
 				for (NSURL *itemURL in itemURLs) {
 					NSFileVersion *currentVersion = [NSFileVersion currentVersionOfItemAtURL:itemURL];
 					if (currentVersion.conflict) {
@@ -393,7 +393,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	 */
 	if (self.iCloudQuery == nil) {
 		self.fileRemotePath = folderPath;
-		self.operation = LIST_FILES;
+		self.operation = TSRemoteStorageOperation_LIST_FILES;
 		[TSUtils foreground:^{
 			[self startCloudQuery];
 		}];
@@ -408,7 +408,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 - (void)checkConflicts
 {
 	if (self.iCloudQuery == nil) {
-		self.operation = CHECK_CONFLICT_STATUS;
+		self.operation = TSRemoteStorageOperation_CHECK_CONFLICT_STATUS;
 		self.fileRemotePath = @"/";
 		[TSUtils foreground:^{
 			[self startCloudQuery];
@@ -423,7 +423,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 {
 	if (self.iCloudQuery == nil) {
 		self.fileRemotePath = remotePath;
-		self.operation = ITEM_EXISTS;
+		self.operation = TSRemoteStorageOperation_ITEM_EXISTS;
 		[TSUtils foreground:^{
 			[self startCloudQuery];
 		}];
@@ -460,7 +460,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	if (self.iCloudQuery == nil) {
 		self.fileLocalPath = fileLocalPath;
 		self.fileRemotePath = fileRemotePath;
-		self.operation = DOWNLOAD_FILE;
+		self.operation = TSRemoteStorageOperation_DOWNLOAD_FILE;
 		[TSUtils foreground:^{
 			[self startCloudQuery];
 		}];
@@ -478,7 +478,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	if (self.iCloudQuery == nil) {
 		self.fileLocalPath = fileLocalPath;
 		self.fileRemotePath = fileRemotePath;
-		self.operation = UPLOAD_FILE;
+		self.operation = TSRemoteStorageOperation_UPLOAD_FILE;
 		[TSUtils foreground:^{
 			[self startCloudQuery];
 		}];
@@ -498,7 +498,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 - (void)deleteFile:(NSString *)fileRemotePath
 {
 	[TSUtils background:^(void) {
-		self.operation = DELETE_FILE;
+		self.operation = TSRemoteStorageOperation_DELETE_FILE;
 		[self deleteItem:fileRemotePath];
 	}];
 }
@@ -508,7 +508,7 @@ fileLocalPath = _fileLocalPath, fileRemotePath = _fileRemotePath, fileRemotePath
 	if (self.iCloudQuery == nil) {
 		self.fileRemotePath = oldPath;
 		self.fileRemotePath2 = newPath;
-		self.operation = RENAME_FILE;
+		self.operation = TSRemoteStorageOperation_RENAME_FILE;
 		[TSUtils foreground:^{
 			[self startCloudQuery];
 		}];

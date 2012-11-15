@@ -113,10 +113,10 @@ BOOL firstTimeSegueTriggered = NO;
 - (TSDatabase *)testDatabase
 {
 	TSDBItem *item = [TSDBItem itemNamed:@"item1"];
-	TSDBItemField *field = [TSDBItemField fieldWithName:@"field1" andValue:@"value ichi"];
+	TSDBItemField *field = [TSDBItemField fieldWithName:@"field1" type:TSDBFieldType_DEFAULT andValue:@"value ichi"];
 	[item addField:field];
-	item.defaultFieldName = field.name;
-	field = [TSDBItemField fieldWithName:@"field2" andValue:@"futatsu no value"];
+	item.quickCopyFieldName = field.name;
+	field = [TSDBItemField fieldWithName:@"field2" type:TSDBFieldType_DEFAULT andValue:@"futatsu no value"];
 	[item addField:field];
 	item.tags = [NSMutableArray arrayWithObjects:@"nabla", @"delta", nil];
 	
@@ -135,7 +135,7 @@ BOOL firstTimeSegueTriggered = NO;
 	NSString *encryptedValue = [TSCryptoUtils tanukiEncryptField:plaintextValue
 												 belongingToItem:itemName
 													 usingSecret:secret];
-	TSDBItemField *field = [TSDBItemField encryptedFieldWithName:@"encryptedField" andValue:encryptedValue];
+	TSDBItemField *field = [TSDBItemField encryptedFieldWithName:@"encryptedField" type:TSDBFieldType_SECRET andValue:encryptedValue];
 	TSDBItem *item = [TSDBItem itemNamed:itemName];
 	[item addField:field];
 	item.tags = [NSMutableArray arrayWithObjects:@"himitsu", nil];

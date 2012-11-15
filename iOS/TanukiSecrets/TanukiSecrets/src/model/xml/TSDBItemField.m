@@ -12,6 +12,7 @@
 
 #define TS_XML_DB_ITEM_FIELD_TAG_NAME @"field"
 #define TS_XML_DB_ITEM_FIELD_NAME_TAG_NAME @"name"
+#define TS_XML_DB_ITEM_FIELD_TYPE_TAG_NAME @"type"
 #define TS_XML_DB_ITEM_FIELD_ENCRYPTED_TAG_NAME @"encrypted"
 #define TS_XML_DB_ITEM_FIELD_VALUE_TAG_NAME @"value"
 
@@ -26,6 +27,9 @@
 	[writer writeStartElement:tagName];
 	[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_FIELD_NAME_TAG_NAME
 				  withStringContent:self.name
+						   toWriter:writer];
+	[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_FIELD_TYPE_TAG_NAME
+				 withIntegerContent:self.type
 						   toWriter:writer];
 	if (self.encrypted) {
 		[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_FIELD_ENCRYPTED_TAG_NAME
@@ -49,6 +53,7 @@
 	if ([element.name isEqualToString:tagName]) {
 		ret = [[TSDBItemField alloc] init];
 		ret.name = [element valueWithPath:TS_XML_DB_ITEM_FIELD_NAME_TAG_NAME];
+		ret.type = [[element valueWithPath:TS_XML_DB_ITEM_FIELD_TYPE_TAG_NAME] intValue];
 		SMXMLElement *aux = [element childNamed:TS_XML_DB_ITEM_FIELD_ENCRYPTED_TAG_NAME];
 		if (aux != nil) {
 			ret.encrypted = YES;
@@ -78,24 +83,26 @@
 {
 	TSDBItemField *ret = [[TSDBItemField alloc] init];
 	ret.name = [self.name copy];
+	ret.type = self.type;
 	ret.encrypted = self.encrypted;
 	return ret;
 }
 
 #pragma mark - factory
 
-+ (TSDBItemField *)fieldWithName:(NSString *)name andValue:(NSString *)value
++ (TSDBItemField *)fieldWithName:(NSString *)name type:(TSDBFieldType)type andValue:(NSString *)value
 {
 	TSDBItemField *ret = [[TSDBItemField alloc] init];
 	ret.name = name;
+	ret.type = type;
 	ret.encrypted = NO;
 	ret.value = value;
 	return ret;
 }
 
-+ (TSDBItemField *)encryptedFieldWithName:(NSString *)name andValue:(NSString *)value
++ (TSDBItemField *)encryptedFieldWithName:(NSString *)name type:(TSDBFieldType)type andValue:(NSString *)value
 {
-	TSDBItemField *ret = [self fieldWithName:name andValue:value];
+	TSDBItemField *ret = [self fieldWithName:name type:type andValue:value];
 	ret.encrypted = YES;
 	return ret;
 }

@@ -53,7 +53,7 @@
 {
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Cannot perform action right now."
 													message:@"The next encryption key is currently being generated in the background. Please try again in a few seconds."
-												   delegate:self
+												   delegate:nil
 										  cancelButtonTitle:@"OK"
 										  otherButtonTitles:nil];
 	[alert show];

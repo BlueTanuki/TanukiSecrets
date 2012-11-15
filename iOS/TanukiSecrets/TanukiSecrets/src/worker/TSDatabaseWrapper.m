@@ -63,89 +63,89 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 + (NSString *)stateString:(TSDatabaseWrapperState)state
 {
 	switch (state) {
-		case IDLE:
+		case TSDatabaseWrapperState_IDLE:
 			return @"IDLE";
-		case WAITING:
+		case TSDatabaseWrapperState_WAITING:
 			return @"WAITING";
-		case LIST_DATABASE_UIDS:
+		case TSDatabaseWrapperState_LIST_DATABASE_UIDS:
 			return @"LIST_DATABASE_UIDS";
-		case LIST_BACKUP_IDS:
+		case TSDatabaseWrapperState_LIST_BACKUP_IDS:
 			return @"LIST_BACKUP_IDS";
-		case UPLOAD_READ_LOCKFILE:
+		case TSDatabaseWrapperState_UPLOAD_READ_LOCKFILE:
 			return @"UPLOAD_READ_LOCKFILE";
-		case UPLOAD_STALLED_OPTIMISTIC_LOCK:
+		case TSDatabaseWrapperState_UPLOAD_STALLED_OPTIMISTIC_LOCK:
 			return @"UPLOAD_STALLED_OPTIMISTIC_LOCK";
-		case UPLOAD_WRITE_LOCKFILE:
+		case TSDatabaseWrapperState_UPLOAD_WRITE_LOCKFILE:
 			return @"UPLOAD_WRITE_LOCKFILE";
-		case UPLOAD_CHECK_LOCKFILE:
+		case TSDatabaseWrapperState_UPLOAD_CHECK_LOCKFILE:
 			return @"UPLOAD_CHECK_LOCKFILE";
-		case UPLOAD_RECHECK_LOCKFILE:
+		case TSDatabaseWrapperState_UPLOAD_RECHECK_LOCKFILE:
 			return @"UPLOAD_RECHECK_LOCKFILE";
-		case UPLOAD_CHECK_BACKUP_FOLDER_EXISTS:
+		case TSDatabaseWrapperState_UPLOAD_CHECK_BACKUP_FOLDER_EXISTS:
 			return @"UPLOAD_CHECK_BACKUP_FOLDER_EXISTS";
-		case UPLOAD_CREATE_BACKUP_FOLDER:
+		case TSDatabaseWrapperState_UPLOAD_CREATE_BACKUP_FOLDER:
 			return @"UPLOAD_CREATE_BACKUP_FOLDER";
-		case UPLOAD_CHECK_DATABASE_EXISTS:
+		case TSDatabaseWrapperState_UPLOAD_CHECK_DATABASE_EXISTS:
 			return @"UPLOAD_CHECK_DATABASE_EXISTS";
-		case UPLOAD_MOVE_DATABASE_TO_BACKUP:
+		case TSDatabaseWrapperState_UPLOAD_MOVE_DATABASE_TO_BACKUP:
 			return @"UPLOAD_MOVE_DATABASE_TO_BACKUP";
-		case UPLOAD_CHECK_METADATA_EXISTS:
+		case TSDatabaseWrapperState_UPLOAD_CHECK_METADATA_EXISTS:
 			return @"UPLOAD_CHECK_METADATA_EXISTS";
-		case UPLOAD_MOVE_METADATA_TO_BACKUP:
+		case TSDatabaseWrapperState_UPLOAD_MOVE_METADATA_TO_BACKUP:
 			return @"UPLOAD_MOVE_METADATA_TO_BACKUP";
-		case UPLOAD_METADATA:
+		case TSDatabaseWrapperState_UPLOAD_METADATA:
 			return @"UPLOAD_METADATA";
-		case UPLOAD_DATABASE:
+		case TSDatabaseWrapperState_UPLOAD_DATABASE:
 			return @"UPLOAD_DATABASE";
-		case UPLOAD_DELETE_LOCKFILE:
+		case TSDatabaseWrapperState_UPLOAD_DELETE_LOCKFILE:
 			return @"UPLOAD_DELETE_LOCKFILE";
-		case OPTIMISTIC_LOCK_ADD_READ_LOCKFILE:
+		case TSDatabaseWrapperState_OPTIMISTIC_LOCK_ADD_READ_LOCKFILE:
 			return @"OPTIMISTIC_LOCK_ADD_READ_LOCKFILE";
-		case OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE:
+		case TSDatabaseWrapperState_OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE:
 			return @"OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE";
-		case OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE:
+		case TSDatabaseWrapperState_OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE:
 			return @"OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE";
-		case OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE:
+		case TSDatabaseWrapperState_OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE:
 			return @"OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE";
-		case CLEANUP_READ_LOCKFILE:
+		case TSDatabaseWrapperState_CLEANUP_READ_LOCKFILE:
 			return @"CLEANUP_READ_LOCKFILE";
-		case CLEANUP_WRITE_LOCKFILE:
+		case TSDatabaseWrapperState_CLEANUP_WRITE_LOCKFILE:
 			return @"CLEANUP_WRITE_LOCKFILE";
-		case CLEANUP_CHECK_LOCKFILE:
+		case TSDatabaseWrapperState_CLEANUP_CHECK_LOCKFILE:
 			return @"CLEANUP_CHECK_LOCKFILE";
-		case CLEANUP_LIST_LOCKFILES:
+		case TSDatabaseWrapperState_CLEANUP_LIST_LOCKFILES:
 			return @"CLEANUP_LIST_LOCKFILES";
-		case CLEANUP_DELETE_REDUNDANT_LOCKFILE:
+		case TSDatabaseWrapperState_CLEANUP_DELETE_REDUNDANT_LOCKFILE:
 			return @"CLEANUP_DELETE_REDUNDANT_LOCKFILE";
-		case CLEANUP_CHECK_BACKUP_FOLDER_EXISTS:
+		case TSDatabaseWrapperState_CLEANUP_CHECK_BACKUP_FOLDER_EXISTS:
 			return @"CLEANUP_CHECK_BACKUP_FOLDER_EXISTS";
-		case CLEANUP_DELETE_OLD_BACKUP:
+		case TSDatabaseWrapperState_CLEANUP_DELETE_OLD_BACKUP:
 			return @"CLEANUP_DELETE_OLD_BACKUP";
-		case CLEANUP_DELETE_LOCKFILE:
+		case TSDatabaseWrapperState_CLEANUP_DELETE_LOCKFILE:
 			return @"CLEANUP_DELETE_LOCKFILE";
-		case DOWNLOAD_METADATA:
+		case TSDatabaseWrapperState_DOWNLOAD_METADATA:
 			return @"DOWNLOAD_METADATA";
-		case DOWNLOAD_DATABASE:
+		case TSDatabaseWrapperState_DOWNLOAD_DATABASE:
 			return @"DOWNLOAD_DATABASE";
-		case DELETE_READ_LOCKFILE:
+		case TSDatabaseWrapperState_DELETE_READ_LOCKFILE:
 			return @"DELETE_READ_LOCKFILE";
-		case DELETE_WRITE_LOCKFILE:
+		case TSDatabaseWrapperState_DELETE_WRITE_LOCKFILE:
 			return @"DELETE_WRITE_LOCKFILE";
-		case DELETE_CHECK_LOCKFILE:
+		case TSDatabaseWrapperState_DELETE_CHECK_LOCKFILE:
 			return @"DELETE_CHECK_LOCKFILE";
-		case DELETE_RECHECK_LOCKFILE:
+		case TSDatabaseWrapperState_DELETE_RECHECK_LOCKFILE:
 			return @"DELETE_RECHECK_LOCKFILE";
-		case DELETE_CHECK_BACKUP_FOLDER_EXISTS:
+		case TSDatabaseWrapperState_DELETE_CHECK_BACKUP_FOLDER_EXISTS:
 			return @"DELETE_CHECK_BACKUP_FOLDER_EXISTS";
-		case DELETE_BACKUP_FILE:
+		case TSDatabaseWrapperState_DELETE_BACKUP_FILE:
 			return @"DELETE_BACKUP_FILE";
-		case DELETE_BACKUP_FOLDER:
+		case TSDatabaseWrapperState_DELETE_BACKUP_FOLDER:
 			return @"DELETE_BACKUP_FOLDER";
-		case DELETE_DATABASE:
+		case TSDatabaseWrapperState_DELETE_DATABASE:
 			return @"DELETE_DATABASE";
-		case DELETE_METADATA:
+		case TSDatabaseWrapperState_DELETE_METADATA:
 			return @"DELETE_METADATA";
-		case DELETE_LOCKFILE:
+		case TSDatabaseWrapperState_DELETE_LOCKFILE:
 			return @"DELETE_LOCKFILE";
 		default:
 			return @"UNKNOWN";
@@ -167,7 +167,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 - (void) stateTransitionError:(NSString *)eventDescription
 {
 	NSLog (@"*** INTERNAL STATE MACHINE ERROR *** Event '%@' occurred in unknown state %@ (%d). Switching back to IDLE...", eventDescription, [self stateString], self.state);
-	[self setState:IDLE];
+	[self setState:TSDatabaseWrapperState_IDLE];
 }
 
 #pragma mark - misc helper methods
@@ -218,7 +218,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (void)reportListDatabaseUidsErrorToDelegate:(NSString *)errorText
 {
-	[self setState:IDLE];
+	[self setState:TSDatabaseWrapperState_IDLE];
 	if ([self.delegate respondsToSelector:@selector(databaseWrapper:listDatabaseUidsFailedWithError:)]) {
 		[self.delegate databaseWrapper:self listDatabaseUidsFailedWithError:errorText];
 	}else {
@@ -229,7 +229,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (void)reportListBackupIdsErrorToDelegate:(NSString *)errorText
 {
-	[self setState:IDLE];
+	[self setState:TSDatabaseWrapperState_IDLE];
 	if ([self.delegate respondsToSelector:@selector(databaseWrapper:listBackupIdsForDatabase:failedWithError:)]) {
 		[self.delegate databaseWrapper:self listBackupIdsForDatabase:self.databaseUid failedWithError:errorText];
 	}else {
@@ -240,7 +240,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (void)reportDatabaseUploadErrorToDelegate:(NSString *)errorText
 {
-	[self setState:IDLE];
+	[self setState:TSDatabaseWrapperState_IDLE];
 	if ([self.delegate respondsToSelector:@selector(databaseWrapper:uploadForDatabase:failedWithError:)]) {
 		[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedWithError:errorText];
 	}else {
@@ -251,7 +251,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (void)reportAddOptimisticLockErrorToDelegate:(NSString *)errorText
 {
-	[self setState:IDLE];
+	[self setState:TSDatabaseWrapperState_IDLE];
 	if ([self.delegate respondsToSelector:@selector(databaseWrapper:addingOptimisticLockForDatabase:failedWithError:)]) {
 		[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
 	}else {
@@ -262,7 +262,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (void)reportRemoveOptimisticLockErrorToDelegate:(NSString *)errorText
 {
-	[self setState:IDLE];
+	[self setState:TSDatabaseWrapperState_IDLE];
 	if ([self.delegate respondsToSelector:@selector(databaseWrapper:removingOptimisticLockForDatabase:failedWithError:)]) {
 		[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedWithError:errorText];
 	}else {
@@ -273,7 +273,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (void)reportCleanupErrorToDelegate:(NSString *)errorText
 {
-	[self setState:IDLE];
+	[self setState:TSDatabaseWrapperState_IDLE];
 	if ([self.delegate respondsToSelector:@selector(databaseWrapper:cleanupForDatabase:failedWithError:)]) {
 		[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedWithError:errorText];
 	}else {
@@ -284,7 +284,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (void)reportDownloadErrorToDelegate:(NSString *)errorText
 {
-	[self setState:IDLE];
+	[self setState:TSDatabaseWrapperState_IDLE];
 	if (self.remoteBackupId == nil) {
 		if ([self.delegate respondsToSelector:@selector(databaseWrapper:downloadDatabase:failedWithError:)]) {
 			[self.delegate databaseWrapper:self downloadDatabase:self.databaseUid failedWithError:errorText];
@@ -304,7 +304,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (void)reportDatabaseDeleteErrorToDelegate:(NSString *)errorText
 {
-	[self setState:IDLE];
+	[self setState:TSDatabaseWrapperState_IDLE];
 	if ([self.delegate respondsToSelector:@selector(databaseWrapper:deleteDatabase:failedWithError:)]) {
 		[self.delegate databaseWrapper:self deleteDatabase:self.databaseUid failedWithError:errorText];
 	}else {
@@ -352,7 +352,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	}
 	TSDatabaseLock *databaseLock = [TSDatabaseLock writeLock];
 	if ([self uploadLockFile:databaseLock overwritingRevision:overwrittenRevision] == YES) {
-		[self setState:UPLOAD_WRITE_LOCKFILE];
+		[self setState:TSDatabaseWrapperState_UPLOAD_WRITE_LOCKFILE];
 	}else {
 		[self reportDatabaseUploadErrorToDelegate:@"Internal error (lockfile write local)"];
 	}
@@ -363,7 +363,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	TSDatabaseLock *databaseLock = [TSDatabaseLock optimisticLock];
 	databaseLock.optimisticLock.comment = self.optimisticLockComment;
 	if ([self uploadLockFile:databaseLock overwritingRevision:overwrittenRevision] == YES) {
-		[self setState:OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE];
+		[self setState:TSDatabaseWrapperState_OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE];
 	}else {
 		[self reportAddOptimisticLockErrorToDelegate:@"Internal error (lockfile write local)"];
 	}
@@ -377,7 +377,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	TSDatabaseLock *databaseLock = [TSDatabaseLock writeLock];
 	databaseLock.writeLock.comment = @"Cleaning up...";
 	if ([self uploadLockFile:databaseLock overwritingRevision:nil] == YES) {
-		[self setState:CLEANUP_WRITE_LOCKFILE];
+		[self setState:TSDatabaseWrapperState_CLEANUP_WRITE_LOCKFILE];
 	}else {
 		[self reportCleanupErrorToDelegate:@"Internal error (lockfile write local)"];
 	}
@@ -391,7 +391,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	TSDatabaseLock *databaseLock = [TSDatabaseLock writeLock];
 	databaseLock.writeLock.comment = @"Deleting this database.";
 	if ([self uploadLockFile:databaseLock overwritingRevision:overwrittenRevision] == YES) {
-		[self setState:DELETE_WRITE_LOCKFILE];
+		[self setState:TSDatabaseWrapperState_DELETE_WRITE_LOCKFILE];
 	}else {
 		[self reportDatabaseDeleteErrorToDelegate:@"Internal error (lockfile write local)"];
 	}
@@ -416,7 +416,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	NSString *backupsFolderName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
 	NSString *backupsFolderRemotePath = [[self.worker rootFolderPath] stringByAppendingPathComponent:backupsFolderName];
 	[self.worker createFolder:backupsFolderRemotePath];
-	[self setState:UPLOAD_CREATE_BACKUP_FOLDER];
+	[self setState:TSDatabaseWrapperState_UPLOAD_CREATE_BACKUP_FOLDER];
 }
 
 - (void)checkDatabaseExists
@@ -424,7 +424,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	NSString *databaseFileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE];
 	NSString *databaseRemotePath = [[self.worker rootFolderPath] stringByAppendingPathComponent:databaseFileName];
 	[self.worker itemExistsAtPath:databaseRemotePath];
-	[self setState:UPLOAD_CHECK_DATABASE_EXISTS];
+	[self setState:TSDatabaseWrapperState_UPLOAD_CHECK_DATABASE_EXISTS];
 }
 
 //first operation of 2-step backup
@@ -437,7 +437,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	NSString *databaseBackupName = [self.remoteBackupId stringByAppendingString:TS_FILE_SUFFIX_DATABASE];
 	NSString *databaseRemotePathNew = [[[self.worker rootFolderPath] stringByAppendingPathComponent:backupsFolderName] stringByAppendingPathComponent:databaseBackupName];
 	[self.worker renameFile:databaseRemotePathOld to:databaseRemotePathNew];
-	[self setState:UPLOAD_MOVE_DATABASE_TO_BACKUP];
+	[self setState:TSDatabaseWrapperState_UPLOAD_MOVE_DATABASE_TO_BACKUP];
 }
 
 - (void)checkMetadataExists
@@ -445,7 +445,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	NSString *metadataFileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA];
 	NSString *metadataRemotePath = [[self.worker rootFolderPath] stringByAppendingPathComponent:metadataFileName];
 	[self.worker itemExistsAtPath:metadataRemotePath];
-	[self setState:UPLOAD_CHECK_METADATA_EXISTS];
+	[self setState:TSDatabaseWrapperState_UPLOAD_CHECK_METADATA_EXISTS];
 }
 
 //second operation of 2-step backup
@@ -457,7 +457,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	NSString *metadataBackupName = [self.remoteBackupId stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA];
 	NSString *metadataRemotePathNew = [[[self.worker rootFolderPath] stringByAppendingPathComponent:backupsFolderName] stringByAppendingPathComponent:metadataBackupName];
 	[self.worker renameFile:metadataRemotePathOld to:metadataRemotePathNew];
-	[self setState:UPLOAD_MOVE_METADATA_TO_BACKUP];
+	[self setState:TSDatabaseWrapperState_UPLOAD_MOVE_METADATA_TO_BACKUP];
 }
 
 - (void)uploadMetadata
@@ -466,7 +466,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	NSString *metadataFileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA];
 	NSString *metadataRemotePath = [[self.worker rootFolderPath] stringByAppendingPathComponent:metadataFileName];
 	[self.worker uploadFile:metadataFilePath toRemotePath:metadataRemotePath];
-	[self setState:UPLOAD_METADATA];
+	[self setState:TSDatabaseWrapperState_UPLOAD_METADATA];
 }
 
 - (void)uploadDatabase
@@ -475,7 +475,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	NSString *databaseFileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE];
 	NSString *databaseRemotePath = [[self.worker rootFolderPath] stringByAppendingPathComponent:databaseFileName];
 	[self.worker uploadFile:databaseFilePath toRemotePath:databaseRemotePath];
-	[self setState:UPLOAD_DATABASE];
+	[self setState:TSDatabaseWrapperState_UPLOAD_DATABASE];
 }
 
 - (void)downloadDatabase
@@ -497,7 +497,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	NSString *backupsFolderName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
 	NSString *backupsFolderRemotePath = [[self.worker rootFolderPath] stringByAppendingPathComponent:backupsFolderName];
 	[self.worker deleteFolder:backupsFolderRemotePath];
-	[self setState:DELETE_BACKUP_FOLDER];
+	[self setState:TSDatabaseWrapperState_DELETE_BACKUP_FOLDER];
 }
 
 - (void)deleteDatabase
@@ -505,7 +505,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	NSString *databaseFileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE];
 	NSString *databaseRemotePath = [[self.worker rootFolderPath] stringByAppendingPathComponent:databaseFileName];
 	[self.worker deleteFile:databaseRemotePath];
-	[self setState:DELETE_DATABASE];
+	[self setState:TSDatabaseWrapperState_DELETE_DATABASE];
 }
 
 - (void)deleteMetadata
@@ -513,7 +513,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	NSString *metadataFileName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA];
 	NSString *metadataRemotePath = [[self.worker rootFolderPath] stringByAppendingPathComponent:metadataFileName];
 	[self.worker deleteFile:metadataRemotePath];
-	[self setState:DELETE_METADATA];
+	[self setState:TSDatabaseWrapperState_DELETE_METADATA];
 }
 
 #pragma mark - TSRemoteStorageDelegate
@@ -522,8 +522,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"List files in folder %@ successful, folder contains %d items", folderPath, [filenames count]);
 	switch (self.state) {
-		case LIST_DATABASE_UIDS: {
-			[self setState:IDLE];
+		case TSDatabaseWrapperState_LIST_DATABASE_UIDS: {
+			[self setState:TSDatabaseWrapperState_IDLE];
 			if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedListDatabaseUids:)]) {
 				[self.delegate databaseWrapper:self finishedListDatabaseUids:[self namesOfMetadataFilesFromFileList:filenames]];
 			}else {
@@ -533,8 +533,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case LIST_BACKUP_IDS: {
-			[self setState:IDLE];
+		case TSDatabaseWrapperState_LIST_BACKUP_IDS: {
+			[self setState:TSDatabaseWrapperState_IDLE];
 			NSArray *backupIds = [TSBackupUtils backupIds:filenames];
 			if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedListBackupIds:forDatabase:)]) {
 				[self.delegate databaseWrapper:self finishedListBackupIds:backupIds forDatabase:self.databaseUid];
@@ -545,7 +545,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case CLEANUP_LIST_LOCKFILES: {
+		case TSDatabaseWrapperState_CLEANUP_LIST_LOCKFILES: {
 			NSMutableArray *deletedPaths = [NSMutableArray array];
 			NSString *realLockfile = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_LOCK];
 			for (NSString *filename in filenames) {
@@ -560,15 +560,15 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 				self.toBeDeleted = [deletedPaths copy];
 				self.toBeDeletedIndex = 0;
 				[self.worker deleteFile:[self.toBeDeleted objectAtIndex:self.toBeDeletedIndex]];
-				[self setState:CLEANUP_DELETE_REDUNDANT_LOCKFILE];
+				[self setState:TSDatabaseWrapperState_CLEANUP_DELETE_REDUNDANT_LOCKFILE];
 			}else {
 				[self listBackupsFolderContent];
-				[self setState:CLEANUP_CHECK_BACKUP_FOLDER_EXISTS];
+				[self setState:TSDatabaseWrapperState_CLEANUP_CHECK_BACKUP_FOLDER_EXISTS];
 			}
 		}
 			break;
 			
-		case CLEANUP_CHECK_BACKUP_FOLDER_EXISTS: {
+		case TSDatabaseWrapperState_CLEANUP_CHECK_BACKUP_FOLDER_EXISTS: {
 			NSMutableArray *deletedPaths = [NSMutableArray array];
 			NSString *backupsFolderName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
 			NSString *backupsFolderRemotePath = [[self.worker rootFolderPath] stringByAppendingPathComponent:backupsFolderName];
@@ -584,15 +584,15 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 				self.toBeDeleted = [deletedPaths copy];
 				self.toBeDeletedIndex = 0;
 				[self.worker deleteFile:[self.toBeDeleted objectAtIndex:self.toBeDeletedIndex]];
-				[self setState:CLEANUP_DELETE_OLD_BACKUP];
+				[self setState:TSDatabaseWrapperState_CLEANUP_DELETE_OLD_BACKUP];
 			}else {
 				[self deleteLockFile];
-				[self setState:CLEANUP_DELETE_LOCKFILE];
+				[self setState:TSDatabaseWrapperState_CLEANUP_DELETE_LOCKFILE];
 			}
 		}
 			break;
 			
-		case DELETE_CHECK_BACKUP_FOLDER_EXISTS: {
+		case TSDatabaseWrapperState_DELETE_CHECK_BACKUP_FOLDER_EXISTS: {
 			NSMutableArray *deletedPaths = [NSMutableArray array];
 			NSString *backupsFolderName = [self.databaseUid stringByAppendingString:TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER];
 			NSString *backupsFolderRemotePath = [[self.worker rootFolderPath] stringByAppendingPathComponent:backupsFolderName];
@@ -605,7 +605,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 				self.toBeDeleted = [deletedPaths copy];
 				self.toBeDeletedIndex = 0;
 				[self.worker deleteFile:[self.toBeDeleted objectAtIndex:self.toBeDeletedIndex]];
-				[self setState:DELETE_BACKUP_FILE];
+				[self setState:TSDatabaseWrapperState_DELETE_BACKUP_FILE];
 			}else {
 				[self deleteBackupsFolder];
 			}
@@ -622,31 +622,31 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"List files in folder %@ failed, error : %@", folderPath, error);
 	switch (self.state) {
-		case LIST_DATABASE_UIDS: {
+		case TSDatabaseWrapperState_LIST_DATABASE_UIDS: {
 			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
 			[self reportListDatabaseUidsErrorToDelegate:[error description]];
 		}
 			break;
 			
-		case LIST_BACKUP_IDS: {
+		case TSDatabaseWrapperState_LIST_BACKUP_IDS: {
 			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
 			[self reportListBackupIdsErrorToDelegate:[error description]];
 		}
 			break;
 			
-		case CLEANUP_LIST_LOCKFILES: {
+		case TSDatabaseWrapperState_CLEANUP_LIST_LOCKFILES: {
 			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
 			[self reportCleanupErrorToDelegate:[error description]];
 		}
 			break;
 			
-		case CLEANUP_CHECK_BACKUP_FOLDER_EXISTS: {
+		case TSDatabaseWrapperState_CLEANUP_CHECK_BACKUP_FOLDER_EXISTS: {
 			if ([error code] == 404) {
 				[self deleteLockFile];
-				[self setState:CLEANUP_DELETE_LOCKFILE];
+				[self setState:TSDatabaseWrapperState_CLEANUP_DELETE_LOCKFILE];
 			}else {
 				NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 					   [self stateString], self.state, [error code], [error domain], [error userInfo]);
@@ -655,7 +655,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case DELETE_CHECK_BACKUP_FOLDER_EXISTS: {
+		case TSDatabaseWrapperState_DELETE_CHECK_BACKUP_FOLDER_EXISTS: {
 			if ([error code] == 404) {
 				[self deleteDatabase];
 			}else {
@@ -676,7 +676,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Item at path %@ existence test successful, exists=%d, isFolder=%d", path, exists, isFolder);
 	switch (self.state) {
-		case UPLOAD_CHECK_BACKUP_FOLDER_EXISTS: {
+		case TSDatabaseWrapperState_UPLOAD_CHECK_BACKUP_FOLDER_EXISTS: {
 			if (exists == YES) {
 				if (isFolder == YES) {
 					[self checkDatabaseExists];
@@ -690,7 +690,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case UPLOAD_CHECK_DATABASE_EXISTS: {
+		case TSDatabaseWrapperState_UPLOAD_CHECK_DATABASE_EXISTS: {
 			if (exists == YES) {
 				if (isFolder == NO) {
 					[self moveDatabaseToBackup];
@@ -704,7 +704,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case UPLOAD_CHECK_METADATA_EXISTS: {
+		case TSDatabaseWrapperState_UPLOAD_CHECK_METADATA_EXISTS: {
 			if (exists == YES) {
 				if (isFolder == NO) {
 					[self moveMetadataToBackup];
@@ -728,21 +728,21 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Item at path %@ existence test failed, error : %@", path, error);
 	switch (self.state) {
-		case UPLOAD_CHECK_BACKUP_FOLDER_EXISTS: {
+		case TSDatabaseWrapperState_UPLOAD_CHECK_BACKUP_FOLDER_EXISTS: {
 			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
 			[self reportDatabaseUploadErrorToDelegate:@"Checking existence of backup folder failed."];
 		}
 			break;
 			
-		case UPLOAD_CHECK_DATABASE_EXISTS: {
+		case TSDatabaseWrapperState_UPLOAD_CHECK_DATABASE_EXISTS: {
 			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
 			[self reportDatabaseUploadErrorToDelegate:@"Checking existence of database file failed."];
 		}
 			break;
 			
-		case UPLOAD_CHECK_METADATA_EXISTS: {
+		case TSDatabaseWrapperState_UPLOAD_CHECK_METADATA_EXISTS: {
 			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
 			[self reportDatabaseUploadErrorToDelegate:@"Checking existence of database metadata failed."];
@@ -759,7 +759,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Create folder %@ successful", folderPath);
 	switch (self.state) {
-		case UPLOAD_CREATE_BACKUP_FOLDER:
+		case TSDatabaseWrapperState_UPLOAD_CREATE_BACKUP_FOLDER:
 			[self checkDatabaseExists];
 			break;
 			
@@ -773,7 +773,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Create folder %@ failed, error : %@", folderPath, error);
 	switch (self.state) {
-		case UPLOAD_CREATE_BACKUP_FOLDER:
+		case TSDatabaseWrapperState_UPLOAD_CREATE_BACKUP_FOLDER:
 			[self reportDatabaseUploadErrorToDelegate:[error description]];
 			break;
 			
@@ -787,7 +787,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Delete folder %@ successful", folderPath);
 	switch (self.state) {
-		case DELETE_BACKUP_FOLDER:
+		case TSDatabaseWrapperState_DELETE_BACKUP_FOLDER:
 			[self deleteDatabase];
 			break;
 			
@@ -801,7 +801,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Delete folder %@ failed, error : %@", folderPath, error);
 	switch (self.state) {
-		case DELETE_BACKUP_FOLDER:
+		case TSDatabaseWrapperState_DELETE_BACKUP_FOLDER:
 			[self reportDatabaseDeleteErrorToDelegate:[error description]];
 			break;
 			
@@ -816,11 +816,11 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 	NSLog (@"Download file %@ successful, has revision %@ and was saved to %@",
 		   fileRemotePath, revision, fileLocalPath);
 	switch (self.state) {
-		case UPLOAD_READ_LOCKFILE: {
+		case TSDatabaseWrapperState_UPLOAD_READ_LOCKFILE: {
 			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:fileLocalPath];
 			if (databaseLock != nil) {
 				if ((databaseLock.writeLock != nil) && ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
-					[self setState:IDLE];
+					[self setState:TSDatabaseWrapperState_IDLE];
 					if ([self.delegate respondsToSelector:@selector(databaseWrapper:uploadForDatabase:failedDueToDatabaseLock:)]) {
 						[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					}else {
@@ -828,7 +828,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 							   NSStringFromClass([self.delegate class]));
 					}
 				}else if ((databaseLock.optimisticLock != nil) && ([databaseLock.optimisticLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
-					[self setState:UPLOAD_STALLED_OPTIMISTIC_LOCK];
+					[self setState:TSDatabaseWrapperState_UPLOAD_STALLED_OPTIMISTIC_LOCK];
 					self.remoteFileRevision = revision;
 					if ([self.delegate respondsToSelector:@selector(databaseWrapper:uploadForDatabase:isStalledBecauseOfOptimisticLock:)]) {
 						[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid isStalledBecauseOfOptimisticLock:databaseLock];
@@ -846,14 +846,14 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case OPTIMISTIC_LOCK_ADD_READ_LOCKFILE: {
+		case TSDatabaseWrapperState_OPTIMISTIC_LOCK_ADD_READ_LOCKFILE: {
 			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:fileLocalPath];
 			if (databaseLock != nil) {
 				if ((databaseLock.optimisticLock == nil) || ([databaseLock.optimisticLock.uid isEqualToString:[TSSharedState instanceUID]] == YES)) {
 					if (databaseLock.writeLock == nil) {
 						[self uploadOptimisticLock:revision];
 					}else {
-						[self setState:IDLE];
+						[self setState:TSDatabaseWrapperState_IDLE];
 						if ([self.delegate respondsToSelector:@selector(databaseWrapper:addingOptimisticLockForDatabase:failedDueToDatabaseLock:)]) {
 							[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 						}else {
@@ -862,7 +862,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 						}
 					}
 				}else {
-					[self setState:IDLE];
+					[self setState:TSDatabaseWrapperState_IDLE];
 					if ([self.delegate respondsToSelector:@selector(databaseWrapper:addingOptimisticLockForDatabase:failedDueToDatabaseLock:)]) {
 						[self.delegate databaseWrapper:self addingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					}else {
@@ -877,15 +877,15 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE: {
+		case TSDatabaseWrapperState_OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE: {
 			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:fileLocalPath];
 			if (databaseLock != nil) {
 				if ((databaseLock.optimisticLock != nil) && ([databaseLock.optimisticLock.uid isEqualToString:[TSSharedState instanceUID]] == YES)) {
 					if (databaseLock.writeLock == nil) {
 						[self deleteLockFile];
-						[self setState:OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE];
+						[self setState:TSDatabaseWrapperState_OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE];
 					}else {
-						[self setState:IDLE];
+						[self setState:TSDatabaseWrapperState_IDLE];
 						if ([self.delegate respondsToSelector:@selector(databaseWrapper:removingOptimisticLockForDatabase:failedDueToDatabaseLock:)]) {
 							[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 						}else {
@@ -894,7 +894,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 						}
 					}
 				}else {
-					[self setState:IDLE];
+					[self setState:TSDatabaseWrapperState_IDLE];
 					if ([self.delegate respondsToSelector:@selector(databaseWrapper:removingOptimisticLockForDatabase:failedDueToDatabaseLock:)]) {
 						[self.delegate databaseWrapper:self removingOptimisticLockForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					}else {
@@ -909,14 +909,14 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case UPLOAD_CHECK_LOCKFILE:
-		case UPLOAD_RECHECK_LOCKFILE:
+		case TSDatabaseWrapperState_UPLOAD_CHECK_LOCKFILE:
+		case TSDatabaseWrapperState_UPLOAD_RECHECK_LOCKFILE:
 		{
 			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:fileLocalPath];
 			if (databaseLock != nil) {
 				if ((databaseLock.writeLock == nil) || ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
 					NSLog (@"Lockfile check failed, the lock is not held by the current device");
-					[self setState:IDLE];
+					[self setState:TSDatabaseWrapperState_IDLE];
 					if ([self.delegate respondsToSelector:@selector(databaseWrapper:uploadForDatabase:failedDueToDatabaseLock:)]) {
 						[self.delegate databaseWrapper:self uploadForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					}else {
@@ -924,19 +924,19 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 							   NSStringFromClass([self.delegate class]));
 					}
 				}else {
-					if (self.state == UPLOAD_CHECK_LOCKFILE) {
+					if (self.state == TSDatabaseWrapperState_UPLOAD_CHECK_LOCKFILE) {
 						NSLog (@"Lockfile check ok, waiting a little more then performing a recheck");
-						[self setState:WAITING];
+						[self setState:TSDatabaseWrapperState_WAITING];
 						[NSThread sleepForTimeInterval:[TSUtils randomDoubleBetween:1.5 and:4]];
 						[self downloadLockFile];
-						[self setState:UPLOAD_RECHECK_LOCKFILE];
+						[self setState:TSDatabaseWrapperState_UPLOAD_RECHECK_LOCKFILE];
 					}else {
 						NSLog (@"Lockfile re-check ok, proceeding with backup");
 						if ([self.delegate respondsToSelector:@selector(databaseWrapper:successfullyLockedDatabase:)]) {
 							[self.delegate databaseWrapper:self successfullyLockedDatabase:self.databaseUid];
 						}
 						[self checkBackupsFolderExistence];
-						[self setState:UPLOAD_CHECK_BACKUP_FOLDER_EXISTS];
+						[self setState:TSDatabaseWrapperState_UPLOAD_CHECK_BACKUP_FOLDER_EXISTS];
 					}
 				}
 			}else {
@@ -946,10 +946,10 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case CLEANUP_READ_LOCKFILE: {
+		case TSDatabaseWrapperState_CLEANUP_READ_LOCKFILE: {
 			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:fileLocalPath];
 			if (databaseLock != nil) {
-				[self setState:IDLE];
+				[self setState:TSDatabaseWrapperState_IDLE];
 				if ([self.delegate respondsToSelector:@selector(databaseWrapper:cleanupForDatabase:failedDueToDatabaseLock:)]) {
 					[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 				}else {
@@ -963,13 +963,13 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case CLEANUP_CHECK_LOCKFILE:
+		case TSDatabaseWrapperState_CLEANUP_CHECK_LOCKFILE:
 		{
 			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:fileLocalPath];
 			if (databaseLock != nil) {
 				if ((databaseLock.writeLock == nil) || ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
 					NSLog (@"Lockfile check failed, the lock is not held by the current device");
-					[self setState:IDLE];
+					[self setState:TSDatabaseWrapperState_IDLE];
 					if ([self.delegate respondsToSelector:@selector(databaseWrapper:cleanupForDatabase:failedDueToDatabaseLock:)]) {
 						[self.delegate databaseWrapper:self cleanupForDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					}else {
@@ -978,7 +978,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 					}
 				}else {
 					[self.worker listFilesInFolder:[self.worker rootFolderPath]];
-					[self setState:CLEANUP_LIST_LOCKFILES];
+					[self setState:TSDatabaseWrapperState_CLEANUP_LIST_LOCKFILES];
 				}
 			}else {
 				NSLog (@"*** INTERNAL ERROR : download of lockfile succeeded but the file could not be read correctly!");
@@ -987,14 +987,14 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case DOWNLOAD_METADATA: {
+		case TSDatabaseWrapperState_DOWNLOAD_METADATA: {
 			[self downloadDatabase];
-			[self setState:DOWNLOAD_DATABASE];
+			[self setState:TSDatabaseWrapperState_DOWNLOAD_DATABASE];
 		}
 			break;
 			
-		case DOWNLOAD_DATABASE: {
-			[self setState:IDLE];
+		case TSDatabaseWrapperState_DOWNLOAD_DATABASE: {
+			[self setState:TSDatabaseWrapperState_IDLE];
 			if (self.remoteBackupId == nil) {
 				if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedDownloadingDatabase:andSavedMetadataFileAs:andDatabaseFileAs:)]) {
 					[self.delegate databaseWrapper:self finishedDownloadingDatabase:self.databaseUid
@@ -1017,12 +1017,12 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case DELETE_READ_LOCKFILE: {
+		case TSDatabaseWrapperState_DELETE_READ_LOCKFILE: {
 			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:fileLocalPath];
 			if (databaseLock != nil) {
 				if (((databaseLock.writeLock != nil) && ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO))
 						|| ((databaseLock.optimisticLock != nil) && ([databaseLock.optimisticLock.uid isEqualToString:[TSSharedState instanceUID]] == NO))){
-					[self setState:IDLE];
+					[self setState:TSDatabaseWrapperState_IDLE];
 					if ([self.delegate respondsToSelector:@selector(databaseWrapper:deleteDatabase:failedDueToDatabaseLock:)]) {
 						[self.delegate databaseWrapper:self deleteDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					}else {
@@ -1039,14 +1039,14 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 
-		case DELETE_CHECK_LOCKFILE:
-		case DELETE_RECHECK_LOCKFILE:
+		case TSDatabaseWrapperState_DELETE_CHECK_LOCKFILE:
+		case TSDatabaseWrapperState_DELETE_RECHECK_LOCKFILE:
 		{
 			TSDatabaseLock *databaseLock = [TSIOUtils loadDatabaseLockFromFile:fileLocalPath];
 			if (databaseLock != nil) {
 				if ((databaseLock.writeLock == nil) || ([databaseLock.writeLock.uid isEqualToString:[TSSharedState instanceUID]] == NO)) {
 					NSLog (@"Lockfile check failed, the lock is not held by the current device");
-					[self setState:IDLE];
+					[self setState:TSDatabaseWrapperState_IDLE];
 					if ([self.delegate respondsToSelector:@selector(databaseWrapper:deleteDatabase:failedDueToDatabaseLock:)]) {
 						[self.delegate databaseWrapper:self deleteDatabase:self.databaseUid failedDueToDatabaseLock:databaseLock];
 					}else {
@@ -1054,19 +1054,19 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 							   NSStringFromClass([self.delegate class]));
 					}
 				}else {
-					if (self.state == DELETE_CHECK_LOCKFILE) {
+					if (self.state == TSDatabaseWrapperState_DELETE_CHECK_LOCKFILE) {
 						NSLog (@"Lockfile check ok, waiting a little more then performing a recheck");
-						[self setState:WAITING];
+						[self setState:TSDatabaseWrapperState_WAITING];
 						[NSThread sleepForTimeInterval:[TSUtils randomDoubleBetween:2.5 and:6]];
 						[self downloadLockFile];
-						[self setState:DELETE_RECHECK_LOCKFILE];
+						[self setState:TSDatabaseWrapperState_DELETE_RECHECK_LOCKFILE];
 					}else {
 						NSLog (@"Lockfile re-check ok, proceeding with deletion");
 						if ([self.delegate respondsToSelector:@selector(databaseWrapper:successfullyLockedDatabase:)]) {
 							[self.delegate databaseWrapper:self successfullyLockedDatabase:self.databaseUid];
 						}
 						[self listBackupsFolderContent];
-						[self setState:DELETE_CHECK_BACKUP_FOLDER_EXISTS];
+						[self setState:TSDatabaseWrapperState_DELETE_CHECK_BACKUP_FOLDER_EXISTS];
 					}
 				}
 			}else {
@@ -1091,7 +1091,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Download file %@ failed, error : %@", fileRemotePath, error);
 	switch (self.state) {
-		case UPLOAD_READ_LOCKFILE: {
+		case TSDatabaseWrapperState_UPLOAD_READ_LOCKFILE: {
 			if ([error code] == 404) {
 				[self uploadWriteLock:nil];
 			}else {
@@ -1102,7 +1102,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case OPTIMISTIC_LOCK_ADD_READ_LOCKFILE: {
+		case TSDatabaseWrapperState_OPTIMISTIC_LOCK_ADD_READ_LOCKFILE: {
 			if ([error code] == 404) {
 				[self uploadOptimisticLock:nil];
 			}else {
@@ -1113,10 +1113,10 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE: {
+		case TSDatabaseWrapperState_OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE: {
 			if ([error code] == 404) {
 				NSLog (@"Removal of optimistic lock is actually not needed...");
-				[self setState:IDLE];
+				[self setState:TSDatabaseWrapperState_IDLE];
 				if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedRemovingOptimisticLockForDatabase:)]) {
 					[self.delegate databaseWrapper:self finishedRemovingOptimisticLockForDatabase:self.databaseUid];
 				}else {
@@ -1131,15 +1131,15 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case UPLOAD_CHECK_LOCKFILE:
-		case UPLOAD_RECHECK_LOCKFILE:
+		case TSDatabaseWrapperState_UPLOAD_CHECK_LOCKFILE:
+		case TSDatabaseWrapperState_UPLOAD_RECHECK_LOCKFILE:
 		{
 			NSLog (@"!!!REMOTE FILES MAY BE INCONSISTENT!!! Lockfile download failed :: %@", [error debugDescription]);
 			[self reportDatabaseUploadErrorToDelegate:@"Failed to check the recently uploaded lockfile!"];
 		}
 			break;
 			
-		case CLEANUP_READ_LOCKFILE: {
+		case TSDatabaseWrapperState_CLEANUP_READ_LOCKFILE: {
 			if ([error code] == 404) {
 				[self uploadCleanupLock];
 			}else {
@@ -1150,28 +1150,28 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case CLEANUP_CHECK_LOCKFILE:
+		case TSDatabaseWrapperState_CLEANUP_CHECK_LOCKFILE:
 		{
 			NSLog (@"Lockfile download failed :: %@", [error debugDescription]);
 			[self reportCleanupErrorToDelegate:@"Failed to check the recently uploaded lockfile!"];
 		}
 			break;
 			
-		case DOWNLOAD_METADATA: {
+		case TSDatabaseWrapperState_DOWNLOAD_METADATA: {
 			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
 			[self reportDownloadErrorToDelegate:@"Download of the metadata file failed."];
 		}
 			break;
 			
-		case DOWNLOAD_DATABASE: {
+		case TSDatabaseWrapperState_DOWNLOAD_DATABASE: {
 			NSLog (@"Unexpected error in state %@ (%d) :: code=%d, domain=%@, info=%@",
 				   [self stateString], self.state, [error code], [error domain], [error userInfo]);
 			[self reportDownloadErrorToDelegate:@"Download of the database file failed."];
 		}
 			break;
 			
-		case DELETE_READ_LOCKFILE: {
+		case TSDatabaseWrapperState_DELETE_READ_LOCKFILE: {
 			if ([error code] == 404) {
 				[self uploadDeleteLock:nil];
 			}else {
@@ -1182,8 +1182,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 
-		case DELETE_CHECK_LOCKFILE:
-		case DELETE_RECHECK_LOCKFILE:
+		case TSDatabaseWrapperState_DELETE_CHECK_LOCKFILE:
+		case TSDatabaseWrapperState_DELETE_RECHECK_LOCKFILE:
 		{
 			NSLog (@"!!!REMOTE FILES MAY BE INCONSISTENT!!! Lockfile download failed :: %@", [error debugDescription]);
 			[self reportDatabaseDeleteErrorToDelegate:@"Failed to check the recently uploaded lockfile!"];
@@ -1200,16 +1200,16 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Upload file %@ successful, remote path is %@", fileLocalPath, fileRemotePath);
 	switch (self.state) {
-		case UPLOAD_WRITE_LOCKFILE: {
+		case TSDatabaseWrapperState_UPLOAD_WRITE_LOCKFILE: {
 			NSLog (@"Lockfile uploaded successfully, waiting 2 seconds before checking the lockfile");
-			[self setState:WAITING];
+			[self setState:TSDatabaseWrapperState_WAITING];
 			[NSThread sleepForTimeInterval:2];
 			[self downloadLockFile];
-			[self setState:UPLOAD_CHECK_LOCKFILE];
+			[self setState:TSDatabaseWrapperState_UPLOAD_CHECK_LOCKFILE];
 		}
 			break;
 			
-		case UPLOAD_METADATA: {
+		case TSDatabaseWrapperState_UPLOAD_METADATA: {
 			if ([self.delegate respondsToSelector:@selector(databaseWrapper:uploadedMetadataFileForDatabase:)]) {
 				[self.delegate databaseWrapper:self uploadedMetadataFileForDatabase:self.databaseUid];
 			}
@@ -1217,17 +1217,17 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case UPLOAD_DATABASE: {
+		case TSDatabaseWrapperState_UPLOAD_DATABASE: {
 			if ([self.delegate respondsToSelector:@selector(databaseWrapper:uploadedMainFileForDatabase:)]) {
 				[self.delegate databaseWrapper:self uploadedMainFileForDatabase:self.databaseUid];
 			}
 			[self deleteLockFile];
-			[self setState:UPLOAD_DELETE_LOCKFILE];
+			[self setState:TSDatabaseWrapperState_UPLOAD_DELETE_LOCKFILE];
 		}
 			break;
 			
-		case OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE: {
-			[self setState:IDLE];
+		case TSDatabaseWrapperState_OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE: {
+			[self setState:TSDatabaseWrapperState_IDLE];
 			if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedAddingOptimisticLockForDatabase:)]) {
 				[self.delegate databaseWrapper:self finishedAddingOptimisticLockForDatabase:self.databaseUid];
 			}else {
@@ -1237,21 +1237,21 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case CLEANUP_WRITE_LOCKFILE: {
+		case TSDatabaseWrapperState_CLEANUP_WRITE_LOCKFILE: {
 			NSLog (@"Lockfile uploaded successfully, waiting 2 seconds before checking the lockfile");
-			[self setState:WAITING];
+			[self setState:TSDatabaseWrapperState_WAITING];
 			[NSThread sleepForTimeInterval:2];
 			[self downloadLockFile];
-			[self setState:CLEANUP_CHECK_LOCKFILE];
+			[self setState:TSDatabaseWrapperState_CLEANUP_CHECK_LOCKFILE];
 		}
 			break;
 			
-		case DELETE_WRITE_LOCKFILE: {
+		case TSDatabaseWrapperState_DELETE_WRITE_LOCKFILE: {
 			NSLog (@"Lockfile uploaded successfully, waiting 3 seconds before checking the lockfile");
-			[self setState:WAITING];
+			[self setState:TSDatabaseWrapperState_WAITING];
 			[NSThread sleepForTimeInterval:3];
 			[self downloadLockFile];
-			[self setState:DELETE_CHECK_LOCKFILE];
+			[self setState:TSDatabaseWrapperState_DELETE_CHECK_LOCKFILE];
 		}
 			break;
 			
@@ -1265,21 +1265,21 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Upload file %@ failed, error : %@", fileLocalPath, error);
 	switch (self.state) {
-		case UPLOAD_WRITE_LOCKFILE:
-		case UPLOAD_METADATA:
-		case UPLOAD_DATABASE:
+		case TSDatabaseWrapperState_UPLOAD_WRITE_LOCKFILE:
+		case TSDatabaseWrapperState_UPLOAD_METADATA:
+		case TSDatabaseWrapperState_UPLOAD_DATABASE:
 			[self reportDatabaseUploadErrorToDelegate:[error description]];
 			break;
 			
-		case OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE:
+		case TSDatabaseWrapperState_OPTIMISTIC_LOCK_ADD_WRITE_LOCKFILE:
 			[self reportAddOptimisticLockErrorToDelegate:[error description]];
 			break;
 			
-		case CLEANUP_WRITE_LOCKFILE:
+		case TSDatabaseWrapperState_CLEANUP_WRITE_LOCKFILE:
 			[self reportCleanupErrorToDelegate:[error description]];
 			break;
 			
-		case DELETE_WRITE_LOCKFILE:
+		case TSDatabaseWrapperState_DELETE_WRITE_LOCKFILE:
 			[self reportDatabaseDeleteErrorToDelegate:[error description]];
 			break;
 			
@@ -1293,11 +1293,11 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Delete file %@ successful", fileRemotePath);
 	switch (self.state) {
-		case UPLOAD_DELETE_LOCKFILE: {
+		case TSDatabaseWrapperState_UPLOAD_DELETE_LOCKFILE: {
 			if ([self.delegate respondsToSelector:@selector(databaseWrapper:successfullyUnlockedDatabase:)]) {
 				[self.delegate databaseWrapper:self successfullyUnlockedDatabase:self.databaseUid];
 			}
-			[self setState:IDLE];
+			[self setState:TSDatabaseWrapperState_IDLE];
 			if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedUploadingDatabase:)]) {
 				[self.delegate databaseWrapper:self finishedUploadingDatabase:self.databaseUid];
 			}else {
@@ -1307,8 +1307,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE: {
-			[self setState:IDLE];
+		case TSDatabaseWrapperState_OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE: {
+			[self setState:TSDatabaseWrapperState_IDLE];
 			if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedRemovingOptimisticLockForDatabase:)]) {
 				[self.delegate databaseWrapper:self finishedRemovingOptimisticLockForDatabase:self.databaseUid];
 			}else {
@@ -1318,8 +1318,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case CLEANUP_DELETE_REDUNDANT_LOCKFILE:
-		case CLEANUP_DELETE_OLD_BACKUP: {
+		case TSDatabaseWrapperState_CLEANUP_DELETE_REDUNDANT_LOCKFILE:
+		case TSDatabaseWrapperState_CLEANUP_DELETE_OLD_BACKUP: {
 			if ([self.delegate respondsToSelector:@selector(databaseWrapper:cleanupDeletedFile:)]) {
 				[self.delegate databaseWrapper:self cleanupDeletedFile:fileRemotePath];
 			}
@@ -1327,19 +1327,19 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 			if (self.toBeDeletedIndex < [self.toBeDeleted count]) {
 				[self.worker deleteFile:[self.toBeDeleted objectAtIndex:self.toBeDeletedIndex]];
 			}else {
-				if (self.state == CLEANUP_DELETE_REDUNDANT_LOCKFILE) {
+				if (self.state == TSDatabaseWrapperState_CLEANUP_DELETE_REDUNDANT_LOCKFILE) {
 					[self listBackupsFolderContent];
-					[self setState:CLEANUP_CHECK_BACKUP_FOLDER_EXISTS];
+					[self setState:TSDatabaseWrapperState_CLEANUP_CHECK_BACKUP_FOLDER_EXISTS];
 				}else {
 					[self deleteLockFile];
-					[self setState:CLEANUP_DELETE_LOCKFILE];
+					[self setState:TSDatabaseWrapperState_CLEANUP_DELETE_LOCKFILE];
 				}
 			}
 		}
 			break;
 			
-		case CLEANUP_DELETE_LOCKFILE: {
-			[self setState:IDLE];
+		case TSDatabaseWrapperState_CLEANUP_DELETE_LOCKFILE: {
+			[self setState:TSDatabaseWrapperState_IDLE];
 			if ([self.delegate respondsToSelector:@selector(databaseWrapper:finishedCleanupForDatabase:)]) {
 				[self.delegate databaseWrapper:self finishedCleanupForDatabase:self.databaseUid];
 			}else {
@@ -1349,7 +1349,7 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case DELETE_BACKUP_FILE: {
+		case TSDatabaseWrapperState_DELETE_BACKUP_FILE: {
 			self.toBeDeletedIndex = self.toBeDeletedIndex + 1;
 			if (self.toBeDeletedIndex < [self.toBeDeleted count]) {
 				[self.worker deleteFile:[self.toBeDeleted objectAtIndex:self.toBeDeletedIndex]];
@@ -1359,18 +1359,18 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 		}
 			break;
 			
-		case DELETE_DATABASE:
+		case TSDatabaseWrapperState_DELETE_DATABASE:
 			[self deleteMetadata];
 			break;
 			
-		case DELETE_METADATA: {
+		case TSDatabaseWrapperState_DELETE_METADATA: {
 			[self deleteLockFile];
-			[self setState:DELETE_LOCKFILE];
+			[self setState:TSDatabaseWrapperState_DELETE_LOCKFILE];
 		}
 			break;
 			
-		case DELETE_LOCKFILE: {
-			[self setState:IDLE];
+		case TSDatabaseWrapperState_DELETE_LOCKFILE: {
+			[self setState:TSDatabaseWrapperState_IDLE];
 			if ([self.delegate respondsToSelector:@selector(databaseWrapper:deletedDatabase:)]) {
 				[self.delegate databaseWrapper:self deletedDatabase:self.databaseUid];
 			}else {
@@ -1390,24 +1390,24 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Delete file %@ failed, error : %@", fileRemotePath, error);
 	switch (self.state) {
-		case UPLOAD_DELETE_LOCKFILE: 
+		case TSDatabaseWrapperState_UPLOAD_DELETE_LOCKFILE: 
 			[self reportDatabaseUploadErrorToDelegate:[error description]];
 			break;
 			
-		case OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE: 
+		case TSDatabaseWrapperState_OPTIMISTIC_LOCK_REMOVE_DELETE_LOCKFILE: 
 			[self reportRemoveOptimisticLockErrorToDelegate:[error description]];
 			break;
 			
-		case CLEANUP_DELETE_REDUNDANT_LOCKFILE:
-		case CLEANUP_DELETE_OLD_BACKUP:
-		case CLEANUP_DELETE_LOCKFILE: 
+		case TSDatabaseWrapperState_CLEANUP_DELETE_REDUNDANT_LOCKFILE:
+		case TSDatabaseWrapperState_CLEANUP_DELETE_OLD_BACKUP:
+		case TSDatabaseWrapperState_CLEANUP_DELETE_LOCKFILE: 
 			[self reportCleanupErrorToDelegate:[error description]];
 			break;
 			
-		case DELETE_BACKUP_FILE:
-		case DELETE_DATABASE:
-		case DELETE_METADATA:
-		case DELETE_LOCKFILE:
+		case TSDatabaseWrapperState_DELETE_BACKUP_FILE:
+		case TSDatabaseWrapperState_DELETE_DATABASE:
+		case TSDatabaseWrapperState_DELETE_METADATA:
+		case TSDatabaseWrapperState_DELETE_LOCKFILE:
 			[self reportDatabaseDeleteErrorToDelegate:[error description]];
 			break;
 			
@@ -1421,11 +1421,11 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Rename file %@ successful, new path is %@", oldPath, newPath);
 	switch (self.state) {
-		case UPLOAD_MOVE_DATABASE_TO_BACKUP: 
+		case TSDatabaseWrapperState_UPLOAD_MOVE_DATABASE_TO_BACKUP: 
 			[self checkMetadataExists];
 			break;
 			
-		case UPLOAD_MOVE_METADATA_TO_BACKUP: {
+		case TSDatabaseWrapperState_UPLOAD_MOVE_METADATA_TO_BACKUP: {
 			NSLog (@"Finished creating backup %@ for database %@", self.remoteBackupId, self.databaseUid);
 			if ([self.delegate respondsToSelector:@selector(databaseWrapper:createdBackup:forDatabase::)]) {
 				[self.delegate databaseWrapper:self createdBackup:self.remoteBackupId forDatabase:self.databaseUid];
@@ -1444,8 +1444,8 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 {
 	NSLog (@"Rename file from %@ to %@ failed, error : %@", oldPath, newPath, error);
 	switch (self.state) {
-		case UPLOAD_MOVE_DATABASE_TO_BACKUP:
-		case UPLOAD_MOVE_METADATA_TO_BACKUP: 
+		case TSDatabaseWrapperState_UPLOAD_MOVE_DATABASE_TO_BACKUP:
+		case TSDatabaseWrapperState_UPLOAD_MOVE_METADATA_TO_BACKUP: 
 			[self reportDatabaseUploadErrorToDelegate:[error description]];
 			break;
 			
@@ -1459,19 +1459,19 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (BOOL)busy
 {
-	return (self.state != IDLE);
+	return (self.state != TSDatabaseWrapperState_IDLE);
 }
 
 - (BOOL)uploadStalledOptimisticLock
 {
-	return (self.state == UPLOAD_STALLED_OPTIMISTIC_LOCK);
+	return (self.state == TSDatabaseWrapperState_UPLOAD_STALLED_OPTIMISTIC_LOCK);
 }
 
 - (BOOL)listDatabaseUids
 {
-	if (self.state == IDLE) {
+	if (self.state == TSDatabaseWrapperState_IDLE) {
 		[self.worker listFilesInFolder:[self.worker rootFolderPath]];
-		[self setState:LIST_DATABASE_UIDS];
+		[self setState:TSDatabaseWrapperState_LIST_DATABASE_UIDS];
 		return YES;
 	}
 	NSLog (@"Rejected listDatabaseUids request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
@@ -1480,10 +1480,10 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (BOOL)listBackupIdsForDatabase:(NSString *)databaseUid
 {
-	if (self.state == IDLE) {
+	if (self.state == TSDatabaseWrapperState_IDLE) {
 		self.databaseUid = databaseUid;
 		[self listBackupsFolderContent];
-		[self setState:LIST_BACKUP_IDS];
+		[self setState:TSDatabaseWrapperState_LIST_BACKUP_IDS];
 		return YES;
 	}
 	NSLog (@"Rejected listBackupIdsForDatabase request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
@@ -1493,10 +1493,10 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 - (BOOL)uploadDatabaseWithUid:(NSString *)databaseUid
 {
 //	NSLog (@"uploadDatabaseWithUid uid : %@", databaseUid);
-	if (self.state == IDLE) {
+	if (self.state == TSDatabaseWrapperState_IDLE) {
 		self.databaseUid = databaseUid;
 		[self downloadLockFile];
-		[self setState:UPLOAD_READ_LOCKFILE];
+		[self setState:TSDatabaseWrapperState_UPLOAD_READ_LOCKFILE];
 		return YES;
 	}
 	NSLog (@"Rejected uploadDatabaseWithUid request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
@@ -1506,13 +1506,13 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 - (BOOL)continueUploadAndOverwriteOptimisticLock
 {
 	switch (self.state) {
-		case UPLOAD_STALLED_OPTIMISTIC_LOCK: {
+		case TSDatabaseWrapperState_UPLOAD_STALLED_OPTIMISTIC_LOCK: {
 			[self uploadWriteLock:self.remoteFileRevision];
 			return YES;
 		}
 			
 		default:
-			NSLog (@"Received continue upload and overwrite optimistic lock permission but the current state %@ (%d) is not the correct one %@ (%d)", [self stateString], self.state, [TSDatabaseWrapper stateString:UPLOAD_STALLED_OPTIMISTIC_LOCK], UPLOAD_STALLED_OPTIMISTIC_LOCK);
+			NSLog (@"Received continue upload and overwrite optimistic lock permission but the current state %@ (%d) is not the correct one %@ (%d)", [self stateString], self.state, [TSDatabaseWrapper stateString:TSDatabaseWrapperState_UPLOAD_STALLED_OPTIMISTIC_LOCK], TSDatabaseWrapperState_UPLOAD_STALLED_OPTIMISTIC_LOCK);
 			return NO;
 	}
 }
@@ -1520,9 +1520,9 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 - (BOOL)cancelUpload
 {
 	switch (self.state) {
-		case UPLOAD_STALLED_OPTIMISTIC_LOCK:
+		case TSDatabaseWrapperState_UPLOAD_STALLED_OPTIMISTIC_LOCK:
 			//		case BLA_BLA:
-			[self setState:IDLE];
+			[self setState:TSDatabaseWrapperState_IDLE];
 			return YES;
 			
 		default:
@@ -1533,11 +1533,11 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (BOOL)addOptimisticLockForDatabase:(NSString *)databaseUid comment:(NSString *)comment
 {
-	if (self.state == IDLE) {
+	if (self.state == TSDatabaseWrapperState_IDLE) {
 		self.databaseUid = databaseUid;
 		self.optimisticLockComment = comment;
 		[self downloadLockFile];
-		[self setState:OPTIMISTIC_LOCK_ADD_READ_LOCKFILE];
+		[self setState:TSDatabaseWrapperState_OPTIMISTIC_LOCK_ADD_READ_LOCKFILE];
 		return YES;
 	}
 	NSLog (@"Rejected addOptimisticLockForDatabase request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
@@ -1546,10 +1546,10 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (BOOL)removeOptimisticLockForDatabase:(NSString *)databaseUid
 {
-	if (self.state == IDLE) {
+	if (self.state == TSDatabaseWrapperState_IDLE) {
 		self.databaseUid = databaseUid;
 		[self downloadLockFile];
-		[self setState:OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE];
+		[self setState:TSDatabaseWrapperState_OPTIMISTIC_LOCK_REMOVE_READ_LOCKFILE];
 		return YES;
 	}
 	NSLog (@"Rejected removeOptimisticLockForDatabase request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
@@ -1558,10 +1558,10 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (BOOL)cleanupDatabase:(NSString *)databaseUid
 {
-	if (self.state == IDLE) {
+	if (self.state == TSDatabaseWrapperState_IDLE) {
 		self.databaseUid = databaseUid;
 		[self downloadLockFile];
-		[self setState:CLEANUP_READ_LOCKFILE];
+		[self setState:TSDatabaseWrapperState_CLEANUP_READ_LOCKFILE];
 		return YES;
 	}
 	NSLog (@"Rejected cleanupDatabase request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
@@ -1570,13 +1570,13 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (BOOL)downloadDatabase:(NSString *)databaseUid
 {
-	if (self.state == IDLE) {
+	if (self.state == TSDatabaseWrapperState_IDLE) {
 		self.downloadDatabaseRemotePrefix = [self downloadRemotePrefix:databaseUid];
 		self.downloadDatabaseLocalPrefix = [self downloadLocalPrefix:databaseUid];
 		self.databaseUid = databaseUid;
 		self.remoteBackupId = nil;
 		[self downloadDatabaseMetadata];
-		[self setState:DOWNLOAD_METADATA];
+		[self setState:TSDatabaseWrapperState_DOWNLOAD_METADATA];
 		return YES;
 	}
 	NSLog (@"Rejected downloadDatabase request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
@@ -1585,13 +1585,13 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (BOOL)downloadBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid
 {
-	if (self.state == IDLE) {
+	if (self.state == TSDatabaseWrapperState_IDLE) {
 		self.downloadDatabaseRemotePrefix = [self downloadRemotePrefix:databaseUid forBackup:backupId];
 		self.downloadDatabaseLocalPrefix = [self downloadLocalPrefix:databaseUid forBackup:backupId];
 		self.databaseUid = databaseUid;
 		self.remoteBackupId = backupId;
 		[self downloadDatabaseMetadata];
-		[self setState:DOWNLOAD_METADATA];
+		[self setState:TSDatabaseWrapperState_DOWNLOAD_METADATA];
 		return YES;
 	}
 	NSLog (@"Rejected downloadDatabaseBackup request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);
@@ -1600,10 +1600,10 @@ toBeDeleted = _toBeDeleted, toBeDeletedIndex = _toBeDeletedIndex;
 
 - (BOOL)deleteDatabase:(NSString *)databaseUid
 {
-	if (self.state == IDLE) {
+	if (self.state == TSDatabaseWrapperState_IDLE) {
 		self.databaseUid = databaseUid;
 		[self downloadLockFile];
-		[self setState:DELETE_READ_LOCKFILE];
+		[self setState:TSDatabaseWrapperState_DELETE_READ_LOCKFILE];
 		return YES;
 	}
 	NSLog (@"Rejected deleteDatabase request, wrapper is not idle (current state is %@ (%d)", [self stateString], self.state);

@@ -115,12 +115,16 @@
 	}else {
 		TSDBItem *item = [self.group.items objectAtIndex:indexPath.row];
 		
-		if ([TSStringUtils isBlank:item.defaultFieldName]) {
+		if ([TSStringUtils isBlank:item.quickCopyFieldName]) {
 			UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 			
 			cell.imageView.image = [UIImage imageNamed:@"file.png"];
 			cell.textLabel.text = item.name;
-			cell.detailTextLabel.text = @"TBD";
+			if ([TSStringUtils isNotBlank:item.subtitleFieldName]) {
+				cell.detailTextLabel.text = [item fieldNamed:item.subtitleFieldName].value;
+			}else {
+				cell.detailTextLabel.text = nil;
+			}
 			
 			return cell;
 		}else {
@@ -129,10 +133,15 @@
 			UILabel *label = (UILabel *)[cell viewWithTag:1];
 			label.text = item.name;
 			label = (UILabel *)[cell viewWithTag:2];
-			label.text = @"TBD";
+			if ([TSStringUtils isNotBlank:item.subtitleFieldName]) {
+				label.text = [item fieldNamed:item.subtitleFieldName].value;
+			}else {
+				label.text = nil;
+			}
 			
 			return cell;
 		}
+		
 	}
     
 }
@@ -234,7 +243,7 @@
 	
 	UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
 	TSDBItem *item = [self.group.items objectAtIndex:indexPath.row];
-	NSString *fieldName = item.defaultFieldName;
+	NSString *fieldName = item.quickCopyFieldName;
 	TSDBItemField *itemField = [item fieldNamed:fieldName];
 	if (itemField.encrypted) {
 		pasteboard.string = [TSCryptoUtils tanukiDecryptField:itemField.value belongingToItem:item.name usingSecret:[[TSSharedState sharedState] openDatabasePassword]];
@@ -268,7 +277,11 @@
 			TSDBGroup *subgroup = [self.group.subgroups lastObject];
 			TSDBGroupViewController *aux = [self.storyboard instantiateViewControllerWithIdentifier:@"TSDBGroupViewController"];
 			aux.group = subgroup;
-			[self.navigationController pushViewController:aux animated:YES];
+			int64_t delayInMilliseconds = 500;
+			dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInMilliseconds * NSEC_PER_MSEC);
+			dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+				[self.navigationController pushViewController:aux animated:YES];
+			});
 		}
 	}];
 }

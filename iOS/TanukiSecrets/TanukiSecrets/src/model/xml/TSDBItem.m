@@ -18,12 +18,14 @@
 #define TS_XML_DB_ITEM_TAGS_TAG_NAME @"tags"
 #define TS_XML_DB_ITEM_TAG_TAG_NAME @"tag"
 #define TS_XML_DB_ITEM_FIELDS_TAG_NAME @"fields"
-#define TS_XML_DB_ITEM_DEFAULT_FIELD_TAG_NAME @"defaultFieldName"
+#define TS_XML_DB_ITEM_QUICK_COPY_FIELD_TAG_NAME @"quickCopyFieldName"
+#define TS_XML_DB_ITEM_SUBTITLE_FIELD_TAG_NAME @"subtitleFieldName"
 
 @implementation TSDBItem
 
-@synthesize parent = _parent, name = _name, description = _description,
-tags = _tags, fields = _fields, defaultFieldName = _defaultFieldName;
+@synthesize parent, name, description;
+@synthesize tags, fields;
+@synthesize quickCopyFieldName, subtitleFieldName;
 
 #pragma mark - TSXMLSerializable
 
@@ -49,9 +51,14 @@ tags = _tags, fields = _fields, defaultFieldName = _defaultFieldName;
 										usingWrapperNode:TS_XML_DB_ITEM_FIELDS_TAG_NAME
 												toWriter:writer];
 	}
-	if ([TSStringUtils isNotBlank:self.defaultFieldName]) {
-		[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_DEFAULT_FIELD_TAG_NAME
-					  withStringContent:self.defaultFieldName
+	if ([TSStringUtils isNotBlank:self.quickCopyFieldName]) {
+		[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_QUICK_COPY_FIELD_TAG_NAME
+					  withStringContent:self.quickCopyFieldName
+							   toWriter:writer];
+	}
+	if ([TSStringUtils isNotBlank:self.subtitleFieldName]) {
+		[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_SUBTITLE_FIELD_TAG_NAME
+					  withStringContent:self.subtitleFieldName
 							   toWriter:writer];
 	}
 	[writer writeEndElement];
@@ -87,7 +94,8 @@ tags = _tags, fields = _fields, defaultFieldName = _defaultFieldName;
 				[ret.fields addObject:field];
 			}
 		}
-		ret.defaultFieldName = [element valueWithPath:TS_XML_DB_ITEM_DEFAULT_FIELD_TAG_NAME];
+		ret.quickCopyFieldName = [element valueWithPath:TS_XML_DB_ITEM_QUICK_COPY_FIELD_TAG_NAME];
+		ret.subtitleFieldName = [element valueWithPath:TS_XML_DB_ITEM_SUBTITLE_FIELD_TAG_NAME];
 	}
 	return ret;
 }
@@ -122,7 +130,8 @@ tags = _tags, fields = _fields, defaultFieldName = _defaultFieldName;
 			[ret.fields addObject:[field createTemplate]];
 		}
 	}
-	ret.defaultFieldName = [self.defaultFieldName copy];
+	ret.quickCopyFieldName = [self.quickCopyFieldName copy];
+	ret.subtitleFieldName = [self.subtitleFieldName copy];
 	return ret;
 }
 
@@ -153,6 +162,39 @@ tags = _tags, fields = _fields, defaultFieldName = _defaultFieldName;
 	TSDBItem *ret = [[TSDBItem alloc] init];
 	ret.name = name;
 	return ret;
+}
+
+#pragma mark - item templates
+
++ (TSDBItem *)usernameAndPasswordTemplate {
+	TSDBItem *ret = [TSDBItem itemNamed:@"Username and password"];
+	[ret addField:[TSDBItemField fieldWithName:@"username" type:TSDBFieldType_DEFAULT andValue:@"username"]];
+	[ret addField:[TSDBItemField encryptedFieldWithName:@"password" type:TSDBFieldType_SECRET andValue:@"secret"]];
+	ret.quickCopyFieldName = @"password";
+	ret.subtitleFieldName = @"username";
+	return ret;
+}
+
++ (TSDBItem *)simpleWebAccountTemplate {
+	TSDBItem *ret = [TSDBItem itemNamed:@"Simple web account"];
+	[ret addField:[TSDBItemField fieldWithName:@"username" type:TSDBFieldType_DEFAULT andValue:@"username"]];
+	[ret addField:[TSDBItemField encryptedFieldWithName:@"password" type:TSDBFieldType_SECRET andValue:@"secret"]];
+	[ret addField:[TSDBItemField fieldWithName:@"url" type:TSDBFieldType_URL andValue:@"http://www.example.net"]];
+	[ret addField:[TSDBItemField fieldWithName:@"notes" type:TSDBFieldType_TEXT andValue:@"Lorem ipsum dolor sit amet, consectetur adipisicing elit, etc. etc. etc."]];
+	ret.quickCopyFieldName = @"password";
+	ret.subtitleFieldName = @"username";
+	return ret;
+}
+
+static NSArray *_systemTemplates = nil;
++ (NSArray *)systemTemplates {
+	if (_systemTemplates == nil) {
+		_systemTemplates = [NSArray arrayWithObjects:
+							[self usernameAndPasswordTemplate],
+							[self simpleWebAccountTemplate],
+							nil];
+	}
+	return _systemTemplates;
 }
 
 @end

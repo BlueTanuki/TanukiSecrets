@@ -189,37 +189,131 @@
             </objects>
             <point key="canvasLocation" x="917" y="-1104"/>
         </scene>
-        <!--Table View Controller-->
+        <!--New Item Choose NameTVC - New Item-->
         <scene sceneID="a8v-Ak-uvG">
             <objects>
-                <tableViewController id="DNa-2L-1Yf" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="vx7-yY-iMr">
+                <tableViewController id="DNa-2L-1Yf" customClass="TSNewItemChooseNameTVC" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="vx7-yY-iMr">
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="NXp-Y2-Wsp">
-                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                            </tableViewCell>
-                        </prototypes>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <sections>
+                            <tableViewSection headerTitle="Name" footerTitle="Give a name to your new item. You are not allowed to have two groups with the same name at the same level." id="iHb-wG-ft4">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="NXp-Y2-Wsp">
+                                        <rect key="frame" x="0.0" y="46" width="320" height="46"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="10" y="1" width="300" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Item name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pUL-9J-yD4">
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="30" id="FNF-AZ-sDt"/>
+                                                        <constraint firstAttribute="width" constant="260" id="Tco-Np-j9N"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <action selector="nameEditingEnded:" destination="DNa-2L-1Yf" eventType="editingDidEndOnExit" id="Ih4-pl-rc9"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <constraints>
+                                            <constraint firstItem="pUL-9J-yD4" firstAttribute="centerY" secondItem="NXp-Y2-Wsp" secondAttribute="centerY" type="default" id="BLa-oP-ROO"/>
+                                            <constraint firstItem="pUL-9J-yD4" firstAttribute="centerX" secondItem="NXp-Y2-Wsp" secondAttribute="centerX" type="default" id="Nb0-BF-IUM"/>
+                                        </constraints>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection id="GAH-OB-yjI">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="7Cr-Cy-9wd">
+                                        <rect key="frame" x="0.0" y="181" width="320" height="46"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="10" y="1" width="300" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Please choose a name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" enabled="NO" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dQe-xs-u0n">
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="260" id="6Vs-QA-F87"/>
+                                                        <constraint firstAttribute="height" constant="21" id="VqJ-Y9-d1g"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                    <color key="textColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <constraints>
+                                            <constraint firstItem="dQe-xs-u0n" firstAttribute="centerX" secondItem="7Cr-Cy-9wd" secondAttribute="centerX" type="default" id="5eI-0R-vET"/>
+                                            <constraint firstItem="dQe-xs-u0n" firstAttribute="top" secondItem="7Cr-Cy-9wd" secondAttribute="top" constant="12" id="jSa-K0-g51"/>
+                                        </constraints>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
                         <connections>
                             <outlet property="dataSource" destination="DNa-2L-1Yf" id="lOA-Yu-roE"/>
                             <outlet property="delegate" destination="DNa-2L-1Yf" id="S7M-Sd-cM0"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="MBR-pT-Kbh"/>
+                    <navigationItem key="navigationItem" title="New Item" id="MBR-pT-Kbh"/>
+                    <connections>
+                        <outlet property="nameCell" destination="NXp-Y2-Wsp" id="QKe-Nh-tk3"/>
+                        <outlet property="nameTextField" destination="pUL-9J-yD4" id="aiT-be-zqz"/>
+                        <outlet property="nextCell" destination="7Cr-Cy-9wd" id="FKf-S4-Bqp"/>
+                        <outlet property="nextCellLabel" destination="dQe-xs-u0n" id="3vL-Zs-peJ"/>
+                        <segue destination="7gs-Cp-ZnS" kind="push" identifier="next" id="wgo-yg-azc"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eze-23-Zv0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1459" y="-880"/>
         </scene>
-        <!--New Group View Controller-->
+        <!--New Item Choose TypeTVC-->
+        <scene sceneID="hMu-5R-mq3">
+            <objects>
+                <tableViewController id="7gs-Cp-ZnS" customClass="TSNewItemChooseTypeTVC" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="C4f-fs-00E">
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" textLabel="1nR-fH-xuf" style="IBUITableViewCellStyleDefault" id="5Ml-cf-z0l">
+                                <rect key="frame" x="0.0" y="46" width="320" height="46"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="10" y="1" width="280" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1nR-fH-xuf">
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                            </tableViewCell>
+                        </prototypes>
+                        <sections/>
+                        <connections>
+                            <outlet property="dataSource" destination="7gs-Cp-ZnS" id="ofz-cw-yYf"/>
+                            <outlet property="delegate" destination="7gs-Cp-ZnS" id="e3F-R2-l18"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="zRh-I1-bg3"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cpt-5d-QtH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1923" y="-876"/>
+        </scene>
+        <!--New Group View Controller - New Group-->
         <scene sceneID="4Lv-s1-eAP">
             <objects>
                 <tableViewController id="B0S-uZ-m3s" customClass="TSNewGroupViewController" sceneMemberID="viewController">
@@ -228,10 +322,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
-                            <tableViewSection footerTitle="Give a name to your new group. You are not allowed to have two groups with the same name at the same level." id="OAf-j2-Kda">
+                            <tableViewSection headerTitle="Name" footerTitle="Give a name to your new group. You are not allowed to have two groups with the same name at the same level." id="OAf-j2-Kda">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="6wB-xK-6uQ">
-                                        <rect key="frame" x="0.0" y="10" width="320" height="46"/>
+                                        <rect key="frame" x="0.0" y="46" width="320" height="46"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -261,7 +355,7 @@
                             <tableViewSection id="CLW-gA-1uM">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="XSz-Ts-Pn7">
-                                        <rect key="frame" x="0.0" y="145" width="320" height="46"/>
+                                        <rect key="frame" x="0.0" y="181" width="320" height="46"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -292,7 +386,7 @@
                             <outlet property="delegate" destination="B0S-uZ-m3s" id="uke-ge-ACl"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="NEK-MV-05Y"/>
+                    <navigationItem key="navigationItem" title="New Group" id="NEK-MV-05Y"/>
                     <connections>
                         <outlet property="createGroupCell" destination="XSz-Ts-Pn7" id="SxP-BF-b4s"/>
                         <outlet property="createGroupCellLabel" destination="qVQ-vM-8HX" id="82F-3W-3xc"/>
