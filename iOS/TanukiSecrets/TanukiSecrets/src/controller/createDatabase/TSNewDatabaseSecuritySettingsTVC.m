@@ -125,8 +125,25 @@
 	[demoItem addField:[TSDBItemField fieldWithName:@"catch phrase" type:TSDBFieldType_DEFAULT andValue:@"resistence is futile"]];
 	demoItem.quickActionFieldName = @"catch phrase";
 	[ret.root addItem:demoItem];
+	
+	demoItem = [TSDBItem itemNamed:@"item with many fields"];
+	[demoItem addField:[TSDBItemField fieldWithName:@"first item" type:TSDBFieldType_DEFAULT andValue:@"nothing to see here"]];
+	NSString *encryptedValue = [TSCryptoUtils tanukiEncryptField:@"http://www.xkcd.com" belongingToItem:demoItem.name usingSecret:secret];
+	[demoItem addField:[TSDBItemField encryptedFieldWithName:@"url" type:TSDBFieldType_URL andValue:encryptedValue]];
+	NSString *longString = @"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?";
+	[demoItem addField:[TSDBItemField fieldWithName:@"long-ass text" type:TSDBFieldType_TEXT andValue:longString]];
+	encryptedValue = [TSCryptoUtils tanukiEncryptField:longString belongingToItem:demoItem.name usingSecret:secret];
+	[demoItem addField:[TSDBItemField encryptedFieldWithName:@"subtitle" type:TSDBFieldType_TEXT andValue:encryptedValue]];
+	[demoItem addField:[TSDBItemField fieldWithName:@"some sandwitched text" type:TSDBFieldType_DEFAULT andValue:@"how did I get here?"]];
+	[demoItem addField:[TSDBItemField fieldWithName:@"nagai desu ne?" type:TSDBFieldType_TEXT andValue:longString]];
+	[demoItem addField:[TSDBItemField fieldWithName:@"secrets should" type:TSDBFieldType_SECRET andValue:@"not be plain text"]];
+	[demoItem addField:[TSDBItemField fieldWithName:@"number" type:TSDBFieldType_NUMERIC andValue:@"1234 ... fooled ya'"]];
+	demoItem.quickActionFieldName = @"url";
+	demoItem.subtitleFieldName = @"subtitle";
+	[ret.root addItem:demoItem];
+	
 	demoItem = [TSDBItem itemNamed:@"encrypted"];
-	NSString *encryptedValue = [TSCryptoUtils tanukiEncryptField:@"himitsu desu" belongingToItem:demoItem.name usingSecret:secret];
+	encryptedValue = [TSCryptoUtils tanukiEncryptField:@"himitsu desu" belongingToItem:demoItem.name usingSecret:secret];
 	[demoItem addField:[TSDBItemField encryptedFieldWithName:@"big secret" type:TSDBFieldType_SECRET andValue:encryptedValue]];
 	demoItem.quickActionFieldName = @"big secret";
 	[demoItem addField:[TSDBItemField fieldWithName:@"shhh" type:TSDBFieldType_DEFAULT andValue:@"don't tell nobody"]];

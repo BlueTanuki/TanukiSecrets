@@ -144,7 +144,12 @@
 			label.text = item.name;
 			label = (UILabel *)[cell viewWithTag:2];
 			if ([TSStringUtils isNotBlank:item.subtitleFieldName]) {
-				label.text = [item fieldNamed:item.subtitleFieldName].value;
+				TSDBItemField *field = [item fieldNamed:item.subtitleFieldName];
+				if (field.encrypted) {
+					label.text = @"Text hidden.";
+				}else {
+					label.text = field.value;
+				}
 			}else {
 				label.text = nil;
 			}
@@ -167,15 +172,10 @@
 		aux.group = subgroup;
 		[self.navigationController pushViewController:aux animated:YES];
 	}else {
-		
+		TSDBItem *item = [self.group.items objectAtIndex:indexPath.row];
+		[TSSharedState sharedState].currentItem = item;
+		[self performSegueWithIdentifier:@"viewItem" sender:nil];
 	}
-   // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
