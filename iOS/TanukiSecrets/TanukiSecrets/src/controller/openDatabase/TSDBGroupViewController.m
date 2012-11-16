@@ -115,7 +115,7 @@
 	}else {
 		TSDBItem *item = [self.group.items objectAtIndex:indexPath.row];
 		
-		if ([TSStringUtils isBlank:item.quickCopyFieldName]) {
+		if ([TSStringUtils isBlank:item.quickActionFieldName]) {
 			UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 			
 			cell.imageView.image = [UIImage imageNamed:@"file.png"];
@@ -128,7 +128,17 @@
 			
 			return cell;
 		}else {
-			UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CellWithButton" forIndexPath:indexPath];
+			TSDBItemField *itemField = [item fieldNamed:item.quickActionFieldName];
+			UITableViewCell *cell;
+			switch (itemField.type) {
+				case TSDBFieldType_URL:
+					cell = [tableView dequeueReusableCellWithIdentifier:@"OpenUrlCell" forIndexPath:indexPath];
+					break;
+					
+				default:
+					cell = [tableView dequeueReusableCellWithIdentifier:@"QuickCopyCell" forIndexPath:indexPath];
+					break;
+			}
 			
 			UILabel *label = (UILabel *)[cell viewWithTag:1];
 			label.text = item.name;
@@ -156,6 +166,8 @@
 		TSDBGroupViewController *aux = [self.storyboard instantiateViewControllerWithIdentifier:@"TSDBGroupViewController"];
 		aux.group = subgroup;
 		[self.navigationController pushViewController:aux animated:YES];
+	}else {
+		
 	}
    // Navigation logic may go here. Create and push another view controller.
     /*
@@ -232,18 +244,35 @@
 
 #pragma mark - events
 
-- (IBAction)quickCopy:(id)sender {
-//	NSLog (@"%@ :: %@", [sender class], [sender debugDescription]);
+- (TSDBItem *)itemForEvent:(id)sender
+{
+	//	NSLog (@"%@ :: %@", [sender class], [sender debugDescription]);
 	UIButton *button = (UIButton *)sender;
-//	NSLog (@"%@ :: %@", [button.superview class], [button.superview debugDescription]);
-//	NSLog (@"%@ :: %@", [button.superview.superview class], [button.superview.superview debugDescription]);
+	//	NSLog (@"%@ :: %@", [button.superview class], [button.superview debugDescription]);
+	//	NSLog (@"%@ :: %@", [button.superview.superview class], [button.superview.superview debugDescription]);
 	UITableViewCell *cell = (UITableViewCell *)button.superview.superview;
 	NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-// 	NSLog (@"QuickCopy triggered :: %d / %d", indexPath.section, indexPath.row);
+	// 	NSLog (@"QuickCopy triggered :: %d / %d", indexPath.section, indexPath.row);
 	
+	return [self.group.items objectAtIndex:indexPath.row];
+}
+
+- (NSString *)valueOfQuickActionFieldForEvent:(id)sender
+{
+	TSDBItem *item = [self itemForEvent:sender];
+	NSString *fieldName = item.quickActionFieldName;
+	TSDBItemField *itemField = [item fieldNamed:fieldName];
+	if (itemField.encrypted) {
+		return [TSCryptoUtils tanukiDecryptField:itemField.value belongingToItem:item.name usingSecret:[[TSSharedState sharedState] openDatabasePassword]];
+	}else {
+		return itemField.value;
+	}
+}
+
+- (IBAction)quickCopy:(id)sender {
 	UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-	TSDBItem *item = [self.group.items objectAtIndex:indexPath.row];
-	NSString *fieldName = item.quickCopyFieldName;
+	TSDBItem *item = [self itemForEvent:sender];
+	NSString *fieldName = item.quickActionFieldName;
 	TSDBItemField *itemField = [item fieldNamed:fieldName];
 	if (itemField.encrypted) {
 		pasteboard.string = [TSCryptoUtils tanukiDecryptField:itemField.value belongingToItem:item.name usingSecret:[[TSSharedState sharedState] openDatabasePassword]];
@@ -253,14 +282,21 @@
 	[TSNotifierUtils info:[NSString stringWithFormat:@"%@ copied", fieldName]];
 }
 
+- (IBAction)openURL:(id)sender {
+	NSString *urlString = [self valueOfQuickActionFieldForEvent:sender];
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-	[TSSharedState sharedState].currentGroup = self.group;
-	[TSSharedState sharedState].currentItem = nil;
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(databaseContentChanged:)
-												 name:TS_NOTIFICATION_OPEN_DATABASE_CONTENT_CHANGED
-											   object:nil];
+	if ([segue.identifier isEqualToString:@"add"]) {
+		[TSSharedState sharedState].currentGroup = self.group;
+		[TSSharedState sharedState].currentItem = nil;
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(databaseContentChanged:)
+													 name:TS_NOTIFICATION_OPEN_DATABASE_CONTENT_CHANGED
+												   object:nil];
+	}
 }
 
 - (void)databaseContentChanged:(NSNotification *)notification
@@ -272,7 +308,7 @@
 	[TSUtils foreground:^{
 		[self.tableView reloadData];
 		if ([TSSharedState sharedState].currentItem != nil) {
-			
+			[TSNotifierUtils error:@"NOT IMPLEMENTED"];
 		}else if ([TSSharedState sharedState].currentGroup != self.group) {
 			TSDBGroup *subgroup = [self.group.subgroups lastObject];
 			TSDBGroupViewController *aux = [self.storyboard instantiateViewControllerWithIdentifier:@"TSDBGroupViewController"];

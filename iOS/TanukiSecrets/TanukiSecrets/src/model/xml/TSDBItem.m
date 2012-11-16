@@ -18,14 +18,14 @@
 #define TS_XML_DB_ITEM_TAGS_TAG_NAME @"tags"
 #define TS_XML_DB_ITEM_TAG_TAG_NAME @"tag"
 #define TS_XML_DB_ITEM_FIELDS_TAG_NAME @"fields"
-#define TS_XML_DB_ITEM_QUICK_COPY_FIELD_TAG_NAME @"quickCopyFieldName"
+#define TS_XML_DB_ITEM_QUICK_ACTION_FIELD_TAG_NAME @"quickActionFieldName"
 #define TS_XML_DB_ITEM_SUBTITLE_FIELD_TAG_NAME @"subtitleFieldName"
 
 @implementation TSDBItem
 
 @synthesize parent, name, description;
 @synthesize tags, fields;
-@synthesize quickCopyFieldName, subtitleFieldName;
+@synthesize quickActionFieldName, subtitleFieldName;
 
 #pragma mark - TSXMLSerializable
 
@@ -51,9 +51,9 @@
 										usingWrapperNode:TS_XML_DB_ITEM_FIELDS_TAG_NAME
 												toWriter:writer];
 	}
-	if ([TSStringUtils isNotBlank:self.quickCopyFieldName]) {
-		[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_QUICK_COPY_FIELD_TAG_NAME
-					  withStringContent:self.quickCopyFieldName
+	if ([TSStringUtils isNotBlank:self.quickActionFieldName]) {
+		[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_QUICK_ACTION_FIELD_TAG_NAME
+					  withStringContent:self.quickActionFieldName
 							   toWriter:writer];
 	}
 	if ([TSStringUtils isNotBlank:self.subtitleFieldName]) {
@@ -94,7 +94,7 @@
 				[ret.fields addObject:field];
 			}
 		}
-		ret.quickCopyFieldName = [element valueWithPath:TS_XML_DB_ITEM_QUICK_COPY_FIELD_TAG_NAME];
+		ret.quickActionFieldName = [element valueWithPath:TS_XML_DB_ITEM_QUICK_ACTION_FIELD_TAG_NAME];
 		ret.subtitleFieldName = [element valueWithPath:TS_XML_DB_ITEM_SUBTITLE_FIELD_TAG_NAME];
 	}
 	return ret;
@@ -130,7 +130,7 @@
 			[ret.fields addObject:[field createTemplate]];
 		}
 	}
-	ret.quickCopyFieldName = [self.quickCopyFieldName copy];
+	ret.quickActionFieldName = [self.quickActionFieldName copy];
 	ret.subtitleFieldName = [self.subtitleFieldName copy];
 	return ret;
 }
@@ -170,7 +170,7 @@
 	TSDBItem *ret = [TSDBItem itemNamed:@"Username and password"];
 	[ret addField:[TSDBItemField fieldWithName:@"username" type:TSDBFieldType_DEFAULT andValue:@"username"]];
 	[ret addField:[TSDBItemField encryptedFieldWithName:@"password" type:TSDBFieldType_SECRET andValue:@"secret"]];
-	ret.quickCopyFieldName = @"password";
+	ret.quickActionFieldName = @"password";
 	ret.subtitleFieldName = @"username";
 	return ret;
 }
@@ -181,7 +181,7 @@
 	[ret addField:[TSDBItemField encryptedFieldWithName:@"password" type:TSDBFieldType_SECRET andValue:@"secret"]];
 	[ret addField:[TSDBItemField fieldWithName:@"url" type:TSDBFieldType_URL andValue:@"http://www.example.net"]];
 	[ret addField:[TSDBItemField fieldWithName:@"notes" type:TSDBFieldType_TEXT andValue:@"Lorem ipsum dolor sit amet, consectetur adipisicing elit, etc. etc. etc."]];
-	ret.quickCopyFieldName = @"password";
+	ret.quickActionFieldName = @"password";
 	ret.subtitleFieldName = @"username";
 	return ret;
 }

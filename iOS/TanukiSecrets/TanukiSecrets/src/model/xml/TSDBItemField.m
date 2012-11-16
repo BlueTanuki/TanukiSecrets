@@ -20,6 +20,49 @@
 
 @synthesize parent = _parent, name = _name, encrypted = _encrypted, value = _value;
 
+#pragma mark - helpers
+
++ (NSString *)stringForType:(TSDBFieldType)type
+{
+	switch (type) {
+		case TSDBFieldType_NUMERIC:
+			return @"NUMERIC";
+			break;
+			
+		case TSDBFieldType_SECRET:
+			return @"SECRET";
+			break;
+			
+		case TSDBFieldType_TEXT:
+			return @"TEXT";
+			break;
+			
+		case TSDBFieldType_URL:
+			return @"URL";
+			break;
+			
+		default:
+			return @"DEFAULT";
+	}
+}
+
++ (TSDBFieldType)typeForString:(NSString *)string
+{
+	if ([@"NUMERIC" isEqualToString:string]) {
+		return TSDBFieldType_NUMERIC;
+	}
+	if ([@"SECRET" isEqualToString:string]) {
+		return TSDBFieldType_SECRET;
+	}
+	if ([@"TEXT" isEqualToString:string]) {
+		return TSDBFieldType_TEXT;
+	}
+	if ([@"URL" isEqualToString:string]) {
+		return TSDBFieldType_URL;
+	}
+	return TSDBFieldType_DEFAULT;
+}
+
 #pragma mark - TSXMLSerializable
 
 - (void)writeTo:(XMLWriter *)writer usingTagName:(NSString *)tagName
@@ -28,8 +71,9 @@
 	[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_FIELD_NAME_TAG_NAME
 				  withStringContent:self.name
 						   toWriter:writer];
+	//avoid saving magic numbers
 	[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_FIELD_TYPE_TAG_NAME
-				 withIntegerContent:self.type
+				 withStringContent:[TSDBItemField stringForType:self.type]
 						   toWriter:writer];
 	if (self.encrypted) {
 		[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_FIELD_ENCRYPTED_TAG_NAME
@@ -53,7 +97,8 @@
 	if ([element.name isEqualToString:tagName]) {
 		ret = [[TSDBItemField alloc] init];
 		ret.name = [element valueWithPath:TS_XML_DB_ITEM_FIELD_NAME_TAG_NAME];
-		ret.type = [[element valueWithPath:TS_XML_DB_ITEM_FIELD_TYPE_TAG_NAME] intValue];
+		//reconvert the string to a magic number
+		ret.type = [self typeForString:[element valueWithPath:TS_XML_DB_ITEM_FIELD_TYPE_TAG_NAME]];
 		SMXMLElement *aux = [element childNamed:TS_XML_DB_ITEM_FIELD_ENCRYPTED_TAG_NAME];
 		if (aux != nil) {
 			ret.encrypted = YES;

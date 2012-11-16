@@ -115,7 +115,7 @@ BOOL firstTimeSegueTriggered = NO;
 	TSDBItem *item = [TSDBItem itemNamed:@"item1"];
 	TSDBItemField *field = [TSDBItemField fieldWithName:@"field1" type:TSDBFieldType_DEFAULT andValue:@"value ichi"];
 	[item addField:field];
-	item.quickCopyFieldName = field.name;
+	item.quickActionFieldName = field.name;
 	field = [TSDBItemField fieldWithName:@"field2" type:TSDBFieldType_DEFAULT andValue:@"futatsu no value"];
 	[item addField:field];
 	item.tags = [NSMutableArray arrayWithObjects:@"nabla", @"delta", nil];

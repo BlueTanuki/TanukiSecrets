@@ -10,6 +10,10 @@
 
 #import "TSDBItem.h"
 #import "TSSharedState.h"
+#import "TSUtils.h"
+#import "TSNotifierUtils.h"
+#import "TSCryptoUtils.h"
+#import "TSIOUtils.h"
 
 @interface TSNewItemChooseTypeTVC ()
 
@@ -53,13 +57,11 @@
 {
 	switch (section) {
 		case 0:
-			return @"This will simply create an empty item for you. You will then be taken to the editing "
-			"view where you can add, one by one, all the fields of the new item. "
-			"The much simpler and recommended way of creating items is by choosing the type "
-			"from one of the templates below.";
+			return @"Just an empty item, without any predefined fields. Not recommended, whenever possible use a template.";
 			
 		case 1:
-			return @"These are built-in templates provided by TanukiSecrets, hopefully covering most needs.";
+			return @"These are built-in templates provided by TanukiSecrets, hopefully "
+			"providing a good starting point for most cases.";
 			
 		case 2: {
 			NSArray *aux = [TSSharedState userTemplates];
@@ -128,13 +130,59 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+	TSSharedState *sharedState = [TSSharedState sharedState];
+	if ([sharedState encryptKeyReady] == NO) {
+		[TSUtils notifyEncryptionKeyIsNotReady];
+		[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+		return;
+	}
+	
+	NSString *itemName = sharedState.currentItem.name;
+	TSDBItem *createdItem;
+	switch (indexPath.section) {
+		case 0: 
+			createdItem = sharedState.currentItem;
+			break;
+			
+		case 1: {
+			TSDBItem *item = [[TSDBItem systemTemplates] objectAtIndex:indexPath.row];
+			createdItem = [item createTemplate];
+			createdItem.name = itemName;
+		}
+			break;
+			
+		case 2: {
+			TSDBItem *item = [[TSSharedState userTemplates] objectAtIndex:indexPath.row];
+			createdItem = [item createTemplate];
+			createdItem.name = itemName;
+		}
+			break;
+			
+		default:
+			[TSNotifierUtils error:@"Unknown row selection!!!"];
+		return;
+	}
+	
+	TSAuthor *author = [TSAuthor authorFromCurrentDevice];
+	author.comment = [NSString stringWithFormat:@"added item %@ as child of %@", itemName, [sharedState.currentGroup uniqueGlobalId]];
+	sharedState.openDatabaseMetadata.lastModifiedBy = author;
+	createdItem.parent = sharedState.currentGroup;
+	[sharedState.currentGroup addItem:createdItem];
+	//NOTE: adding a new item does not trigger a backup, the operation is too irrelevant.
+	NSData *encryptKey = [sharedState encryptKey];
+	NSData *encryptedContent = [TSCryptoUtils tanukiEncryptDatabase:sharedState.openDatabase
+													 havingMetadata:sharedState.openDatabaseMetadata
+														   usingKey:encryptKey];
+	
+	if ([TSIOUtils saveDatabaseWithMetadata:sharedState.openDatabaseMetadata andEncryptedContent:encryptedContent]) {
+		sharedState.currentItem = createdItem;
+		[[self presentingViewController] dismissViewControllerAnimated:YES completion:^{
+			NSNotification *notification = [NSNotification notificationWithName:TS_NOTIFICATION_OPEN_DATABASE_CONTENT_CHANGED object:nil];
+			[[NSNotificationCenter defaultCenter] postNotification:notification];
+		}];
+	}else {
+		[TSNotifierUtils error:@"Local database writing failed"];
+	}
 }
 
 @end

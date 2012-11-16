@@ -23,7 +23,7 @@
 @property(nonatomic, strong) NSMutableArray *tags;//of NSString
 
 @property(nonatomic, strong) NSMutableArray *fields;//of TSDBItemField
-@property(nonatomic, strong) NSString *quickCopyFieldName;//can be nil
+@property(nonatomic, strong) NSString *quickActionFieldName;//can be nil
 @property(nonatomic, strong) NSString *subtitleFieldName;//can be nil
 
 //string uniquely identifying this field inside the database

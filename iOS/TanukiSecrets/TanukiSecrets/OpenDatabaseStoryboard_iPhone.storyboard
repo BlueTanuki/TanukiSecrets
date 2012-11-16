@@ -34,8 +34,8 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CellWithButton" id="yQ8-WW-BGC">
-                                <rect key="frame" x="0.0" y="91" width="320" height="45"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="QuickCopyCell" id="yQ8-WW-BGC">
+                                <rect key="frame" x="0.0" y="91" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="10" y="0.0" width="280" height="43"/>
@@ -86,6 +86,60 @@
                                     <constraint firstItem="p0W-yw-WVu" firstAttribute="top" secondItem="yQ8-WW-BGC" secondAttribute="top" type="default" id="r8K-iG-n2Z"/>
                                     <constraint firstItem="p0W-yw-WVu" firstAttribute="centerY" secondItem="yQ8-WW-BGC" secondAttribute="centerY" type="default" id="wid-LY-zuA"/>
                                     <constraint firstItem="vWD-SP-c2e" firstAttribute="top" secondItem="yQ8-WW-BGC" secondAttribute="top" constant="20" type="default" id="yEk-5i-hDA"/>
+                                </constraints>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="OpenUrlCell" id="sAd-E3-oNh">
+                                <rect key="frame" x="0.0" y="135" width="320" height="45"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="10" y="0.0" width="280" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vsq-sn-JvI">
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="43" id="gFG-7e-syX"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                            <state key="normal" image="globe.png">
+                                                <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <state key="highlighted">
+                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="openURL:" destination="V1D-BD-N57" eventType="touchUpInside" id="6B8-Tb-8QK"/>
+                                            </connections>
+                                        </button>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="1" contentMode="left" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Izu-8a-dTx">
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="21" id="23C-Vu-DcS"/>
+                                                <constraint firstAttribute="width" constant="209" id="WFF-oU-HRg"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="2" contentMode="left" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MBq-HP-yvk">
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="21" id="xRi-kF-q82"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" red="0.50196078430000002" green="0.50196078430000002" blue="0.50196078430000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <constraints>
+                                    <constraint firstItem="MBq-HP-yvk" firstAttribute="top" secondItem="sAd-E3-oNh" secondAttribute="top" constant="20" type="default" id="52Y-F3-GCq"/>
+                                    <constraint firstItem="MBq-HP-yvk" firstAttribute="leading" secondItem="Vsq-sn-JvI" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="DDa-Gx-OoT"/>
+                                    <constraint firstItem="Izu-8a-dTx" firstAttribute="top" secondItem="sAd-E3-oNh" secondAttribute="top" constant="2" id="MUh-9I-t2o"/>
+                                    <constraint firstItem="Izu-8a-dTx" firstAttribute="trailing" secondItem="MBq-HP-yvk" secondAttribute="trailing" type="default" id="oPT-TK-f3X"/>
+                                    <constraint firstItem="Vsq-sn-JvI" firstAttribute="centerY" secondItem="sAd-E3-oNh" secondAttribute="centerY" type="default" id="qE9-q8-JTh"/>
+                                    <constraint firstItem="Vsq-sn-JvI" firstAttribute="top" secondItem="sAd-E3-oNh" secondAttribute="top" type="default" id="qdu-Oy-KXY"/>
+                                    <constraint firstItem="Vsq-sn-JvI" firstAttribute="leading" secondItem="sAd-E3-oNh" secondAttribute="leading" constant="10" id="u4B-3p-498"/>
+                                    <constraint firstItem="Izu-8a-dTx" firstAttribute="leading" secondItem="Vsq-sn-JvI" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="u66-lO-xsk"/>
                                 </constraints>
                             </tableViewCell>
                         </prototypes>
@@ -475,8 +529,54 @@
         <image name="file.png" width="32" height="32"/>
         <image name="fileClipboard.png" width="32" height="32"/>
         <image name="folder.png" width="32" height="32"/>
+        <image name="globe.png" width="32" height="32"/>
         <image name="lock.png" width="30" height="30"/>
     </resources>
+    <classes>
+        <class className="NSLayoutConstraint" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
+        </class>
+        <class className="TSDBGroupViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSDBGroupViewController.h"/>
+        </class>
+        <class className="TSModalDialogDismissingTableViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSModalDialogDismissingTableViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="cancel:"/>
+            </relationships>
+        </class>
+        <class className="TSNewGroupViewController" superclassName="TSSelectiveTapCallbackTableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNewGroupViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="createGroup:"/>
+                <relationship kind="action" name="nameEditingEnded:"/>
+                <relationship kind="outlet" name="createGroupCell" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="createGroupCellLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="nameCell" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="nameTextField" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="TSNewItemChooseNameTVC" superclassName="TSSelectiveTapCallbackTableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNewItemChooseNameTVC.h"/>
+            <relationships>
+                <relationship kind="action" name="nameEditingEnded:"/>
+                <relationship kind="action" name="next:"/>
+                <relationship kind="outlet" name="nameCell" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="nameTextField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="nextCell" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="nextCellLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="TSNewItemChooseTypeTVC" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNewItemChooseTypeTVC.h"/>
+        </class>
+        <class className="TSSelectiveTapCallbackTableViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSSelectiveTapCallbackTableViewController.h"/>
+        </class>
+        <class className="TSTabBarController" superclassName="UITabBarController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSTabBarController.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

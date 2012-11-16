@@ -106,7 +106,7 @@
 	TSDBGroup *demoSubgroup = [TSDBGroup groupNamed:@"test group"];
 	TSDBItem *demoSubgroupItem = [TSDBItem itemNamed:@"item in subgroup"];
 	[demoSubgroupItem addField:[TSDBItemField fieldWithName:@"url" type:TSDBFieldType_URL andValue:@"http://www.youtube.com/watch?v=oHg5SJYRHA0"]];
-	demoSubgroupItem.quickCopyFieldName = @"url";
+	demoSubgroupItem.quickActionFieldName = @"url";
 	[demoSubgroupItem addField:[TSDBItemField fieldWithName:@"movieTitle" type:TSDBFieldType_DEFAULT andValue:@"RickRoll"]];
 	demoSubgroupItem.subtitleFieldName = @"movieTitle";
 	[demoSubgroup addItem:demoSubgroupItem];
@@ -114,7 +114,7 @@
 	TSDBItem *demoItem = [TSDBItem itemNamed:@"test item"];
 	[demoItem addField:[TSDBItemField fieldWithName:@"username" type:TSDBFieldType_DEFAULT andValue:@"name"]];
 	[demoItem addField:[TSDBItemField fieldWithName:@"password" type:TSDBFieldType_SECRET andValue:@"word"]];
-	demoItem.quickCopyFieldName = @"password";
+	demoItem.quickActionFieldName = @"password";
 	demoItem.subtitleFieldName = @"username";
 	[ret.root addItem:demoItem];
 	demoItem = [TSDBItem itemNamed:@"no quick copy"];
@@ -123,12 +123,12 @@
 	[ret.root addItem:demoItem];
 	demoItem = [TSDBItem itemNamed:@"borg"];
 	[demoItem addField:[TSDBItemField fieldWithName:@"catch phrase" type:TSDBFieldType_DEFAULT andValue:@"resistence is futile"]];
-	demoItem.quickCopyFieldName = @"catch phrase";
+	demoItem.quickActionFieldName = @"catch phrase";
 	[ret.root addItem:demoItem];
 	demoItem = [TSDBItem itemNamed:@"encrypted"];
 	NSString *encryptedValue = [TSCryptoUtils tanukiEncryptField:@"himitsu desu" belongingToItem:demoItem.name usingSecret:secret];
 	[demoItem addField:[TSDBItemField encryptedFieldWithName:@"big secret" type:TSDBFieldType_SECRET andValue:encryptedValue]];
-	demoItem.quickCopyFieldName = @"big secret";
+	demoItem.quickActionFieldName = @"big secret";
 	[demoItem addField:[TSDBItemField fieldWithName:@"shhh" type:TSDBFieldType_DEFAULT andValue:@"don't tell nobody"]];
 	demoItem.subtitleFieldName = @"shhh";
 	[ret.root addItem:demoItem];
