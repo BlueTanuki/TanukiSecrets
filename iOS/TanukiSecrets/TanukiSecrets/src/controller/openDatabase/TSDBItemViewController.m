@@ -11,18 +11,24 @@
 #import "TSDBItem.h"
 #import "TSDBItemField.h"
 #import "TSSharedState.h"
+#import "TSCryptoUtils.h"
+#import "TSUtils.h"
+#import "TSNotifierUtils.h"
+#import "TSStringUtils.h"
 
 @interface TSDBItemViewController ()
 
 @property(nonatomic, strong) NSMutableDictionary *indexPathToFieldItem;
 @property(nonatomic, assign) NSInteger numberOfSections;
 @property(nonatomic, strong) NSMutableArray *numberOfRowsForSection;
+@property(nonatomic, strong) NSMutableArray *encryptedRowsShownPlaintext;
 
 @end
 
 @implementation TSDBItemViewController
 
-@synthesize indexPathToFieldItem, numberOfRowsForSection, numberOfSections;
+@synthesize indexPathToFieldItem, numberOfRowsForSection, numberOfSections,
+encryptedRowsShownPlaintext, performEditSegueOnLoad;
 
 #pragma mark - worker methods
 
@@ -68,6 +74,7 @@
 		//last section had nothing, meaning that the last field was a textarea field
 		self.numberOfSections = section;
 	}
+	self.encryptedRowsShownPlaintext = [NSMutableArray array];
 }
 
 #pragma mark - view lifecycle
@@ -79,6 +86,18 @@
 	self.title = item.name;
 	[self initializeTableStuctureFromItem:item];
 	[self.tableView reloadData];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+	[super viewDidAppear:animated];
+	if (self.performEditSegueOnLoad) {
+		int64_t delayInMilliseconds = 300;
+		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInMilliseconds * NSEC_PER_MSEC);
+		dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+			[self performSegueWithIdentifier:@"edit" sender:nil];
+		});
+	}
 }
 
 #pragma mark - Table view data source
@@ -96,13 +115,18 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	NSNumber *number = [self.numberOfRowsForSection objectAtIndex:section];
-	if ([number intValue] == 1) {
-		NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:section];
-		TSDBItemField *field = [self.indexPathToFieldItem objectForKey:indexPath];
-		return field.name;
+	NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:section];
+	TSDBItemField *field = [self.indexPathToFieldItem objectForKey:indexPath];
+	switch (field.type) {
+		case TSDBFieldType_TEXT: {
+			NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:section];
+			TSDBItemField *field = [self.indexPathToFieldItem objectForKey:indexPath];
+			return field.name;
+		}
+			
+		default:
+			return nil;
 	}
-	return nil;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -127,7 +151,11 @@
 			cell = [tableView dequeueReusableCellWithIdentifier:@"TextareaCell" forIndexPath:indexPath];
 			UITextView *textView = (UITextView *)[cell viewWithTag:1];
 			if (field.encrypted) {
-				textView.text = @"Text hidden, visible only when editing.";
+				if ([self.encryptedRowsShownPlaintext containsObject:indexPath]) {
+					textView.text = [TSCryptoUtils tanukiDecryptField:field.value belongingToItem:field.parent.name usingSecret:[[TSSharedState sharedState] openDatabasePassword]];
+				}else {
+					textView.text = @"Text hidden, tap to show.";
+				}
 			}else {
 				textView.text = field.value;
 			}
@@ -135,27 +163,50 @@
 			break;
 			
 		case TSDBFieldType_URL: {
-			cell = [tableView dequeueReusableCellWithIdentifier:@"OpenUrlCell" forIndexPath:indexPath];
-			UILabel *label = (UILabel *)[cell viewWithTag:1];
-			label.text = field.name;
-			label = (UILabel *)[cell viewWithTag:2];
-			if (field.encrypted) {
-				label.text = @"URL hidden, tap icon to open.";
+			if ([TSStringUtils isBlank:field.value]) {
+				cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+				cell.textLabel.text = field.name;
+				cell.detailTextLabel.text = nil;
 			}else {
-				label.text = field.value;
+				cell = [tableView dequeueReusableCellWithIdentifier:@"OpenUrlCell" forIndexPath:indexPath];
+				UILabel *label = (UILabel *)[cell viewWithTag:1];
+				label.text = field.name;
+				label = (UILabel *)[cell viewWithTag:2];
+				if (field.encrypted) {
+					if ([self.encryptedRowsShownPlaintext containsObject:indexPath]) {
+						label.text = [TSCryptoUtils tanukiDecryptField:field.value belongingToItem:field.parent.name usingSecret:[[TSSharedState sharedState] openDatabasePassword]];
+					}else {
+						label.text = @"URL hidden, tap to show.";
+					}
+				}else {
+					label.text = field.value;
+				}
 			}
 		}
 			break;
 			
 		default: {
-			cell = [tableView dequeueReusableCellWithIdentifier:@"QuickCopyCell" forIndexPath:indexPath];
-			UILabel *label = (UILabel *)[cell viewWithTag:1];
-			label.text = field.name;
-			label = (UILabel *)[cell viewWithTag:2];
-			if (field.encrypted) {
-				label.text = @"Value hidden, tap icon to copy.";
+			if ([TSStringUtils isBlank:field.value]) {
+				cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+				cell.textLabel.text = field.name;
+				cell.detailTextLabel.text = nil;
 			}else {
-				label.text = field.value;
+				cell = [tableView dequeueReusableCellWithIdentifier:@"QuickCopyCell" forIndexPath:indexPath];
+				UILabel *label = (UILabel *)[cell viewWithTag:1];
+				label.text = field.name;
+				label = (UILabel *)[cell viewWithTag:2];
+				if (field.encrypted) {
+					if (TS_DEV_DEBUG_ALL) {
+						NSLog (@"row %@ is encrypted and plaintext array is %@", indexPath, [self.encryptedRowsShownPlaintext debugDescription]);
+					}
+					if ([self.encryptedRowsShownPlaintext containsObject:indexPath]) {
+						label.text = [TSCryptoUtils tanukiDecryptField:field.value belongingToItem:field.parent.name usingSecret:[[TSSharedState sharedState] openDatabasePassword]];
+					}else {
+						label.text = @"Value hidden, tap to show.";
+					}
+				}else {
+					label.text = field.value;
+				}
 			}
 		}
 			break;
@@ -169,6 +220,62 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	[self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+	TSDBItemField *field = [self.indexPathToFieldItem objectForKey:indexPath];
+	if ((field.encrypted) && ([self.encryptedRowsShownPlaintext containsObject:indexPath] == NO)) {
+		[self.encryptedRowsShownPlaintext addObject:indexPath];
+		[self.tableView reloadData];
+		if (TS_DEV_DEBUG_ALL) {
+			NSLog (@"tapped encrypted field %@, encrypted shown array is now %@", field.name, [self.encryptedRowsShownPlaintext debugDescription]);
+		}
+	}
 }
+
+#pragma mark - events
+
+- (TSDBItemField *)itemFieldForEvent:(id)sender
+{
+	//	NSLog (@"%@ :: %@", [sender class], [sender debugDescription]);
+	UIButton *button = (UIButton *)sender;
+	//	NSLog (@"%@ :: %@", [button.superview class], [button.superview debugDescription]);
+	//	NSLog (@"%@ :: %@", [button.superview.superview class], [button.superview.superview debugDescription]);
+	UITableViewCell *cell = (UITableViewCell *)button.superview.superview;
+	NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+	// 	NSLog (@"QuickCopy triggered :: %d / %d", indexPath.section, indexPath.row);
+	
+	return [self.indexPathToFieldItem objectForKey:indexPath];
+}
+
+- (NSString *)valueOfQuickActionFieldForEvent:(id)sender
+{
+	TSDBItemField *itemField = [self itemFieldForEvent:sender];
+	if (itemField.encrypted) {
+		return [TSCryptoUtils tanukiDecryptField:itemField.value belongingToItem:itemField.parent.name usingSecret:[[TSSharedState sharedState] openDatabasePassword]];
+	}else {
+		return itemField.value;
+	}
+}
+
+- (IBAction)quickCopy:(id)sender {
+	UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+	TSDBItemField *itemField = [self itemFieldForEvent:sender];
+	NSString *value = nil;
+	if (itemField.encrypted) {
+		value = [TSCryptoUtils tanukiDecryptField:itemField.value belongingToItem:itemField.parent.name usingSecret:[[TSSharedState sharedState] openDatabasePassword]];
+	}else {
+		value = itemField.value;
+	}
+	if ([TSStringUtils isNotBlank:value]) {
+		pasteboard.string = value;
+		[TSNotifierUtils infoAtTopOfScreen:[NSString stringWithFormat:@"%@ copied", itemField.name]];
+	}
+}
+
+- (IBAction)openURL:(id)sender {
+	NSString *urlString = [self valueOfQuickActionFieldForEvent:sender];
+	if ([TSStringUtils isNotBlank:urlString]) {
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+	}
+}
+
 
 @end

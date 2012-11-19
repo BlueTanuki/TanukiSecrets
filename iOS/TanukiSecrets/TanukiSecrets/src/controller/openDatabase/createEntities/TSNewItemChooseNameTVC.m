@@ -75,6 +75,9 @@
 	TSSharedState *sharedState = [TSSharedState sharedState];
 	NSString *itemName = [TSStringUtils trim:self.nameTextField.text];
 	sharedState.currentItem = [TSDBItem itemNamed:itemName];
+	if (TS_DEV_DEBUG_ALL) {
+		NSLog (@"textfield name %@, item name %@", self.nameTextField.text, sharedState.currentItem.name);
+	}
 	[self performSegueWithIdentifier:@"next" sender:sender];
 }
 

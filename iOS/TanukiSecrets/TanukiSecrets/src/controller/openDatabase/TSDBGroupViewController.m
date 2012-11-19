@@ -17,6 +17,7 @@
 #import "TSCryptoUtils.h"
 #import "TSUtils.h"
 #import "TSIOUtils.h"
+#import "TSDBItemViewController.h"
 
 @interface TSDBGroupViewController ()
 
@@ -120,7 +121,7 @@
 			
 			cell.imageView.image = [UIImage imageNamed:@"file.png"];
 			cell.textLabel.text = item.name;
-			if ([TSStringUtils isNotBlank:item.subtitleFieldName]) {
+			if (([TSStringUtils isNotBlank:item.subtitleFieldName]) && ([item fieldNamed:item.subtitleFieldName].encrypted == NO)) {
 				cell.detailTextLabel.text = [item fieldNamed:item.subtitleFieldName].value;
 			}else {
 				cell.detailTextLabel.text = nil;
@@ -129,6 +130,26 @@
 			return cell;
 		}else {
 			TSDBItemField *itemField = [item fieldNamed:item.quickActionFieldName];
+			if ([TSStringUtils isBlank:itemField.value]) {
+				UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+				switch (itemField.type) {
+					case TSDBFieldType_URL:
+						cell.imageView.image = [UIImage imageNamed:@"globe.png"];
+						break;
+						
+					default:
+						cell.imageView.image = [UIImage imageNamed:@"file.png"];
+						break;
+				}
+				cell.textLabel.text = item.name;
+				if (([TSStringUtils isNotBlank:item.subtitleFieldName]) && ([item fieldNamed:item.subtitleFieldName].encrypted == NO)) {
+					cell.detailTextLabel.text = [item fieldNamed:item.subtitleFieldName].value;
+				}else {
+					cell.detailTextLabel.text = nil;
+				}
+				return cell;
+			}
+			
 			UITableViewCell *cell;
 			switch (itemField.type) {
 				case TSDBFieldType_URL:
@@ -143,13 +164,8 @@
 			UILabel *label = (UILabel *)[cell viewWithTag:1];
 			label.text = item.name;
 			label = (UILabel *)[cell viewWithTag:2];
-			if ([TSStringUtils isNotBlank:item.subtitleFieldName]) {
-				TSDBItemField *field = [item fieldNamed:item.subtitleFieldName];
-				if (field.encrypted) {
-					label.text = @"Text hidden.";
-				}else {
-					label.text = field.value;
-				}
+			if (([TSStringUtils isNotBlank:item.subtitleFieldName]) && ([item fieldNamed:item.subtitleFieldName].encrypted == NO)) {
+				label.text = [item fieldNamed:item.subtitleFieldName].value;
 			}else {
 				label.text = nil;
 			}
@@ -180,6 +196,8 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	[TSSharedState sharedState].currentGroup = self.group;
+	[TSSharedState sharedState].currentItem = nil;
 	if (editingStyle == UITableViewCellEditingStyleDelete) {
 		self.deletedRowIndexPath = indexPath;
 		NSString *message;
@@ -274,17 +292,23 @@
 	TSDBItem *item = [self itemForEvent:sender];
 	NSString *fieldName = item.quickActionFieldName;
 	TSDBItemField *itemField = [item fieldNamed:fieldName];
+	NSString *value = nil;
 	if (itemField.encrypted) {
-		pasteboard.string = [TSCryptoUtils tanukiDecryptField:itemField.value belongingToItem:item.name usingSecret:[[TSSharedState sharedState] openDatabasePassword]];
+		value = [TSCryptoUtils tanukiDecryptField:itemField.value belongingToItem:item.name usingSecret:[[TSSharedState sharedState] openDatabasePassword]];
 	}else {
-		pasteboard.string = itemField.value;
+		value = itemField.value;
 	}
-	[TSNotifierUtils info:[NSString stringWithFormat:@"%@ copied", fieldName]];
+	if ([TSStringUtils isNotBlank:value]) {
+		pasteboard.string = value;
+		[TSNotifierUtils infoAtTopOfScreen:[NSString stringWithFormat:@"%@ copied", fieldName]];
+	}
 }
 
 - (IBAction)openURL:(id)sender {
 	NSString *urlString = [self valueOfQuickActionFieldForEvent:sender];
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+	if ([TSStringUtils isNotBlank:urlString]) {
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+	}
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -296,6 +320,9 @@
 												 selector:@selector(databaseContentChanged:)
 													 name:TS_NOTIFICATION_OPEN_DATABASE_CONTENT_CHANGED
 												   object:nil];
+	}else if ([segue.identifier isEqualToString:@"editItem"]) {
+		TSDBItemViewController *destinationController = (TSDBItemViewController *)segue.destinationViewController;
+		destinationController.performEditSegueOnLoad = YES;
 	}
 }
 
@@ -308,12 +335,12 @@
 	[TSUtils foreground:^{
 		[self.tableView reloadData];
 		if ([TSSharedState sharedState].currentItem != nil) {
-			[TSNotifierUtils error:@"NOT IMPLEMENTED"];
+			[self performSegueWithIdentifier:@"editItem" sender:nil];
 		}else if ([TSSharedState sharedState].currentGroup != self.group) {
 			TSDBGroup *subgroup = [self.group.subgroups lastObject];
 			TSDBGroupViewController *aux = [self.storyboard instantiateViewControllerWithIdentifier:@"TSDBGroupViewController"];
 			aux.group = subgroup;
-			int64_t delayInMilliseconds = 500;
+			int64_t delayInMilliseconds = 300;
 			dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInMilliseconds * NSEC_PER_MSEC);
 			dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
 				[self.navigationController pushViewController:aux animated:YES];

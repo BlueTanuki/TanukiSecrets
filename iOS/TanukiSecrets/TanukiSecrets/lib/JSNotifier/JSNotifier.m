@@ -44,7 +44,11 @@ CGFloat JSStatusHeight()
         return statusBarFrame.size.width;
     }
 	
-    return statusBarFrame.size.height;
+	int sizeCorrection = 0;
+	if (!JSIsPad()) {
+		sizeCorrection = -3;//for iPhone, somehow the reported height does not match the actual status bar
+	}
+    return statusBarFrame.size.height + sizeCorrection;
 }
 
 CGRect JSScreenBounds()

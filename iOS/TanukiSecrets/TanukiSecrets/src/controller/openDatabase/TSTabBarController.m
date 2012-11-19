@@ -21,10 +21,8 @@
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
 	if (item.tag == 0) {
-		TSSharedState *sharedState = [TSSharedState sharedState];
-		sharedState.openDatabasePassword = nil;
-		sharedState.openDatabase = nil;
-		sharedState.openDatabaseMetadata = nil;
+		
+		[[TSSharedState sharedState] reset];
 		[self.presentingViewController dismissViewControllerAnimated:YES completion:^{
 			NSNotification *notificaton = [NSNotification notificationWithName:TS_NOTIFICATION_DATABASE_WAS_LOCKED_SUCCESSFULLY object:nil];
 			[[NSNotificationCenter defaultCenter] postNotification:notificaton];

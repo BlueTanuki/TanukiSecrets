@@ -29,7 +29,8 @@
 
 @implementation TSSharedState
 
-@synthesize openDatabasePassword, openDatabaseMetadata, openDatabase, currentGroup;
+@synthesize openDatabasePassword, openDatabaseMetadata, openDatabase, currentGroup, currentItem;
+
 @synthesize instanceUID = _instanceUID;
 
 @synthesize dropboxWrapper = _dropboxWrapper;
@@ -37,7 +38,7 @@
 
 @synthesize nextEncryptKey, nextEncryptKeyGenerationInProgress, nextEncryptKeyReady;
 
-#pragma mark - singleton creation
+#pragma mark - singleton creation and initialization
 
 + (TSSharedState*)sharedState
 {
@@ -45,6 +46,15 @@
     static dispatch_once_t once = 0;
     dispatch_once(&once, ^{sharedState = [[self alloc] init];});
     return sharedState;
+}
+
+- (void)reset
+{
+	self.currentItem = nil;
+	self.currentGroup = nil;
+	self.openDatabasePassword = nil;
+	self.openDatabase = nil;
+	self.openDatabaseMetadata = nil;
 }
 
 #pragma mark - read-only properties

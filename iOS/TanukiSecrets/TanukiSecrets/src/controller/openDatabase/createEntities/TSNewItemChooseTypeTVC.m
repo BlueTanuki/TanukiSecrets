@@ -26,7 +26,18 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+	if (TS_DEV_DEBUG_ALL) {
+		NSLog (@"view will appear, current item name %@", [TSSharedState sharedState].currentItem.name);
+	}
 	self.title = [TSSharedState sharedState].currentItem.name;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+	[super viewDidAppear:animated];
+	if (TS_DEV_DEBUG_ALL) {
+		NSLog (@"view did appear, current item name %@", [TSSharedState sharedState].currentItem.name);
+	}
 }
 
 #pragma mark - Table view data source
@@ -138,6 +149,9 @@
 	}
 	
 	NSString *itemName = sharedState.currentItem.name;
+	if (TS_DEV_DEBUG_ALL) {
+		NSLog (@"current item %@, name : %@", [sharedState.currentItem debugDescription], itemName);
+	}
 	TSDBItem *createdItem;
 	switch (indexPath.section) {
 		case 0: 
@@ -161,6 +175,9 @@
 		default:
 			[TSNotifierUtils error:@"Unknown row selection!!!"];
 		return;
+	}
+	if (TS_DEV_DEBUG_ALL) {
+		NSLog (@"created item name : %@", createdItem.name);
 	}
 	
 	TSAuthor *author = [TSAuthor authorFromCurrentDevice];

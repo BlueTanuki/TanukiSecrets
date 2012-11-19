@@ -10,4 +10,6 @@
 
 @interface TSDBItemViewController : UITableViewController
 
+@property(nonatomic, assign) BOOL performEditSegueOnLoad;
+
 @end
