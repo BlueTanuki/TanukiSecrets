@@ -33,5 +33,6 @@
 #define TS_NOTIFICATION_DATABASE_WAS_UNLOCKED_SUCCESSFULLY @"TSDatabaseWasUnlockedSuccessfully"
 #define TS_NOTIFICATION_DATABASE_WAS_LOCKED_SUCCESSFULLY @"TSDatabaseWasLockedSuccessfully"
 #define TS_NOTIFICATION_OPEN_DATABASE_CONTENT_CHANGED @"TSOpenDatabaseContentChangedNotification"
+#define TS_NOTIFICATION_ITEM_CONTENT_CHANGED @"TSItemContentChangedNotification"
 
 #endif

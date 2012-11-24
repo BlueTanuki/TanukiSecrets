@@ -14,7 +14,6 @@
 
 #define TS_XML_DB_ITEM_TAG_NAME @"item"
 #define TS_XML_DB_ITEM_NAME_TAG_NAME @"name"
-#define TS_XML_DB_ITEM_DESCRIPTION_TAG_NAME @"description"
 #define TS_XML_DB_ITEM_TAGS_TAG_NAME @"tags"
 #define TS_XML_DB_ITEM_TAG_TAG_NAME @"tag"
 #define TS_XML_DB_ITEM_FIELDS_TAG_NAME @"fields"
@@ -23,7 +22,7 @@
 
 @implementation TSDBItem
 
-@synthesize parent, name, description;
+@synthesize parent, name;
 @synthesize tags, fields;
 @synthesize quickActionFieldName, subtitleFieldName;
 
@@ -35,11 +34,6 @@
 	[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_NAME_TAG_NAME
 				  withStringContent:self.name
 						   toWriter:writer];
-	if ([TSStringUtils isNotBlank:self.description]) {
-		[TSXMLUtils writeSimpleTagNamed:TS_XML_DB_ITEM_DESCRIPTION_TAG_NAME
-					  withStringContent:self.description
-							   toWriter:writer];
-	}
 	if ([self.tags count] > 0) {
 		[TSXMLUtils writeStringArray:self.tags
 						usingTagName:TS_XML_DB_ITEM_TAG_TAG_NAME
@@ -75,7 +69,6 @@
 	if ([element.name isEqualToString:tagName]) {
 		ret = [[TSDBItem alloc] init];
 		ret.name = [element valueWithPath:TS_XML_DB_ITEM_NAME_TAG_NAME];
-		ret.description = [element valueWithPath:TS_XML_DB_ITEM_DESCRIPTION_TAG_NAME];
 		SMXMLElement *aux = [element childNamed:TS_XML_DB_ITEM_TAGS_TAG_NAME];
 		if (aux != nil) {
 			ret.tags = [[NSMutableArray alloc] init];
@@ -119,21 +112,52 @@
 - (TSDBItem *)createTemplate
 {
 	TSDBItem *ret = [[TSDBItem alloc] init];
-	ret.name = [self.name copy];
-	ret.description = [self.description copy];
+	ret.name = self.name;
 	if ([self.tags count] > 0) {
 		ret.tags = [NSMutableArray arrayWithArray:[self.tags copy]];
 	}
 	if ([self.fields count] > 0) {
 		ret.fields = [[NSMutableArray alloc] initWithCapacity:[self.fields count]];
 		for (TSDBItemField *field in self.fields) {
-			[ret.fields addObject:[field createTemplate]];
+			TSDBItemField *templateField = [field createTemplate];
+			templateField.parent = ret;
+			[ret.fields addObject:templateField];
 		}
 	}
-	ret.quickActionFieldName = [self.quickActionFieldName copy];
-	ret.subtitleFieldName = [self.subtitleFieldName copy];
+	ret.quickActionFieldName = self.quickActionFieldName;
+	ret.subtitleFieldName = self.subtitleFieldName;
 	return ret;
 }
+
+- (TSDBItem *)editingCopy
+{
+	TSDBItem *ret = [[TSDBItem alloc] init];
+	ret.name = self.name;
+	if ([self.tags count] > 0) {
+		ret.tags = [NSMutableArray arrayWithArray:[self.tags copy]];
+	}
+	if ([self.fields count] > 0) {
+		ret.fields = [[NSMutableArray alloc] initWithCapacity:[self.fields count]];
+		for (TSDBItemField *field in self.fields) {
+			TSDBItemField *clonedField = [field clone];
+			clonedField.parent = ret;
+			[ret.fields addObject:clonedField];
+		}
+	}
+	ret.quickActionFieldName = self.quickActionFieldName;
+	ret.subtitleFieldName = self.subtitleFieldName;
+	return ret;
+}
+
+- (void)commitEditingChanges:(TSDBItem *)itemUsedForEditing
+{
+	self.name = itemUsedForEditing.name;
+	self.tags = itemUsedForEditing.tags;
+	self.fields = itemUsedForEditing.fields;
+	self.quickActionFieldName = itemUsedForEditing.quickActionFieldName;
+	self.subtitleFieldName = itemUsedForEditing.subtitleFieldName;
+}
+
 
 - (void) addField:(TSDBItemField *)field
 {

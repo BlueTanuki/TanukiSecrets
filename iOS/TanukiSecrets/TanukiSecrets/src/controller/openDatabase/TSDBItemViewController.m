@@ -92,6 +92,7 @@ encryptedRowsShownPlaintext, performEditSegueOnLoad;
 {
 	[super viewDidAppear:animated];
 	if (self.performEditSegueOnLoad) {
+		self.performEditSegueOnLoad = NO;
 		int64_t delayInMilliseconds = 300;
 		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInMilliseconds * NSEC_PER_MSEC);
 		dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
@@ -230,6 +231,15 @@ encryptedRowsShownPlaintext, performEditSegueOnLoad;
 	}
 }
 
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	TSDBItemField *field = [self.indexPathToFieldItem objectForKey:indexPath];
+	if ((field.encrypted) && ([self.encryptedRowsShownPlaintext containsObject:indexPath] == NO)) {
+		return YES;
+	}
+	return NO;
+}
+
 #pragma mark - events
 
 - (TSDBItemField *)itemFieldForEvent:(id)sender
@@ -277,5 +287,28 @@ encryptedRowsShownPlaintext, performEditSegueOnLoad;
 	}
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+	if ([segue.identifier isEqualToString:@"edit"]) {
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(itemContentChanged:)
+													 name:TS_NOTIFICATION_ITEM_CONTENT_CHANGED
+												   object:nil];
+	}
+}
+
+- (void)itemContentChanged:(NSNotification *)notification
+{
+	if (TS_DEV_DEBUG_ALL) {
+		NSLog (@"received item content changed notification");
+	}
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	[TSUtils foreground:^{
+		TSDBItem *item = [TSSharedState sharedState].currentItem;
+		self.title = item.name;
+		[self initializeTableStuctureFromItem:item];
+		[self.tableView reloadData];
+	}];
+}
 
 @end

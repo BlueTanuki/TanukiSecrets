@@ -17,7 +17,7 @@
 @property(nonatomic, weak) TSDBGroup *parent;
 
 //unique inside parent group
-@property(nonatomic, strong) NSString *name;
+@property(nonatomic, copy) NSString *name;
 @property(nonatomic, strong) NSMutableArray *subgroups;//of TSDBGroup
 @property(nonatomic, strong) NSMutableArray *items;//of TSDBItem
 

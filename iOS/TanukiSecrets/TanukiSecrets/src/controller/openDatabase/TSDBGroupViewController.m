@@ -54,6 +54,14 @@
 	}else {
 		self.title = self.group.name;
 	}
+	[self.group.subgroups sortUsingComparator:^ NSComparisonResult(TSDBGroup *group1, TSDBGroup *group2)
+	 {
+		 return [group1.name caseInsensitiveCompare:group2.name];
+	 } ];
+	[self.group.items sortUsingComparator:^ NSComparisonResult(TSDBItem *item1, TSDBItem *item2)
+	 {
+		 return [item1.name caseInsensitiveCompare:item2.name];
+	 } ];
 	[self.tableView reloadData];
 }
 
@@ -337,9 +345,8 @@
 		if ([TSSharedState sharedState].currentItem != nil) {
 			[self performSegueWithIdentifier:@"editItem" sender:nil];
 		}else if ([TSSharedState sharedState].currentGroup != self.group) {
-			TSDBGroup *subgroup = [self.group.subgroups lastObject];
 			TSDBGroupViewController *aux = [self.storyboard instantiateViewControllerWithIdentifier:@"TSDBGroupViewController"];
-			aux.group = subgroup;
+			aux.group = [TSSharedState sharedState].currentGroup;
 			int64_t delayInMilliseconds = 300;
 			dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInMilliseconds * NSEC_PER_MSEC);
 			dispatch_after(popTime, dispatch_get_main_queue(), ^(void){

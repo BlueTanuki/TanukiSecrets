@@ -53,6 +53,11 @@
 		9F49205E1656B8B500B80E0A /* globe.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F49205C1656B8B500B80E0A /* globe.png */; };
 		9F49205F1656B8B500B80E0A /* globe@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F49205D1656B8B500B80E0A /* globe@2x.png */; };
 		9F4920631656C4E600B80E0A /* TSDBItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4920621656C4E500B80E0A /* TSDBItemViewController.m */; };
+		9F492086165D4D6200B80E0A /* DateInputTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F49207F165D4D6200B80E0A /* DateInputTableViewCell.m */; };
+		9F492087165D4D6200B80E0A /* StringInputTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F492081165D4D6200B80E0A /* StringInputTableViewCell.m */; };
+		9F492088165D4D6200B80E0A /* IntegerInputTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F492083165D4D6200B80E0A /* IntegerInputTableViewCell.m */; };
+		9F492089165D4D6200B80E0A /* PickerInputTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F492085165D4D6200B80E0A /* PickerInputTableViewCell.m */; };
+		9F4920A1166110FC00B80E0A /* SimplePickerInputTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4920A0166110FB00B80E0A /* SimplePickerInputTableViewCell.m */; };
 		9F5459E81649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5459E71649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.m */; };
 		9F5459EC1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5459EB1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.m */; };
 		9F57C20A16146E420085703E /* TSBackupUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57C20916146E420085703E /* TSBackupUtils.m */; };
@@ -76,6 +81,7 @@
 		9F96775E162096C700C9182D /* TSUIDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F96775D162096C700C9182D /* TSUIDocument.m */; };
 		9F98D40E15F0CAB9001A2C82 /* TSCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98D40D15F0CAB9001A2C82 /* TSCryptoUtils.m */; };
 		9F98D41115F0CCB3001A2C82 /* TSStringUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98D41015F0CCB3001A2C82 /* TSStringUtils.m */; };
+		9F9C94191661547C00F85CEB /* TSEditItemTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C94181661547C00F85CEB /* TSEditItemTVC.m */; };
 		9F9D868E15CBFDF60066BC04 /* SMXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */; };
 		9F9D869115CC14CA0066BC04 /* Sandbox.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */; };
 		9FC16205161F081700094E43 /* TSDatabaseWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC16204161F081700094E43 /* TSDatabaseWrapper.m */; };
@@ -186,6 +192,16 @@
 		9F49205D1656B8B500B80E0A /* globe@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "globe@2x.png"; sourceTree = "<group>"; };
 		9F4920611656C4E400B80E0A /* TSDBItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDBItemViewController.h; sourceTree = "<group>"; };
 		9F4920621656C4E500B80E0A /* TSDBItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDBItemViewController.m; sourceTree = "<group>"; };
+		9F49207E165D4D6200B80E0A /* DateInputTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateInputTableViewCell.h; sourceTree = "<group>"; };
+		9F49207F165D4D6200B80E0A /* DateInputTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DateInputTableViewCell.m; sourceTree = "<group>"; };
+		9F492080165D4D6200B80E0A /* StringInputTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringInputTableViewCell.h; sourceTree = "<group>"; };
+		9F492081165D4D6200B80E0A /* StringInputTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringInputTableViewCell.m; sourceTree = "<group>"; };
+		9F492082165D4D6200B80E0A /* IntegerInputTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegerInputTableViewCell.h; sourceTree = "<group>"; };
+		9F492083165D4D6200B80E0A /* IntegerInputTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntegerInputTableViewCell.m; sourceTree = "<group>"; };
+		9F492084165D4D6200B80E0A /* PickerInputTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PickerInputTableViewCell.h; sourceTree = "<group>"; };
+		9F492085165D4D6200B80E0A /* PickerInputTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PickerInputTableViewCell.m; sourceTree = "<group>"; };
+		9F49209F166110FA00B80E0A /* SimplePickerInputTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimplePickerInputTableViewCell.h; sourceTree = "<group>"; };
+		9F4920A0166110FB00B80E0A /* SimplePickerInputTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimplePickerInputTableViewCell.m; sourceTree = "<group>"; };
 		9F5459E61649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSSelectiveTapCallbackTableViewController.h; sourceTree = "<group>"; };
 		9F5459E71649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSSelectiveTapCallbackTableViewController.m; sourceTree = "<group>"; };
 		9F5459EA1649645D0011F6FC /* TSNewDatabaseChooseNameTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNewDatabaseChooseNameTVC.h; sourceTree = "<group>"; };
@@ -224,6 +240,8 @@
 		9F98D40D15F0CAB9001A2C82 /* TSCryptoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSCryptoUtils.m; sourceTree = "<group>"; };
 		9F98D40F15F0CCB3001A2C82 /* TSStringUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSStringUtils.h; sourceTree = "<group>"; };
 		9F98D41015F0CCB3001A2C82 /* TSStringUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSStringUtils.m; sourceTree = "<group>"; };
+		9F9C94171661547C00F85CEB /* TSEditItemTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSEditItemTVC.h; sourceTree = "<group>"; };
+		9F9C94181661547C00F85CEB /* TSEditItemTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSEditItemTVC.m; sourceTree = "<group>"; };
 		9F9D868C15CBFDF60066BC04 /* SMXMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXMLDocument.h; sourceTree = "<group>"; };
 		9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXMLDocument.m; sourceTree = "<group>"; };
 		9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Sandbox.storyboard; sourceTree = "<group>"; };
@@ -422,12 +440,13 @@
 			isa = PBXGroup;
 			children = (
 				9F4920491652D77200B80E0A /* createEntities */,
-				9F321604163F10DC00123E72 /* TSTabBarController.h */,
-				9F321605163F10DC00123E72 /* TSTabBarController.m */,
+				9F49209E1660FA5400B80E0A /* editItem */,
 				9F32162B1642AB7800123E72 /* TSDBGroupViewController.h */,
 				9F32162C1642AB7800123E72 /* TSDBGroupViewController.m */,
 				9F4920611656C4E400B80E0A /* TSDBItemViewController.h */,
 				9F4920621656C4E500B80E0A /* TSDBItemViewController.m */,
+				9F321604163F10DC00123E72 /* TSTabBarController.h */,
+				9F321605163F10DC00123E72 /* TSTabBarController.m */,
 			);
 			path = openDatabase;
 			sourceTree = "<group>";
@@ -443,6 +462,32 @@
 				9F492056165560AB00B80E0A /* TSNewItemChooseTypeTVC.m */,
 			);
 			path = createEntities;
+			sourceTree = "<group>";
+		};
+		9F49207D165D4D0400B80E0A /* TableViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				9F49207E165D4D6200B80E0A /* DateInputTableViewCell.h */,
+				9F49207F165D4D6200B80E0A /* DateInputTableViewCell.m */,
+				9F492082165D4D6200B80E0A /* IntegerInputTableViewCell.h */,
+				9F492083165D4D6200B80E0A /* IntegerInputTableViewCell.m */,
+				9F492084165D4D6200B80E0A /* PickerInputTableViewCell.h */,
+				9F492085165D4D6200B80E0A /* PickerInputTableViewCell.m */,
+				9F49209F166110FA00B80E0A /* SimplePickerInputTableViewCell.h */,
+				9F4920A0166110FB00B80E0A /* SimplePickerInputTableViewCell.m */,
+				9F492080165D4D6200B80E0A /* StringInputTableViewCell.h */,
+				9F492081165D4D6200B80E0A /* StringInputTableViewCell.m */,
+			);
+			path = TableViewCells;
+			sourceTree = "<group>";
+		};
+		9F49209E1660FA5400B80E0A /* editItem */ = {
+			isa = PBXGroup;
+			children = (
+				9F9C94171661547C00F85CEB /* TSEditItemTVC.h */,
+				9F9C94181661547C00F85CEB /* TSEditItemTVC.m */,
+			);
+			path = editItem;
 			sourceTree = "<group>";
 		};
 		9F8ED45615B98C6900391EF8 = {
@@ -617,9 +662,10 @@
 			isa = PBXGroup;
 			children = (
 				9F026A1B160B76180097BED4 /* DropboxSDK.framework */,
-				9F9D868B15CBFDF60066BC04 /* SMXMLDocument */,
-				9FEC4E5F15CABA1E008B18D5 /* XMLWriter */,
 				9FEC4DCC15C29870008B18D5 /* JSNotifier */,
+				9F9D868B15CBFDF60066BC04 /* SMXMLDocument */,
+				9F49207D165D4D0400B80E0A /* TableViewCells */,
+				9FEC4E5F15CABA1E008B18D5 /* XMLWriter */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -854,6 +900,12 @@
 				9F492053165557D000B80E0A /* TSNewItemChooseNameTVC.m in Sources */,
 				9F492057165560AC00B80E0A /* TSNewItemChooseTypeTVC.m in Sources */,
 				9F4920631656C4E600B80E0A /* TSDBItemViewController.m in Sources */,
+				9F492086165D4D6200B80E0A /* DateInputTableViewCell.m in Sources */,
+				9F492087165D4D6200B80E0A /* StringInputTableViewCell.m in Sources */,
+				9F492088165D4D6200B80E0A /* IntegerInputTableViewCell.m in Sources */,
+				9F492089165D4D6200B80E0A /* PickerInputTableViewCell.m in Sources */,
+				9F4920A1166110FC00B80E0A /* SimplePickerInputTableViewCell.m in Sources */,
+				9F9C94191661547C00F85CEB /* TSEditItemTVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

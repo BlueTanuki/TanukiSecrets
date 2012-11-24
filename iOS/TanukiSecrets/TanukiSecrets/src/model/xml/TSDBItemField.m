@@ -22,6 +22,30 @@
 
 #pragma mark - helpers
 
++ (NSString *)interfaceStringForType:(TSDBFieldType)type
+{
+	switch (type) {
+		case TSDBFieldType_NUMERIC:
+			return @"Numeric";
+			break;
+			
+		case TSDBFieldType_SECRET:
+			return @"Secret";
+			break;
+			
+		case TSDBFieldType_TEXT:
+			return @"Long text";
+			break;
+			
+		case TSDBFieldType_URL:
+			return @"URL";
+			break;
+			
+		default:
+			return @"Text";
+	}
+}
+
 + (NSString *)stringForType:(TSDBFieldType)type
 {
 	switch (type) {
@@ -127,9 +151,19 @@
 - (TSDBItemField *)createTemplate
 {
 	TSDBItemField *ret = [[TSDBItemField alloc] init];
-	ret.name = [self.name copy];
+	ret.name = self.name;
 	ret.type = self.type;
 	ret.encrypted = self.encrypted;
+	return ret;
+}
+
+- (TSDBItemField *)clone
+{
+	TSDBItemField *ret = [[TSDBItemField alloc] init];
+	ret.name = self.name;
+	ret.type = self.type;
+	ret.encrypted = self.encrypted;
+	ret.value = self.value;
 	return ret;
 }
 

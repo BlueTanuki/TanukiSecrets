@@ -162,6 +162,5 @@
 //	[TSNotifierUtils error:@"not implemented"];
 //	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 //}
-// -- DOES NOT work well together with TSSelectiveTapCallbackTableViewController code
 
 @end

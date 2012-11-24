@@ -14,3 +14,6 @@ Using components/libraries :
 	http://creativecommons.org/licenses/by-sa/3.0/
 	http://blog.twg.ca/2010/11/retina-display-icon-set/
  * icon set from http://sourceforge.net/projects/openiconlibrary/
+ * editable table cell suite by Tom Fewster, http://www.wannabegeek.com/?p=104
+ 		public domain, http://www.wannabegeek.com/?page_id=253
+	(+ changes were made to several classes)

@@ -29,6 +29,11 @@
 {
 }
 
+- (BOOL)tapGestureRecognizerConsumesEvent
+{
+	return YES;
+}
+
 #pragma mark - UIGestureRecognizerDelegate
 
 -(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
@@ -77,7 +82,9 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     [super viewDidLoad];
 	UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
 	tapRecognizer.delegate = self;
+	tapRecognizer.cancelsTouchesInView = [self tapGestureRecognizerConsumesEvent];
 	[self.view addGestureRecognizer:tapRecognizer];
+//	NSLog (@"Tap gesture recognizer added.");
 }
 
 @end

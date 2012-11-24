@@ -25,4 +25,8 @@
 //callback for subclasses, a tap that did not fall inside any of the returned views
 - (void)outsideTapped;
 
+//subclasses should return NO if the tap event should not be exclusively consumed by this component
+//default implementation returns YES (meaning that the tap event will not reach any cells)
+- (BOOL)tapGestureRecognizerConsumesEvent;
+
 @end

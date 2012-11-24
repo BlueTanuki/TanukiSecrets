@@ -16,10 +16,10 @@
  */
 @interface TSAuthor : NSObject<TSXMLSerializable>
 
-@property(nonatomic, strong) NSString *uid;
-@property(nonatomic, strong) NSString *name;
+@property(nonatomic, copy) NSString *uid;
+@property(nonatomic, copy) NSString *name;
 @property(nonatomic, strong) NSDate *date;
-@property(nonatomic, strong) NSString *comment;//optional
+@property(nonatomic, copy) NSString *comment;//optional
 
 // Designated initializer
 - (id)initWithId:(NSString *)uid andName:(NSString *)name;

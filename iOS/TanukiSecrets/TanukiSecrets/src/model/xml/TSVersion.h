@@ -13,8 +13,8 @@
 @interface TSVersion : NSObject<TSXMLSerializable>
 
 @property(nonatomic, assign) NSInteger versionNumber;
-@property(nonatomic, strong) NSString *label;//optional
-@property(nonatomic, strong) NSString *checksum;
+@property(nonatomic, copy) NSString *label;//optional
+@property(nonatomic, copy) NSString *checksum;
 
 /// Designated initializer
 - (id)initWithNumber:(NSInteger)number andChecksum:(NSString *)checksum;
