@@ -17,7 +17,7 @@
 
 @implementation SimplePickerInputTableViewCell
 
-@synthesize possibleValues, delegate;
+@synthesize possibleValues, possibleValueLabels, delegate;
 @synthesize selectedValue;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -43,7 +43,12 @@
 
 - (void)setValue:(NSString *)value {
 	self.selectedValue = value;
-	self.detailTextLabel.text = self.selectedValue;
+	if (self.possibleValueLabels) {
+		NSUInteger index = [self.possibleValues indexOfObject:value];
+		self.detailTextLabel.text = [self.possibleValueLabels objectAtIndex:index];
+	}else {
+		self.detailTextLabel.text = self.selectedValue;
+	}
 	[self.picker selectRow:[self.possibleValues indexOfObject:self.selectedValue] inComponent:0 animated:YES];
 }
 
@@ -62,6 +67,9 @@
 #pragma mark UIPickerViewDelegate
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+	if (self.possibleValueLabels) {
+		return [self.possibleValueLabels objectAtIndex:row];
+	}
 	return [self.possibleValues objectAtIndex:row];
 }
 

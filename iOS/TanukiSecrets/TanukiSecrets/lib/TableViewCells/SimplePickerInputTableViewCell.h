@@ -18,7 +18,10 @@
 
 @interface SimplePickerInputTableViewCell : PickerInputTableViewCell <UIPickerViewDataSource, UIPickerViewDelegate>
 
+//values
 @property (nonatomic, strong) NSArray *possibleValues;
+//labels for values (must be the same size as values, if missing the values are shown)
+@property (nonatomic, strong) NSArray *possibleValueLabels;
 @property (weak) IBOutlet id <SimplePickerInputTableViewCellDelegate> delegate;
 
 - (void)setValue:(NSString *)value;

@@ -85,6 +85,9 @@
 		9F9D868E15CBFDF60066BC04 /* SMXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D868D15CBFDF60066BC04 /* SMXMLDocument.m */; };
 		9F9D869115CC14CA0066BC04 /* Sandbox.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F9D869015CC14CA0066BC04 /* Sandbox.storyboard */; };
 		9FC16205161F081700094E43 /* TSDatabaseWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC16204161F081700094E43 /* TSDatabaseWrapper.m */; };
+		9FC25B1A16652263000850BE /* TSEditFieldTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC25B1916652263000850BE /* TSEditFieldTVC.m */; };
+		9FC25B1E1665456E000850BE /* d20.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FC25B1C1665456E000850BE /* d20.png */; };
+		9FC25B1F1665456E000850BE /* d20@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FC25B1D1665456E000850BE /* d20@2x.png */; };
 		9FCE97BD1631A289003FE67F /* TSLocalDatabasesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCE97BC1631A288003FE67F /* TSLocalDatabasesViewController.m */; };
 		9FCE97C61631BD2E003FE67F /* TSChooseCreationMethodViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCE97C51631BD2E003FE67F /* TSChooseCreationMethodViewController.m */; };
 		9FCE97C91635B2E6003FE67F /* TSRemoteDatabasesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCE97C81635B2E5003FE67F /* TSRemoteDatabasesViewController.m */; };
@@ -248,6 +251,10 @@
 		9FC16203161F081700094E43 /* TSDatabaseWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDatabaseWrapper.h; sourceTree = "<group>"; };
 		9FC16204161F081700094E43 /* TSDatabaseWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSDatabaseWrapper.m; sourceTree = "<group>"; };
 		9FC16206161F243300094E43 /* TSRemoteStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSRemoteStorage.h; sourceTree = "<group>"; };
+		9FC25B1816652263000850BE /* TSEditFieldTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSEditFieldTVC.h; sourceTree = "<group>"; };
+		9FC25B1916652263000850BE /* TSEditFieldTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSEditFieldTVC.m; sourceTree = "<group>"; };
+		9FC25B1C1665456E000850BE /* d20.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = d20.png; sourceTree = "<group>"; };
+		9FC25B1D1665456E000850BE /* d20@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "d20@2x.png"; sourceTree = "<group>"; };
 		9FCE97BB1631A288003FE67F /* TSLocalDatabasesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLocalDatabasesViewController.h; sourceTree = "<group>"; };
 		9FCE97BC1631A288003FE67F /* TSLocalDatabasesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TSLocalDatabasesViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		9FCE97C41631BD2E003FE67F /* TSChooseCreationMethodViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSChooseCreationMethodViewController.h; sourceTree = "<group>"; };
@@ -409,6 +416,8 @@
 		9F32126D163F011700123E72 /* img */ = {
 			isa = PBXGroup;
 			children = (
+				9FC25B1C1665456E000850BE /* d20.png */,
+				9FC25B1D1665456E000850BE /* d20@2x.png */,
 				9F492035165184BB00B80E0A /* file.png */,
 				9F492036165184BB00B80E0A /* file@2x.png */,
 				9F49205C1656B8B500B80E0A /* globe.png */,
@@ -486,6 +495,8 @@
 			children = (
 				9F9C94171661547C00F85CEB /* TSEditItemTVC.h */,
 				9F9C94181661547C00F85CEB /* TSEditItemTVC.m */,
+				9FC25B1816652263000850BE /* TSEditFieldTVC.h */,
+				9FC25B1916652263000850BE /* TSEditFieldTVC.m */,
 			);
 			path = editItem;
 			sourceTree = "<group>";
@@ -811,6 +822,8 @@
 				9F49203C165184BB00B80E0A /* fileClipboard@2x.png in Resources */,
 				9F49205E1656B8B500B80E0A /* globe.png in Resources */,
 				9F49205F1656B8B500B80E0A /* globe@2x.png in Resources */,
+				9FC25B1E1665456E000850BE /* d20.png in Resources */,
+				9FC25B1F1665456E000850BE /* d20@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -906,6 +919,7 @@
 				9F492089165D4D6200B80E0A /* PickerInputTableViewCell.m in Sources */,
 				9F4920A1166110FC00B80E0A /* SimplePickerInputTableViewCell.m in Sources */,
 				9F9C94191661547C00F85CEB /* TSEditItemTVC.m in Sources */,
+				9FC25B1A16652263000850BE /* TSEditFieldTVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

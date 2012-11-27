@@ -42,5 +42,7 @@ typedef enum {
 + (TSDBItemField *)encryptedFieldWithName:(NSString *)name type:(TSDBFieldType)type andValue:(NSString *)value;
 
 + (NSString *)interfaceStringForType:(TSDBFieldType)type;
++ (NSString *)stringForType:(TSDBFieldType)type;
++ (TSDBFieldType)typeForString:(NSString *)string;
 
 @end

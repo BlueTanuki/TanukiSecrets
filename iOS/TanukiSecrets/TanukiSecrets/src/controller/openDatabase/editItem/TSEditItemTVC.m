@@ -13,6 +13,7 @@
 #import "TSDBItemField.h"
 #import "TSStringUtils.h"
 #import "TSUtils.h"
+#import "TSEditFieldTVC.h"
 
 @interface TSEditItemTVC ()
 
@@ -191,7 +192,7 @@
 		}
         [self.editingItem.fields removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-		[self.tableView reloadData];
+//		[self.tableView reloadData];
     }else if (editingStyle == UITableViewCellEditingStyleInsert) {
 		TSDBItemField *newField = [[TSDBItemField alloc] init];
 		[self.editingItem.fields addObject:newField];
@@ -241,6 +242,10 @@
 			self.editingField = [self.editingItem.fields objectAtIndex:indexPath.row];
 		}
 		[self performSegueWithIdentifier:@"editField" sender:nil];
+	}else {
+		if (indexPath.row == 0) {
+			[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+		}
 	}
 }
 
@@ -248,6 +253,10 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+	if ([@"editField" isEqualToString:segue.identifier]) {
+		TSEditFieldTVC *destinationController = (TSEditFieldTVC *)[segue destinationViewController];
+		destinationController.editingField = self.editingField;
+	}
 }
 
 - (IBAction)cancel:(id)sender {
@@ -268,6 +277,10 @@
 			[self.tableView reloadData];
 		});
 	}
+}
+
+- (IBAction)texteditingEnded:(id)sender {
+	[self outsideTapped];
 }
 
 #pragma mark - SimplePickerInputTableViewCellDelegate
@@ -342,6 +355,5 @@
 {
 	return NO;//this will allow the event to reach the other cells
 }
-
 
 @end
