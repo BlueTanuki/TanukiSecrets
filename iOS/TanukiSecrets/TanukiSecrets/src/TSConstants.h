@@ -10,7 +10,7 @@
 #define TanukiSecrets_TSConstants_h
 
 #define TS_DEV_DEBUG_ALL 0
-#define TS_DEV_DEBUG_SELECTIVE 0
+#define TS_DEV_DEBUG_SELECTIVE 1
 
 #define TS_INSTANCE_UID_KEY @"TS_INSTANCE_UID_KEY"
 

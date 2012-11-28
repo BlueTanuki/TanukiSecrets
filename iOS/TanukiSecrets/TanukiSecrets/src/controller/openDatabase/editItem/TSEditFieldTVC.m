@@ -49,6 +49,8 @@
 	}
 	self.valueTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
 	self.valueTextField.autocorrectionType = UITextAutocorrectionTypeNo;
+	[self.valueTextField becomeFirstResponder];
+	[self.valueTextField resignFirstResponder];
 	if (TS_DEV_DEBUG_ALL) {
 		NSLog (@"keyboard set to type %d", self.valueTextField.keyboardType);
 	}
@@ -56,7 +58,7 @@
 
 - (void)transferValuesToEditingField
 {
-	self.editingField.name = self.nameTextField.text;
+	self.editingField.name = [TSStringUtils trim:self.nameTextField.text];
 	if (self.editingField.type == TSDBFieldType_TEXT) {
 		self.editingField.value= self.valueTextView.text;
 	}else {
@@ -76,13 +78,7 @@
 	}else {
 		value = self.valueTextField.text;
 	}
-	if (self.encryptedSwitch.on) {
-		self.editingField.value = [TSCryptoUtils tanukiEncryptField:value
-													belongingToItem:self.editingField.parent.name
-														usingSecret:[TSSharedState sharedState].openDatabasePassword];
-	}else {
-		self.editingField.value = value;
-	}
+	self.editingField.value = value;
 	[self.nameTextField resignFirstResponder];
 	[self.valueTextField resignFirstResponder];
 	[self.valueTextView resignFirstResponder];
@@ -90,9 +86,22 @@
 	[super viewWillDisappear:animated];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	if ([TSStringUtils isBlank:self.editingField.name]) {
+		self.title = @"New item";
+	}else {
+		self.title = self.editingField.name;
+	}
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
+	if (self.editingField.type != TSDBFieldType_TEXT) {
+		[self setCorrectKeyboardTypeForValueTextField];
+	}
 	if ([TSStringUtils isBlank:self.editingField.name]) {
 		[self.nameTextField becomeFirstResponder];
 	}
@@ -168,13 +177,7 @@
 				cell = [tableView dequeueReusableCellWithIdentifier:@"LongValueCell" forIndexPath:indexPath];
 				self.valueCell = cell;
 				self.valueTextView = (UITextView *)[cell viewWithTag:1];
-				if (self.editingField.encrypted) {
-					self.valueTextView.text = [TSCryptoUtils tanukiDecryptField:self.editingField.value
-																belongingToItem:self.editingField.parent.name
-																	usingSecret:[TSSharedState sharedState].openDatabasePassword];
-				}else {
-					self.valueTextView.text = self.editingField.value;
-				}
+				self.valueTextView.text = self.editingField.value;
 			}else {
 				if (self.editingField.type == TSDBFieldType_SECRET) {
 					cell = [tableView dequeueReusableCellWithIdentifier:@"SecretValueCell" forIndexPath:indexPath];
@@ -183,13 +186,7 @@
 				}
 				self.valueCell = cell;
 				self.valueTextField = (UITextField *)[cell viewWithTag:1];
-				if (self.editingField.encrypted) {
-					self.valueTextField.text = [TSCryptoUtils tanukiDecryptField:self.editingField.value
-																belongingToItem:self.editingField.parent.name
-																	usingSecret:[TSSharedState sharedState].openDatabasePassword];
-				}else {
-					self.valueTextField.text = self.editingField.value;
-				}
+				self.valueTextField.text = self.editingField.value;
 			}
 		}
 			break;
@@ -200,6 +197,11 @@
 	}
 	
     return cell;
+}
+
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	return indexPath.row == 1;
 }
 
 #pragma mark - Table view delegate
@@ -218,7 +220,7 @@
 }
 
 - (IBAction)randomizeFieldValue:(id)sender {
-	self.valueTextField.text = @"random (tbd)";
+	self.valueTextField.text = [TSCryptoUtils randomPassword];
 	[self.valueTextField resignFirstResponder];
 }
 

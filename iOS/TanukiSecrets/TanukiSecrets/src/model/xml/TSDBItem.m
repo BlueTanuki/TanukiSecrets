@@ -153,6 +153,9 @@
 {
 	self.name = itemUsedForEditing.name;
 	self.tags = itemUsedForEditing.tags;
+	for (TSDBItemField *field in itemUsedForEditing.fields) {
+		field.parent = self;
+	}
 	self.fields = itemUsedForEditing.fields;
 	self.quickActionFieldName = itemUsedForEditing.quickActionFieldName;
 	self.subtitleFieldName = itemUsedForEditing.subtitleFieldName;

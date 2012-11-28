@@ -466,7 +466,11 @@
                                 <action selector="cancel:" destination="0SO-gH-xig" id="BRk-Ae-M6m"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="XoJ-ih-r97"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="XoJ-ih-r97">
+                            <connections>
+                                <action selector="save:" destination="0SO-gH-xig" id="euk-p6-3Ok"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <segue destination="D9N-6O-jLn" kind="push" identifier="editField" id="8eZ-9a-bie"/>
@@ -1081,22 +1085,39 @@
         </class>
         <class className="TSDBGroupViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSDBGroupViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="openURL:"/>
+                <relationship kind="action" name="quickCopy:"/>
+            </relationships>
         </class>
         <class className="TSDBItemViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSDBItemViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="openURL:"/>
+                <relationship kind="action" name="quickCopy:"/>
+            </relationships>
         </class>
         <class className="TSEditFieldTVC" superclassName="TSSelectiveTapCallbackTableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSEditFieldTVC.h"/>
+            <relationships>
+                <relationship kind="action" name="randomizeFieldValue:"/>
+                <relationship kind="action" name="texteditingEnded:"/>
+            </relationships>
         </class>
         <class className="TSEditItemTVC" superclassName="TSSelectiveTapCallbackTableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSEditItemTVC.h"/>
         </class>
         <class className="TSModalDialogDismissingTableViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSModalDialogDismissingTableViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="cancel:"/>
+            </relationships>
         </class>
         <class className="TSNewGroupViewController" superclassName="TSSelectiveTapCallbackTableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNewGroupViewController.h"/>
             <relationships>
+                <relationship kind="action" name="createGroup:"/>
+                <relationship kind="action" name="nameEditingEnded:"/>
                 <relationship kind="outlet" name="createGroupCell" candidateClass="UITableViewCell"/>
                 <relationship kind="outlet" name="createGroupCellLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="nameCell" candidateClass="UITableViewCell"/>
@@ -1107,6 +1128,7 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNewItemChooseNameTVC.h"/>
             <relationships>
                 <relationship kind="action" name="nameEditingEnded:"/>
+                <relationship kind="action" name="next:"/>
                 <relationship kind="outlet" name="nameCell" candidateClass="UITableViewCell"/>
                 <relationship kind="outlet" name="nameTextField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="nextCell" candidateClass="UITableViewCell"/>

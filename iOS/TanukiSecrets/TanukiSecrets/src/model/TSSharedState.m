@@ -15,6 +15,8 @@
 #import "TSNotifierUtils.h"
 #import "TSCryptoUtils.h"
 #import "TSUtils.h"
+#import "TSDBGroup.h"
+#import "TSDBItem.h"
 
 @interface TSSharedState()
 
@@ -29,7 +31,10 @@
 
 @implementation TSSharedState
 
-@synthesize openDatabasePassword, openDatabaseMetadata, openDatabase, currentGroup, currentItem;
+@synthesize openDatabasePassword, openDatabaseMetadata, openDatabase;
+
+@synthesize currentGroup = _currentGroup;
+@synthesize currentItem = _currentItem;
 
 @synthesize instanceUID = _instanceUID;
 
@@ -37,6 +42,24 @@
 @synthesize iCloudWrapper = _iCloudWrapper;
 
 @synthesize nextEncryptKey, nextEncryptKeyGenerationInProgress, nextEncryptKeyReady;
+
+#pragma mark - override getters/setters
+
+- (void)setCurrentGroup:(TSDBGroup *)currentGroup
+{
+	_currentGroup = currentGroup;
+	if (TS_DEV_DEBUG_ALL) {
+		NSLog (@"Current group set to %@", [_currentGroup uniqueGlobalId]);
+	}
+}
+
+- (void)setCurrentItem:(TSDBItem *)currentItem
+{
+	_currentItem = currentItem;
+	if (TS_DEV_DEBUG_ALL) {
+		NSLog (@"Current item set to %@", [_currentItem uniqueGlobalId]);
+	}
+}
 
 #pragma mark - singleton creation and initialization
 

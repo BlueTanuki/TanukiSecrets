@@ -38,7 +38,75 @@
 
 + (NSData *)randomDataOfVariableLengthMinimum:(NSInteger)min maximum:(NSInteger)max
 {
-	return [self randomDataOfLength:(min + arc4random() % (max - min + 1))];
+	return [self randomDataOfLength:[self randomNumberMinimum:min maximum:max]];
+}
+
++ (NSInteger)randomNumberMinimum:(NSInteger)min maximum:(NSInteger)max
+{
+	if (min > max) {
+		return [self randomNumberMinimum:max maximum:min];
+	}
+	return min + arc4random() % (max - min + 1);
+}
+
++ (NSString *)lowercaseLettersAlphabet
+{
+	return @"qwertyuioplkjhgfdsazxcvbnm";
+}
+
++ (NSString *)uppercaseLettersAlphabet
+{
+	return @"QWERTYUIOPLKJHGFDSAZXCVBNM";
+}
+
++ (NSString *)lettersAlphabet
+{
+	return [[self lowercaseLettersAlphabet] stringByAppendingString:[self uppercaseLettersAlphabet]];
+}
+
++ (NSString *)numbersAlphabet
+{
+	return @"1234567890";
+}
+
++ (NSString *)alphanumericAlphabet
+{
+	return [[self lettersAlphabet] stringByAppendingString:[self numbersAlphabet]];
+}
+
++ (NSString *)symbolsAlphabet
+{
+	return @"`,./;'[]\\-=~!@#$%^&*()_+{}|:\"<>?";
+}
+
++ (NSString *)defaultAlphabet
+{
+	return [[self alphanumericAlphabet] stringByAppendingString:[self symbolsAlphabet]];
+}
+
++ (NSString *)randomPassword
+{
+	return [self randomStringOfVariableLengthMinimum:8 maximum:25];
+}
+
++ (NSString *)randomStringOfVariableLengthMinimum:(NSInteger)min maximum:(NSInteger)max
+{
+	return [self randomStringOfLength:[self randomNumberMinimum:min maximum:max]];
+}
+
++ (NSString *)randomStringOfLength:(NSInteger)length
+{
+	return [self randomStringOfLength:length usingAlphabet:[self defaultAlphabet]];
+}
+
++ (NSString *)randomStringOfLength:(NSInteger)length usingAlphabet:(NSString *)alphabet
+{
+    NSMutableString *randomString = [NSMutableString stringWithCapacity:length];
+	NSUInteger n = [alphabet length];
+    for (int i=0; i<length; i++) {
+		[randomString appendFormat: @"%C", [alphabet characterAtIndex: arc4random() % n]];
+    }
+    return randomString;
 }
 
 #pragma mark - Hashing

@@ -85,6 +85,9 @@ encryptedRowsShownPlaintext, performEditSegueOnLoad;
 	TSDBItem *item = [TSSharedState sharedState].currentItem;
 	self.title = item.name;
 	[self initializeTableStuctureFromItem:item];
+	if (TS_DEV_DEBUG_ALL) {
+		NSLog (@"calling reloadData in viewWillAppear");
+	}
 	[self.tableView reloadData];
 }
 
@@ -199,6 +202,8 @@ encryptedRowsShownPlaintext, performEditSegueOnLoad;
 				if (field.encrypted) {
 					if (TS_DEV_DEBUG_ALL) {
 						NSLog (@"row %@ is encrypted and plaintext array is %@", indexPath, [self.encryptedRowsShownPlaintext debugDescription]);
+						NSLog (@"value is %@", field.value);
+						NSLog (@"parent name is %@", field.parent.name);
 					}
 					if ([self.encryptedRowsShownPlaintext containsObject:indexPath]) {
 						label.text = [TSCryptoUtils tanukiDecryptField:field.value belongingToItem:field.parent.name usingSecret:[[TSSharedState sharedState] openDatabasePassword]];
@@ -224,6 +229,9 @@ encryptedRowsShownPlaintext, performEditSegueOnLoad;
 	TSDBItemField *field = [self.indexPathToFieldItem objectForKey:indexPath];
 	if ((field.encrypted) && ([self.encryptedRowsShownPlaintext containsObject:indexPath] == NO)) {
 		[self.encryptedRowsShownPlaintext addObject:indexPath];
+		if (TS_DEV_DEBUG_ALL) {
+			NSLog (@"calling reloadData because encrypted row was tapped");
+		}
 		[self.tableView reloadData];
 		if (TS_DEV_DEBUG_ALL) {
 			NSLog (@"tapped encrypted field %@, encrypted shown array is now %@", field.name, [self.encryptedRowsShownPlaintext debugDescription]);
@@ -283,32 +291,43 @@ encryptedRowsShownPlaintext, performEditSegueOnLoad;
 - (IBAction)openURL:(id)sender {
 	NSString *urlString = [self valueOfQuickActionFieldForEvent:sender];
 	if ([TSStringUtils isNotBlank:urlString]) {
-		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+		NSURL *url = [NSURL URLWithString:urlString];
+		if (TS_DEV_DEBUG_ALL) {
+			NSLog (@"Attempting to open url %@ (string was %@) in external application", url, urlString);
+		}
+		if ([[UIApplication sharedApplication] canOpenURL:url]) {
+			[[UIApplication sharedApplication] openURL:url];
+		}else {
+			[TSNotifierUtils errorAtTopOfScreen:@"Cannot open this URL."];
+		}
 	}
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-	if ([segue.identifier isEqualToString:@"edit"]) {
-		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(itemContentChanged:)
-													 name:TS_NOTIFICATION_ITEM_CONTENT_CHANGED
-												   object:nil];
-	}
-}
-
-- (void)itemContentChanged:(NSNotification *)notification
-{
-	if (TS_DEV_DEBUG_ALL) {
-		NSLog (@"received item content changed notification");
-	}
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[TSUtils foreground:^{
-		TSDBItem *item = [TSSharedState sharedState].currentItem;
-		self.title = item.name;
-		[self initializeTableStuctureFromItem:item];
-		[self.tableView reloadData];
-	}];
-}
+//- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+//{
+//	if ([segue.identifier isEqualToString:@"edit"]) {
+//		[[NSNotificationCenter defaultCenter] addObserver:self
+//												 selector:@selector(itemContentChanged:)
+//													 name:TS_NOTIFICATION_ITEM_CONTENT_CHANGED
+//												   object:nil];
+//	}
+//}
+//
+//- (void)itemContentChanged:(NSNotification *)notification
+//{
+//	if (TS_DEV_DEBUG_ALL) {
+//		NSLog (@"received item content changed notification");
+//	}
+//	[[NSNotificationCenter defaultCenter] removeObserver:self];
+//	[TSUtils foreground:^{
+//		TSDBItem *item = [TSSharedState sharedState].currentItem;
+//		self.title = item.name;
+//		[self initializeTableStuctureFromItem:item];
+//		if (TS_DEV_DEBUG_SELECTIVE) {
+//			NSLog (@"calling reloadData following notification");
+//		}
+//		[self.tableView reloadData];
+//	}];
+//}
 
 @end

@@ -18,6 +18,22 @@
 + (NSData *)randomDataOfLength:(NSInteger)length;
 + (NSData *)randomDataOfVariableLengthMinimum:(NSInteger)min maximum:(NSInteger) max;
 
++ (NSInteger)randomNumberMinimum:(NSInteger)min maximum:(NSInteger) max;
+
++ (NSString *)lowercaseLettersAlphabet;
++ (NSString *)uppercaseLettersAlphabet;
++ (NSString *)lettersAlphabet;
++ (NSString *)numbersAlphabet;
++ (NSString *)alphanumericAlphabet;
++ (NSString *)symbolsAlphabet;
++ (NSString *)defaultAlphabet;
+
++ (NSString *)randomPassword;
++ (NSString *)randomStringOfVariableLengthMinimum:(NSInteger)min maximum:(NSInteger) max;
++ (NSString *)randomStringOfLength:(NSInteger)length;
++ (NSString *)randomStringOfLength:(NSInteger)length usingAlphabet:(NSString *)alphabet;
+
+
 #pragma mark - Hashing
 
 + (NSData *) sha512:(NSData *)bytes;

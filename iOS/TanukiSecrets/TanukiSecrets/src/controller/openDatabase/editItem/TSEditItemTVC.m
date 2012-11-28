@@ -14,6 +14,9 @@
 #import "TSStringUtils.h"
 #import "TSUtils.h"
 #import "TSEditFieldTVC.h"
+#import "TSCryptoUtils.h"
+#import "TSIOUtils.h"
+#import "TSNotifierUtils.h"
 
 @interface TSEditItemTVC ()
 
@@ -32,12 +35,105 @@
 @synthesize editingItem, editingField;
 @synthesize nameCell, nameTextField, quickActionCell, subtitleCell;
 
+#pragma mark - validation
+
+- (void)decryptAllFields
+{
+	//all fields must be decrypted while editing and re-encrypted on save
+	//this is because the name of the item may change
+	for (TSDBItemField *field in self.editingItem.fields) {
+		if (field.encrypted) {
+			field.value = [TSCryptoUtils tanukiDecryptField:field.value
+											belongingToItem:self.editingItem.name
+												usingSecret:[TSSharedState sharedState].openDatabasePassword];
+		}
+	}
+}
+
+- (NSString *)itemName
+{
+	return [TSStringUtils trim:self.nameTextField.text];
+}
+
+- (void)encryptAllFields
+{
+	//set the name back to the editing item and encrypt all needed fields
+	self.editingItem.name = [self itemName];
+	for (TSDBItemField *field in self.editingItem.fields) {
+		if (field.encrypted) {
+			field.value = [TSCryptoUtils tanukiEncryptField:field.value
+											belongingToItem:self.editingItem.name
+												usingSecret:[TSSharedState sharedState].openDatabasePassword];
+		}
+	}
+}
+
+- (NSString *)editedItemError
+{
+	NSString *name = [self itemName];
+	if ([TSStringUtils isBlank:name]) {
+		return @"The item must have a name.";
+	}
+	TSSharedState *sharedState = [TSSharedState sharedState];
+//	NSLog (@"%@ %@ %d", name, sharedState.currentItem.name, [name caseInsensitiveCompare:sharedState.currentItem.name]);
+	if ([name caseInsensitiveCompare:sharedState.currentItem.name] != NSOrderedSame) {
+//		NSLog (@"%d", [sharedState.currentItem.parent.items count]);
+		for (TSDBItem *item in sharedState.currentItem.parent.items) {
+//			NSLog (@"%@ %d", item.name, [name caseInsensitiveCompare:item.name]);
+			if ([name caseInsensitiveCompare:item.name] == NSOrderedSame) {
+				return @"The current group already has an item with the given name. "
+				"You are not allowed to have two items with the same name in the same group.";
+			}
+		}
+	}
+	NSMutableArray *fieldNames = [NSMutableArray arrayWithCapacity:[self.editingItem.fields count]];
+	for (TSDBItemField *field in self.editingItem.fields) {
+		if ([TSStringUtils isBlank:field.name]) {
+			return @"You have at least one field without a name. Fields without names are not allowed.";
+		}
+		if ([fieldNames containsObject:[field.name lowercaseString]]) {
+			return [NSString stringWithFormat:@"You have two fields named %@. Having two fields with the same name is not allowed.", [field.name lowercaseString]];
+		}
+		[fieldNames addObject:[field.name lowercaseString]];
+	}
+	return nil;
+}
+
+- (NSString *)editedItemWarning
+{
+	if ([TSStringUtils isBlank:self.editingItem.quickActionFieldName]) {
+		return @"Consider choosing a field for this item's quick action.";
+	}
+	if ([TSStringUtils isBlank:self.editingItem.subtitleFieldName]) {
+		return @"Consider choosing a subtitle field for this item.";
+	}
+	for (TSDBItemField *field in self.editingItem.fields) {
+		if ([TSStringUtils isBlank:field.value]) {
+			return [NSString stringWithFormat:@"You din not set a value for the field %@.", field.name];
+		}
+		if ((field.type == TSDBFieldType_SECRET) && (field.encrypted == NO)) {
+			return [NSString stringWithFormat:@"The field named %@ is a secret. Consider marking it as encrypted.", field.name];
+		}
+		if (field.type == TSDBFieldType_URL) {
+			NSURL *url = [NSURL URLWithString:field.value];
+			if (url == nil) {
+				return [NSString stringWithFormat:@"The URL for field %@ is malformed.", field.name];
+			}else if ([[UIApplication sharedApplication] canOpenURL:url] == NO) {
+				return [NSString stringWithFormat:@"The URL for field %@ cannot be opened from this app.", field.name];
+			}
+		}
+	}
+	return nil;
+}
+
 #pragma mark - view lifecycle
 
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
 	self.editingItem = [[TSSharedState sharedState].currentItem editingCopy];
+	[self decryptAllFields];
+	self.title = [TSSharedState sharedState].currentItem.name;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -77,6 +173,14 @@
 			return @"Drag rows to change the order of the fields. Tap and hold to exit editing mode.";
 		}
 		return @"Tap and hold to enter editing mode.";
+	}
+	NSString *error = [self editedItemError];
+	if ([TSStringUtils isNotBlank:error]) {
+		return [NSString stringWithFormat:@"WARNING: %@", error];
+	}
+	NSString *warning = [self editedItemWarning];
+	if ([TSStringUtils isNotBlank:warning]) {
+		return [NSString stringWithFormat:@"HINT: %@", warning];
 	}
 	return nil;
 }
@@ -144,7 +248,11 @@
 		}else {
 			TSDBItemField *field = [self.editingItem.fields objectAtIndex:indexPath.row];
 			cell = [tableView dequeueReusableCellWithIdentifier:@"ExistingFieldCell" forIndexPath:indexPath];
-			cell.textLabel.text = field.name != nil ? field.name : @"[name missing]";
+			if ([TSStringUtils isBlank:field.name]) {
+				cell.textLabel.text = @"[name missing]";
+			}else {
+				cell.textLabel.text = field.name;
+			}
 			if (field.encrypted) {
 				cell.detailTextLabel.text = [NSString stringWithFormat:@"[%@], encrypted", [TSDBItemField interfaceStringForType:field.type]];
 			}else {
@@ -154,8 +262,25 @@
 						cell.detailTextLabel.text = [NSString stringWithFormat:@"[%@]", [TSDBItemField interfaceStringForType:field.type]];
 						break;
 						
-					default:
-						cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", field.value != nil ? field.value : @"[value missing]"];
+					case TSDBFieldType_URL: {
+						if ([TSStringUtils isBlank:field.value]) {
+							cell.detailTextLabel.text = @"[value missing]";
+						}else {
+							if ([field.value hasPrefix:@"www."]) {
+								field.value = [NSString stringWithFormat:@"http://%@", field.value];
+							}
+							cell.detailTextLabel.text = field.value;
+						}
+					}
+						break;
+						
+					default: {
+						if ([TSStringUtils isBlank:field.value]) {
+							cell.detailTextLabel.text = @"[value missing]";
+						}else {
+							cell.detailTextLabel.text = field.value;
+						}
+					}
 						break;
 				}
 			}
@@ -192,7 +317,7 @@
 		}
         [self.editingItem.fields removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-//		[self.tableView reloadData];
+		[self.tableView reloadData];
     }else if (editingStyle == UITableViewCellEditingStyleInsert) {
 		TSDBItemField *newField = [[TSDBItemField alloc] init];
 		[self.editingItem.fields addObject:newField];
@@ -254,6 +379,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
 	if ([@"editField" isEqualToString:segue.identifier]) {
+		self.editingItem.name = [self itemName];
 		TSEditFieldTVC *destinationController = (TSEditFieldTVC *)[segue destinationViewController];
 		destinationController.editingField = self.editingField;
 	}
@@ -281,6 +407,48 @@
 
 - (IBAction)texteditingEnded:(id)sender {
 	[self outsideTapped];
+	[self.tableView reloadData];
+}
+
+- (IBAction)save:(id)sender {
+	NSString *error = [self editedItemError];
+	TSSharedState *sharedState = [TSSharedState sharedState];
+	if ([TSStringUtils isNotBlank:error]) {
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Validation error, cannot save item."
+														message:error
+													   delegate:nil
+											  cancelButtonTitle:@"OK"
+											  otherButtonTitles:nil];
+		[alert show];
+	}else if ([sharedState encryptKeyReady] == NO) {
+		[TSUtils notifyEncryptionKeyIsNotReady];
+	}else {
+		[self encryptAllFields];
+		[sharedState.currentItem commitEditingChanges:self.editingItem];
+		TSAuthor *author = [TSAuthor authorFromCurrentDevice];
+		author.comment = [NSString stringWithFormat:@"saved item %@", [sharedState.currentItem uniqueGlobalId]];
+		sharedState.openDatabaseMetadata.lastModifiedBy = author;
+		
+		if ([TSIOUtils createBackupFor:sharedState.openDatabaseMetadata.uid]) {
+			NSData *encryptKey = [sharedState encryptKey];
+			NSData *encryptedContent = [TSCryptoUtils tanukiEncryptDatabase:sharedState.openDatabase
+															 havingMetadata:sharedState.openDatabaseMetadata
+																   usingKey:encryptKey];
+			if ([TSIOUtils saveDatabaseWithMetadata:sharedState.openDatabaseMetadata andEncryptedContent:encryptedContent]) {
+				[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+//				[self.presentingViewController dismissViewControllerAnimated:YES completion:^{
+//					NSNotification *notificaton = [NSNotification notificationWithName:TS_NOTIFICATION_ITEM_CONTENT_CHANGED object:nil];
+//					[[NSNotificationCenter defaultCenter] postNotification:notificaton];
+//				}];
+			}else {
+				[TSNotifierUtils error:@"Local database writing failed."];
+				[self decryptAllFields];
+			}
+		}else {
+			[TSNotifierUtils error:@"Could not create backup of database."];
+			[self decryptAllFields];
+		}
+	}
 }
 
 #pragma mark - SimplePickerInputTableViewCellDelegate
@@ -335,6 +503,7 @@
 	}
 	if (view != self.nameCell) {
 		[self.nameTextField resignFirstResponder];
+		self.editingItem.name = [self itemName];
 	}
 	if (view != self.quickActionCell) {
 		[self.quickActionCell resignFirstResponder];
@@ -349,6 +518,7 @@
 	[self.nameTextField resignFirstResponder];
 	[self.quickActionCell resignFirstResponder];
 	[self.subtitleCell resignFirstResponder];
+	self.editingItem.name = [self itemName];
 }
 
 - (BOOL)tapGestureRecognizerConsumesEvent
