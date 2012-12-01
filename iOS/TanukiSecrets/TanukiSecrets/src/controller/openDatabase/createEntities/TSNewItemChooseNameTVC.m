@@ -72,13 +72,16 @@
 #pragma mark - events
 
 - (IBAction)next:(id)sender {
-	TSSharedState *sharedState = [TSSharedState sharedState];
-	NSString *itemName = [TSStringUtils trim:self.nameTextField.text];
-	sharedState.currentItem = [TSDBItem itemNamed:itemName];
-	if (TS_DEV_DEBUG_ALL) {
-		NSLog (@"textfield name %@, item name %@", self.nameTextField.text, sharedState.currentItem.name);
+	[self changeNextCellLabelIfNeeded];
+	if (self.nextCellLabel.enabled) {
+		TSSharedState *sharedState = [TSSharedState sharedState];
+		NSString *itemName = [TSStringUtils trim:self.nameTextField.text];
+		sharedState.currentItem = [TSDBItem itemNamed:itemName];
+		if (TS_DEV_DEBUG_ALL) {
+			NSLog (@"textfield name %@, item name %@", self.nameTextField.text, sharedState.currentItem.name);
+		}
+		[self performSegueWithIdentifier:@"next" sender:sender];
 	}
-	[self performSegueWithIdentifier:@"next" sender:sender];
 }
 
 - (IBAction)nameEditingEnded:(id)sender {
@@ -101,8 +104,9 @@
 {
  	if ((view == self.nextCell) && (self.nextCellLabel.enabled == YES)){
 		NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:1];
-		[[self tableView] selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+		[self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
 		[self next:nil];
+		[self.tableView deselectRowAtIndexPath:indexPath animated:NO];
 	}
 	if ((view == self.nameCell) && ([self.nameTextField isFirstResponder] == NO)) {
 		[self.nameTextField becomeFirstResponder];

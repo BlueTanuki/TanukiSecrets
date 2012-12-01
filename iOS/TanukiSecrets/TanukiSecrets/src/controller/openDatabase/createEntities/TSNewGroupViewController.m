@@ -75,10 +75,11 @@
 #pragma mark - events
 
 - (IBAction)createGroup:(id)sender {
+	[self changeCreateGroupCellLabelIfNeeded];
 	TSSharedState *sharedState = [TSSharedState sharedState];
 	if ([sharedState encryptKeyReady] == NO) {
 		[TSUtils notifyEncryptionKeyIsNotReady];
-	}else {
+	}else if (self.createGroupCellLabel.enabled) {
 		NSString *subgroupName = [TSStringUtils trim:self.nameTextField.text];
 		TSAuthor *author = [TSAuthor authorFromCurrentDevice];
 		author.comment = [NSString stringWithFormat:@"added group %@ as child of %@", subgroupName, [sharedState.currentGroup uniqueGlobalId]];
@@ -102,7 +103,6 @@
 			[TSNotifierUtils error:@"Local database writing failed"];
 		}
 	}
-	
 }
 
 - (IBAction)nameEditingEnded:(id)sender {
@@ -125,8 +125,9 @@
 {
  	if ((view == self.createGroupCell) && (self.createGroupCellLabel.enabled == YES)){
 		NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:1];
-		[[self tableView] selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+		[self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
 		[self createGroup:nil];
+		[self.tableView deselectRowAtIndexPath:indexPath animated:NO];
 	}
 	if ((view == self.nameCell) && ([self.nameTextField isFirstResponder] == NO)) {
 		[self.nameTextField becomeFirstResponder];

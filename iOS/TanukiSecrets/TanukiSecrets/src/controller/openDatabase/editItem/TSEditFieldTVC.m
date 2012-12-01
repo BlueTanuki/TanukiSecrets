@@ -119,6 +119,15 @@
 	return 4;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+{
+	if (self.editingField.type == TSDBFieldType_SECRET) {
+		return @"Tap the die to genearte a random password.";
+	}
+	return nil;
+}
+
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	if ((indexPath.row == 3) && (self.editingField.type == TSDBFieldType_TEXT)) {
@@ -236,9 +245,9 @@
 	}
 	if (changed) {
 		self.editingField.value = nil;
-		[self setCorrectKeyboardTypeForValueTextField];
-		[self.tableView reloadData];
 	}
+	[self setCorrectKeyboardTypeForValueTextField];
+	[self.tableView reloadData];
 }
 
 #pragma mark - TSSelectiveTapCallbackTableViewController callbacks

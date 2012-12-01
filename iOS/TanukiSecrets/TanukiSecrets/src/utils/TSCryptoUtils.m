@@ -86,7 +86,13 @@
 
 + (NSString *)randomPassword
 {
-	return [self randomStringOfVariableLengthMinimum:8 maximum:25];
+	NSInteger d20roll = [self randomNumberMinimum:0 maximum:20];
+	if (d20roll > 17) {
+		NSInteger length = [self randomNumberMinimum:15 maximum:30];
+		return [self randomStringOfLength:length usingAlphabet:[self defaultAlphabet]];
+	}
+	NSInteger length = [self randomNumberMinimum:8 maximum:16];
+	return [self randomStringOfLength:length usingAlphabet:[self alphanumericAlphabet]];
 }
 
 + (NSString *)randomStringOfVariableLengthMinimum:(NSInteger)min maximum:(NSInteger)max

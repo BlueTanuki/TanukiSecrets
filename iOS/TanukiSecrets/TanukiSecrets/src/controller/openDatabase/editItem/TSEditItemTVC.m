@@ -134,6 +134,25 @@
 	self.editingItem = [[TSSharedState sharedState].currentItem editingCopy];
 	[self decryptAllFields];
 	self.title = [TSSharedState sharedState].currentItem.name;
+//	NSLog (@"viewDidLoad");
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	NSMutableArray *existingFieldNames = [[NSMutableArray alloc] initWithCapacity:[self.editingItem.fields count]];
+	for (TSDBItemField *field in self.editingItem.fields) {
+		if ([TSStringUtils isNotBlank:field.name]) {
+			[existingFieldNames addObject:field.name];
+		}
+	}
+	if ([existingFieldNames containsObject:self.editingItem.quickActionFieldName] == NO) {
+		self.editingItem.quickActionFieldName = nil;
+	}
+	if ([existingFieldNames containsObject:self.editingItem.subtitleFieldName] == NO) {
+		self.editingItem.subtitleFieldName = nil;
+	}
+//	NSLog (@"viewWillAppear");
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -143,6 +162,7 @@
 		[self.nameTextField becomeFirstResponder];
 	}
 	[self.tableView reloadData];
+//	NSLog (@"viewDidAppear");
 }
 
 #pragma mark - Table view data source
@@ -176,12 +196,15 @@
 	}
 	NSString *error = [self editedItemError];
 	if ([TSStringUtils isNotBlank:error]) {
+//		NSLog (@"Footer is an error : %@", error);
 		return [NSString stringWithFormat:@"WARNING: %@", error];
 	}
 	NSString *warning = [self editedItemWarning];
 	if ([TSStringUtils isNotBlank:warning]) {
+//		NSLog (@"Footer is a warning : %@", warning);
 		return [NSString stringWithFormat:@"HINT: %@", warning];
 	}
+//	NSLog (@"Footer is empty");
 	return nil;
 }
 
@@ -317,9 +340,15 @@
 		}
         [self.editingItem.fields removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+		if (TS_DEV_DEBUG_ALL) {
+			NSLog(@"calling reloadData after row was deleted");
+		}
 		[self.tableView reloadData];
     }else if (editingStyle == UITableViewCellEditingStyleInsert) {
 		TSDBItemField *newField = [[TSDBItemField alloc] init];
+		if (self.editingItem.fields == nil) {
+			self.editingItem.fields = [NSMutableArray array];
+		}
 		[self.editingItem.fields addObject:newField];
 		self.editingField = newField;
 		[self performSegueWithIdentifier:@"editField" sender:nil];
@@ -361,6 +390,9 @@
 	if (indexPath.section == 1) {
 		if (indexPath.row == [self.editingItem.fields count]) {
 			TSDBItemField *newField = [[TSDBItemField alloc] init];
+			if (self.editingItem.fields == nil) {
+				self.editingItem.fields = [NSMutableArray array];
+			}
 			[self.editingItem.fields addObject:newField];
 			self.editingField = newField;
 		}else {
@@ -400,6 +432,9 @@
 		int64_t delayInMilliseconds = 200;
 		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInMilliseconds * NSEC_PER_MSEC);
 		dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+			if (TS_DEV_DEBUG_ALL) {
+				NSLog(@"calling reloadData after long tap detected");
+			}
 			[self.tableView reloadData];
 		});
 	}
@@ -407,6 +442,9 @@
 
 - (IBAction)texteditingEnded:(id)sender {
 	[self outsideTapped];
+	if (TS_DEV_DEBUG_ALL) {
+		NSLog(@"calling reloadData after text editing ended");
+	}
 	[self.tableView reloadData];
 }
 
@@ -482,6 +520,9 @@
 		}
 	}
 	if (changed) {
+		if (TS_DEV_DEBUG_ALL) {
+			NSLog(@"calling reloadData after pickerInput was changed");
+		}
 		[self.tableView reloadData];
 	}
 }

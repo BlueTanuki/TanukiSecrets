@@ -780,7 +780,7 @@
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Item name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pUL-9J-yD4">
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Item name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="pUL-9J-yD4">
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="30" id="FNF-AZ-sDt"/>
                                                         <constraint firstAttribute="width" constant="260" id="Tco-Np-j9N"/>
@@ -1085,39 +1085,22 @@
         </class>
         <class className="TSDBGroupViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSDBGroupViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="openURL:"/>
-                <relationship kind="action" name="quickCopy:"/>
-            </relationships>
         </class>
         <class className="TSDBItemViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSDBItemViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="openURL:"/>
-                <relationship kind="action" name="quickCopy:"/>
-            </relationships>
         </class>
         <class className="TSEditFieldTVC" superclassName="TSSelectiveTapCallbackTableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSEditFieldTVC.h"/>
-            <relationships>
-                <relationship kind="action" name="randomizeFieldValue:"/>
-                <relationship kind="action" name="texteditingEnded:"/>
-            </relationships>
         </class>
         <class className="TSEditItemTVC" superclassName="TSSelectiveTapCallbackTableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSEditItemTVC.h"/>
         </class>
         <class className="TSModalDialogDismissingTableViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSModalDialogDismissingTableViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="cancel:"/>
-            </relationships>
         </class>
         <class className="TSNewGroupViewController" superclassName="TSSelectiveTapCallbackTableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNewGroupViewController.h"/>
             <relationships>
-                <relationship kind="action" name="createGroup:"/>
-                <relationship kind="action" name="nameEditingEnded:"/>
                 <relationship kind="outlet" name="createGroupCell" candidateClass="UITableViewCell"/>
                 <relationship kind="outlet" name="createGroupCellLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="nameCell" candidateClass="UITableViewCell"/>
