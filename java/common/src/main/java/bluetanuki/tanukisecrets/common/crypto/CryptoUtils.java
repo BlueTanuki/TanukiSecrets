@@ -17,7 +17,7 @@ import org.apache.commons.codec.digest.DigestUtils;
  */
 public class CryptoUtils {
 	
-	private static byte[] aesCbcWithPadding (byte[] data, byte[] key, byte[] iv, boolean decrypt) throws Exception {
+	public static byte[] aesCbcWithPadding (byte[] data, byte[] key, byte[] iv, boolean decrypt) throws Exception {
 		SecretKeySpec keySpec = new SecretKeySpec (key, "AES");
 
 		Cipher cipher = Cipher.getInstance ("AES/CBC/PKCS5Padding");

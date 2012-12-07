@@ -1,15 +1,22 @@
 package bluetanuki.tanukisecrets.sandbox.crypto.analysis;
 
 import bluetanuki.tanukisecrets.common.RandomDataGenerator;
+import bluetanuki.tanukisecrets.common.crypto.CryptoUtils;
 import bluetanuki.tanukisecrets.common.crypto.HashFunctions;
+import bluetanuki.tanukisecrets.common.model.xml.Database;
+import bluetanuki.tanukisecrets.common.model.xml.Field;
+import bluetanuki.tanukisecrets.common.model.xml.Item;
+import bluetanuki.tanukisecrets.common.xml.XMLUtils;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -362,7 +369,7 @@ public class AnalyseTanukiHash {
 		ImageIO.write (bufferedImage, "png", new File (filename));
 	}
 	
-	public static void main (String[] args) throws Exception {
+	public static void manyArraysAndPlots (String[] args) throws Exception {
 		int totalArrays = 100;
 		int arraysShownOnPlot = 10;
 		List<ArrayAnalysis> arrayAnalysisList = new ArrayList<ArrayAnalysis> (totalArrays);
@@ -512,6 +519,194 @@ public class AnalyseTanukiHash {
 //		xyplot.setRenderer (dotRenderer);
 //		BufferedImage bufferedImage = chart.createBufferedImage (800, 600);
 //		ImageIO.write (bufferedImage, "png", new File ("/Users/lucian/tmp/jfreechartTest.png"));
+	}
+	
+	private static double probabilityToHaveEqualBytes (byte[] a, byte[] b) {
+		if (a.length != b.length) {
+			throw new IllegalStateException ();
+		}
+		int n = a.length;
+		int equal = 0;
+		for (int i = 0; i < n; i++) {
+			if (a[i] == b[i]) {
+				equal++;
+			}
+		}
+		return ((double)equal) / n;
+	}
+	
+	public static void smallChangesPasswordAndSalt (String[] args) throws Exception {
+		int baselineSizeMB = RANDOM_DATA_GENERATOR.getInt (7, 16);
+		LOGGER.info ("Chose baseline of " + baselineSizeMB + " MB");
+		byte[] baselineSecret = RANDOM_DATA_GENERATOR.getString (RandomDataGenerator.ALFANUM, 7, 20).getBytes ("UTF-8");
+		LOGGER.info ("Using baseline secret: " + Hex.encodeHexString (baselineSecret));
+		byte[] baselineSalt = RANDOM_DATA_GENERATOR.getBytes (64, 128);
+		LOGGER.info ("Using baseline salt: " + Hex.encodeHexString (baselineSalt));
+		byte[] baselineHash = HashFunctions.tanukiHashInternalArray (baselineSecret, baselineSalt, baselineSizeMB);
+	
+		byte[] secret = Arrays.copyOf (baselineSecret, baselineSecret.length);
+		secret[0] = (byte)(secret[0] ^ 1);//flip the last bit of the first byte
+		LOGGER.info ("Using altered secret: " + Hex.encodeHexString (secret));
+		byte[] hash = HashFunctions.tanukiHashInternalArray (secret, baselineSalt, baselineSizeMB);
+		double probability = probabilityToHaveEqualBytes (baselineHash, hash);
+		LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		
+		secret = Arrays.copyOf (baselineSecret, baselineSecret.length);
+		secret[secret.length - 1] = (byte)(secret[secret.length - 1] ^ 0x80);//flip the first bit of the last byte
+		LOGGER.info ("Using altered secret: " + Hex.encodeHexString (secret));
+		hash = HashFunctions.tanukiHashInternalArray (secret, baselineSalt, baselineSizeMB);
+		probability = probabilityToHaveEqualBytes (baselineHash, hash);
+		LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		
+		secret = Arrays.copyOf (baselineSecret, baselineSecret.length);
+		secret[secret.length / 2] = (byte)(secret[secret.length / 2] ^ 0xff);//negate
+		LOGGER.info ("Using altered secret: " + Hex.encodeHexString (secret));
+		hash = HashFunctions.tanukiHashInternalArray (secret, baselineSalt, baselineSizeMB);
+		probability = probabilityToHaveEqualBytes (baselineHash, hash);
+		LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		
+		
+		byte[] salt = Arrays.copyOf (baselineSalt, baselineSalt.length);
+		salt[0] = (byte)(salt[0] ^ 13);
+		LOGGER.info ("Using altered salt: " + Hex.encodeHexString (salt));
+		hash = HashFunctions.tanukiHashInternalArray (baselineSecret, salt, baselineSizeMB);
+		probability = probabilityToHaveEqualBytes (baselineHash, hash);
+		LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		
+		salt = Arrays.copyOf (baselineSalt, baselineSalt.length);
+		salt[salt.length - 1] = (byte)(salt[salt.length - 1] ^ 154);
+		LOGGER.info ("Using altered salt: " + Hex.encodeHexString (salt));
+		hash = HashFunctions.tanukiHashInternalArray (baselineSecret, salt, baselineSizeMB);
+		probability = probabilityToHaveEqualBytes (baselineHash, hash);
+		LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		
+		salt = Arrays.copyOf (baselineSalt, baselineSalt.length);
+		salt[salt.length / 2] = (byte)(salt[salt.length / 2] ^ 0xdc);
+		LOGGER.info ("Using altered salt: " + Hex.encodeHexString (salt));
+		hash = HashFunctions.tanukiHashInternalArray (baselineSecret, salt, baselineSizeMB);
+		probability = probabilityToHaveEqualBytes (baselineHash, hash);
+		LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		
+	}
+	
+	public static void sizeChange (String[] args) throws Exception {
+		for (int i = 0; i < 10; i++) {
+			int baselineSizeMB = 10;
+			byte[] baselineSecret = RANDOM_DATA_GENERATOR.getString (RandomDataGenerator.ALFANUM, 7, 20).getBytes ("UTF-8");
+			LOGGER.info ("Using baseline secret: " + Hex.encodeHexString (baselineSecret));
+			byte[] baselineSalt = RANDOM_DATA_GENERATOR.getBytes (64, 128);
+			LOGGER.info ("Using baseline salt: " + Hex.encodeHexString (baselineSalt));
+			byte[] baselineHash = HashFunctions.tanukiHashInternalArray (baselineSecret, baselineSalt, baselineSizeMB);
+
+			int sizeMB = 13;
+			byte[] hash = HashFunctions.tanukiHashInternalArray (baselineSecret, baselineSalt, sizeMB);
+			double probability = probabilityToHaveEqualBytes (baselineHash, Arrays.copyOf (hash, baselineHash.length));
+			LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		}
+	}
+	
+	private static Database bigDatabase () {
+		Database ret = new Database ();
+		ret.setName ("big db");
+		ret.setItems (new ArrayList<Item> ());
+		for (int i = 0; i < 1000; i++) {
+			Item item = new Item ();
+			item.setName (RANDOM_DATA_GENERATOR.getString (10, 50));
+			item.setFields (new ArrayList<Field> ());
+			for (int j=0; j<30; j++) {
+				Field field = new Field ();
+				field.setName (RANDOM_DATA_GENERATOR.getString (7));
+				field.setValue (RANDOM_DATA_GENERATOR.getString (5, 20));
+				item.getFields ().add (field);
+			}
+			ret.getItems ().add (item);
+		}
+		return ret;
+	}
+	
+	public static void main (String[] args) throws Exception {
+		Database database = bigDatabase ();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream ();
+		XMLUtils.saveDatabase (database, baos);
+		byte[] databaseContentPlain = baos.toByteArray ();
+		
+		int baselineSizeMB = RANDOM_DATA_GENERATOR.getInt (7, 16);
+		LOGGER.info ("Chose baseline of " + baselineSizeMB + " MB");
+		byte[] baselineSecret = RANDOM_DATA_GENERATOR.getString (RandomDataGenerator.ALFANUM, 7, 20).getBytes ("UTF-8");
+		LOGGER.info ("Using baseline secret: " + Hex.encodeHexString (baselineSecret));
+		byte[] baselineSalt = RANDOM_DATA_GENERATOR.getBytes (64, 128);
+		LOGGER.info ("Using baseline salt: " + Hex.encodeHexString (baselineSalt));
+		byte[] baselineKey = HashFunctions.tanukiHash (baselineSecret, baselineSalt, baselineSizeMB);
+		LOGGER.info ("Baseline key is: " + Hex.encodeHexString (baselineKey));
+		byte[] iv = HashFunctions.firstHalfOfSha256 (baselineSalt);
+		byte[] baselineEncryptedContent = CryptoUtils.aesCbcWithPadding (
+				  databaseContentPlain, baselineKey, iv, false);
+		
+		byte[] secret = Arrays.copyOf (baselineSecret, baselineSecret.length);
+		secret[0] = (byte)(secret[0] ^ 1);//flip the last bit of the first byte
+		LOGGER.info ("Using altered secret: " + Hex.encodeHexString (secret));
+		byte[] key = HashFunctions.tanukiHash (secret, baselineSalt, baselineSizeMB);
+		LOGGER.info ("Key is: " + Hex.encodeHexString (key));
+		//iv is the same
+		byte[] encryptedContent = CryptoUtils.aesCbcWithPadding (
+				  databaseContentPlain, key, iv, false);
+		double probability = probabilityToHaveEqualBytes (baselineEncryptedContent, encryptedContent);
+		LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		
+		secret = Arrays.copyOf (baselineSecret, baselineSecret.length);
+		secret[secret.length - 1] = (byte)(secret[secret.length - 1] ^ 0x80);//flip the first bit of the last byte
+		LOGGER.info ("Using altered secret: " + Hex.encodeHexString (secret));
+		key = HashFunctions.tanukiHash (secret, baselineSalt, baselineSizeMB);
+		LOGGER.info ("Key is: " + Hex.encodeHexString (key));
+		encryptedContent = CryptoUtils.aesCbcWithPadding (
+				  databaseContentPlain, key, iv, false);
+		probability = probabilityToHaveEqualBytes (baselineEncryptedContent, encryptedContent);
+		LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		
+		secret = Arrays.copyOf (baselineSecret, baselineSecret.length);
+		secret[secret.length / 2] = (byte)(secret[secret.length / 2] ^ 0xff);//negate
+		LOGGER.info ("Using altered secret: " + Hex.encodeHexString (secret));
+		key = HashFunctions.tanukiHash (secret, baselineSalt, baselineSizeMB);
+		LOGGER.info ("Key is: " + Hex.encodeHexString (key));
+		encryptedContent = CryptoUtils.aesCbcWithPadding (
+				  databaseContentPlain, key, iv, false);
+		probability = probabilityToHaveEqualBytes (baselineEncryptedContent, encryptedContent);
+		LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		
+		
+		byte[] salt = Arrays.copyOf (baselineSalt, baselineSalt.length);
+		salt[0] = (byte)(salt[0] ^ 13);
+		LOGGER.info ("Using altered salt: " + Hex.encodeHexString (salt));
+		key = HashFunctions.tanukiHash (baselineSecret, salt, baselineSizeMB);
+		LOGGER.info ("Key is: " + Hex.encodeHexString (key));
+		iv = HashFunctions.firstHalfOfSha256 (salt);
+		encryptedContent = CryptoUtils.aesCbcWithPadding (
+				  databaseContentPlain, key, iv, false);
+		probability = probabilityToHaveEqualBytes (baselineEncryptedContent, encryptedContent);
+		LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		
+		salt = Arrays.copyOf (baselineSalt, baselineSalt.length);
+		salt[salt.length - 1] = (byte)(salt[salt.length - 1] ^ 154);
+		LOGGER.info ("Using altered salt: " + Hex.encodeHexString (salt));
+		key = HashFunctions.tanukiHash (baselineSecret, salt, baselineSizeMB);
+		LOGGER.info ("Key is: " + Hex.encodeHexString (key));
+		iv = HashFunctions.firstHalfOfSha256 (salt);
+		encryptedContent = CryptoUtils.aesCbcWithPadding (
+				  databaseContentPlain, key, iv, false);
+		probability = probabilityToHaveEqualBytes (baselineEncryptedContent, encryptedContent);
+		LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		
+		salt = Arrays.copyOf (baselineSalt, baselineSalt.length);
+		salt[salt.length / 2] = (byte)(salt[salt.length / 2] ^ 0xdc);
+		LOGGER.info ("Using altered salt: " + Hex.encodeHexString (salt));
+		key = HashFunctions.tanukiHash (baselineSecret, salt, baselineSizeMB);
+		LOGGER.info ("Key is: " + Hex.encodeHexString (key));
+		iv = HashFunctions.firstHalfOfSha256 (salt);
+		encryptedContent = CryptoUtils.aesCbcWithPadding (
+				  databaseContentPlain, key, iv, false);
+		probability = probabilityToHaveEqualBytes (baselineEncryptedContent, encryptedContent);
+		LOGGER.info ("probabilityToHaveEqualBytes : " + probability);
+		
 	}
 
 }

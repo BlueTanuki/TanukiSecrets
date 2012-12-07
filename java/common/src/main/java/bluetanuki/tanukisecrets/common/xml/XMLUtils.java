@@ -65,4 +65,8 @@ public class XMLUtils {
 		}
 	}
 
+	public static void saveDatabase (Database database, OutputStream os) {
+		xStream ().toXML (database, os);
+	}
+
 }
