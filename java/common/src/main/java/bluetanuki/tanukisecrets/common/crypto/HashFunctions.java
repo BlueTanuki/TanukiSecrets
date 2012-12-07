@@ -88,17 +88,32 @@ public class HashFunctions {
 	 */
 	public static byte[] tanukiHash (byte[] secret, byte[] salt, Integer consumedMemoryMB) throws Exception {
 		long start = System.currentTimeMillis ();
-		int debugCount = 0;
 		
-		int bufSizeMB = 13;
+		int bufSizeMB;
 		if ((consumedMemoryMB == null) || (consumedMemoryMB < 5)) {
-			LOGGER.warn ("the consumed memory is not allowed to be below 5MB, using default value of 13!");
+			LOGGER.warn ("the consumed memory is not allowed to be below 5MB, using this minimum value instead!");
+			bufSizeMB = 5;
 		}else if (consumedMemoryMB > 25) {
-			LOGGER.warn ("for performace reasons, the consumed memory is not allowed to be above 25MB, using default value of 13!");
+			LOGGER.warn ("for performace reasons, the consumed memory is not allowed to be above 25MB, using this maximum value instead!");
+			bufSizeMB = 25;
 		}else {
 			bufSizeMB = consumedMemoryMB;
 		}
-		int bufSize = 1024 * 1024 * bufSizeMB;
+		byte[] buf = tanukiHashInternalArray (secret, salt, bufSizeMB);
+		
+		byte[] ret = DigestUtils.sha256 (buf);
+		long end = System.currentTimeMillis ();
+		LOGGER.info ("tanukiHash took " + (end - start) + " milliseconds");
+		return ret;
+	}
+	
+	/**
+	 *  Use only for very specific needs. This is the internal array used by TanukiHash.
+	 * Should only be used for analysis of the hash function.
+	 */
+	public static byte[] tanukiHashInternalArray (byte[] secret, byte[] salt, Integer consumedMemoryMB) throws Exception {
+		int debugCount = 0;
+		int bufSize = 1024 * 1024 * consumedMemoryMB;
 		byte[] buf = new byte[bufSize];
 		Mac mac = Mac.getInstance ("HmacSHA512");
 		SecretKeySpec keySpec = new SecretKeySpec (secret, "HmacSHA512");
@@ -150,10 +165,7 @@ public class HashFunctions {
 			}
 		}
 		
-		byte[] ret = DigestUtils.sha256 (buf);
-		long end = System.currentTimeMillis ();
-		LOGGER.info ("tanukiHash took " + (end - start) + " milliseconds");
-		return ret;
+		return buf;
 	}
 	
 	public static byte[] firstHalfOfSha256 (byte[] data) {
