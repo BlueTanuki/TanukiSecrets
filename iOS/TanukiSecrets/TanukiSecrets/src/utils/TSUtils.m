@@ -59,4 +59,16 @@
 	[alert show];
 }
 
+#pragma mark - other UI crap
+
++ (void)setImage:(UIImage *)image forButton:(UIButton *)button
+{
+	[button setImage:image forState:UIControlStateNormal];
+	[button setImage:image forState:UIControlStateHighlighted];
+	[button setImage:image forState:UIControlStateDisabled];
+	[button setImage:image forState:UIControlStateSelected];
+	[button setImage:image forState:UIControlStateApplication];
+	[button setImage:image forState:UIControlStateReserved];
+}
+
 @end

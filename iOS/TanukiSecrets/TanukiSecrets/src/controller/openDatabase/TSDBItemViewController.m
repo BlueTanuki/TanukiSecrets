@@ -169,8 +169,12 @@ encryptedRowsShownPlaintext, performEditSegueOnLoad;
 		case TSDBFieldType_URL: {
 			if ([TSStringUtils isBlank:field.value]) {
 				cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-				cell.textLabel.text = field.name;
-				cell.detailTextLabel.text = nil;
+				UILabel *label = (UILabel *)[cell viewWithTag:1];
+				label.text = field.name;
+//				cell.textLabel.text = field.name;
+				label = (UILabel *)[cell viewWithTag:2];
+				label.text = nil;
+//				cell.detailTextLabel.text = nil;
 			}else {
 				cell = [tableView dequeueReusableCellWithIdentifier:@"OpenUrlCell" forIndexPath:indexPath];
 				UILabel *label = (UILabel *)[cell viewWithTag:1];
@@ -192,8 +196,10 @@ encryptedRowsShownPlaintext, performEditSegueOnLoad;
 		default: {
 			if ([TSStringUtils isBlank:field.value]) {
 				cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-				cell.textLabel.text = field.name;
-				cell.detailTextLabel.text = nil;
+				UILabel *label = (UILabel *)[cell viewWithTag:1];
+				label.text = field.name;
+				label = (UILabel *)[cell viewWithTag:2];
+				label.text = nil;
 			}else {
 				cell = [tableView dequeueReusableCellWithIdentifier:@"QuickCopyCell" forIndexPath:indexPath];
 				UILabel *label = (UILabel *)[cell viewWithTag:1];

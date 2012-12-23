@@ -103,20 +103,27 @@
 	if ((indexPath.section == 0) && (self.group.subgroups != nil) && ([self.group.subgroups count] > 0)) {
 		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 		
-		cell.imageView.image = [UIImage imageNamed:@"folder.png"];
+		UIButton *imageButton = (UIButton *)[cell viewWithTag:3];
+		UIImage *image = [UIImage imageNamed:@"folder.png"];
+		[TSUtils setImage:image forButton:imageButton];
+//		cell.imageView.image = [UIImage imageNamed:@"folder.png"];
 		TSDBGroup *subgroup = [self.group.subgroups objectAtIndex:indexPath.row];
-		cell.textLabel.text = subgroup.name;
+		UILabel *label = (UILabel *)[cell viewWithTag:1];
+		label.text = subgroup.name;
+//		cell.textLabel.text = subgroup.name;
+		label = (UILabel *)[cell viewWithTag:2];
 		if ((subgroup.subgroups == nil) || ([subgroup.subgroups count] <= 0)) {
 			if ((subgroup.items == nil) || ([subgroup.items count] <= 0)) {
-				cell.detailTextLabel.text = @"Empty";
+//				cell.detailTextLabel.text = @"Empty";
+				label.text = @"Empty";
 			}else {
-				cell.detailTextLabel.text = [NSString stringWithFormat:@"%d item(s)", [subgroup.items count]];
+				label.text = [NSString stringWithFormat:@"%d item(s)", [subgroup.items count]];
 			}
 		}else {
 			if ((subgroup.items == nil) || ([subgroup.items count] <= 0)) {
-				cell.detailTextLabel.text = [NSString stringWithFormat:@"%d subgroup(s)", [subgroup.subgroups count]];
+				label.text = [NSString stringWithFormat:@"%d subgroup(s)", [subgroup.subgroups count]];
 			}else {
-				cell.detailTextLabel.text = [NSString stringWithFormat:@"%d subgroup(s), %d item(s)", [subgroup.subgroups count], [subgroup.items count]];
+				label.text = [NSString stringWithFormat:@"%d subgroup(s), %d item(s)", [subgroup.subgroups count], [subgroup.items count]];
 			}
 		}
 		
@@ -127,12 +134,19 @@
 		if ([TSStringUtils isBlank:item.quickActionFieldName]) {
 			UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 			
-			cell.imageView.image = [UIImage imageNamed:@"file.png"];
-			cell.textLabel.text = item.name;
+			UIButton *imageButton = (UIButton *)[cell viewWithTag:3];
+			UIImage *image = [UIImage imageNamed:@"file.png"];
+			[TSUtils setImage:image forButton:imageButton];
+//			cell.imageView.image = [UIImage imageNamed:@"file.png"];
+			UILabel *label = (UILabel *)[cell viewWithTag:1];
+			label.text = item.name;
+//			cell.textLabel.text = item.name;
+			label = (UILabel *)[cell viewWithTag:2];
 			if (([TSStringUtils isNotBlank:item.subtitleFieldName]) && ([item fieldNamed:item.subtitleFieldName].encrypted == NO)) {
-				cell.detailTextLabel.text = [item fieldNamed:item.subtitleFieldName].value;
+//				cell.detailTextLabel.text = [item fieldNamed:item.subtitleFieldName].value;
+				label.text = [item fieldNamed:item.subtitleFieldName].value;
 			}else {
-				cell.detailTextLabel.text = nil;
+				label.text = nil;
 			}
 			
 			return cell;
@@ -140,20 +154,30 @@
 			TSDBItemField *itemField = [item fieldNamed:item.quickActionFieldName];
 			if ([TSStringUtils isBlank:itemField.value]) {
 				UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+				UIButton *imageButton = (UIButton *)[cell viewWithTag:3];
 				switch (itemField.type) {
-					case TSDBFieldType_URL:
-						cell.imageView.image = [UIImage imageNamed:@"globe.png"];
+					case TSDBFieldType_URL: {
+//						cell.imageView.image = [UIImage imageNamed:@"globe.png"];
+						UIImage *image = [UIImage imageNamed:@"globe.png"];
+						[TSUtils setImage:image forButton:imageButton];
+					}
 						break;
 						
-					default:
-						cell.imageView.image = [UIImage imageNamed:@"file.png"];
+					default: {
+						UIImage *image = [UIImage imageNamed:@"file.png"];
+						[TSUtils setImage:image forButton:imageButton];
+					}
 						break;
 				}
-				cell.textLabel.text = item.name;
+				UILabel *label = (UILabel *)[cell viewWithTag:1];
+				label.text = item.name;
+//				cell.textLabel.text = item.name;
+				label = (UILabel *)[cell viewWithTag:2];
 				if (([TSStringUtils isNotBlank:item.subtitleFieldName]) && ([item fieldNamed:item.subtitleFieldName].encrypted == NO)) {
-					cell.detailTextLabel.text = [item fieldNamed:item.subtitleFieldName].value;
+//					cell.detailTextLabel.text = [item fieldNamed:item.subtitleFieldName].value;
+					label.text = [item fieldNamed:item.subtitleFieldName].value;
 				}else {
-					cell.detailTextLabel.text = nil;
+					label.text = nil;
 				}
 				return cell;
 			}

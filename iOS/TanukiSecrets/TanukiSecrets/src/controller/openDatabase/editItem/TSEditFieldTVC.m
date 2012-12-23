@@ -49,8 +49,12 @@
 	}
 	self.valueTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
 	self.valueTextField.autocorrectionType = UITextAutocorrectionTypeNo;
+	//this interacts with the footer (????) to create the scrolling problem.
 	[self.valueTextField becomeFirstResponder];
 	[self.valueTextField resignFirstResponder];
+	//comment out and watch the keyboard type fall behind
+	//leave in and watch the magical scroll happen
+	//??? ?????????????????????
 	if (TS_DEV_DEBUG_ALL) {
 		NSLog (@"keyboard set to type %d", self.valueTextField.keyboardType);
 	}
@@ -105,6 +109,7 @@
 	if ([TSStringUtils isBlank:self.editingField.name]) {
 		[self.nameTextField becomeFirstResponder];
 	}
+	[self.tableView reloadData];
 }
 
 #pragma mark - Table view data source
@@ -121,8 +126,9 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
+//	return @"This is a footer. This is present just so you can see how nicely the table scrolls itself for no reason whatsoever.";
 	if (self.editingField.type == TSDBFieldType_SECRET) {
-		return @"Tap the die to genearte a random password.";
+		return @"Tap the die to generate a random password.";
 	}
 	return nil;
 }
@@ -237,6 +243,7 @@
 
 - (void)tableViewCell:(SimplePickerInputTableViewCell *)cell didEndEditingWithValue:(NSString *)value
 {
+	[self.typeCell resignFirstResponder];
 	BOOL changed = NO;
 	TSDBFieldType newFieldType = [TSDBItemField typeForString:value];
 	if (newFieldType != self.editingField.type) {
@@ -245,9 +252,12 @@
 	}
 	if (changed) {
 		self.editingField.value = nil;
+		[self setCorrectKeyboardTypeForValueTextField];
+		[self.tableView reloadData];
 	}
-	[self setCorrectKeyboardTypeForValueTextField];
-	[self.tableView reloadData];
+	if (TS_DEV_DEBUG_ALL) {
+		NSLog (@"picker callback ended, things changed: %d", changed);
+	}
 }
 
 #pragma mark - TSSelectiveTapCallbackTableViewController callbacks

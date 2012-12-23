@@ -26,4 +26,9 @@
 
 + (void)notifyEncryptionKeyIsNotReady;
 
+#pragma mark - other UI crap
+
+//sets the same image for all states of the button
++ (void)setImage:(UIImage *)image forButton:(UIButton *)button;
+
 @end
