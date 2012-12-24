@@ -25,6 +25,10 @@
 {
 }
 
+- (void)tap:(CGPoint)tapLocation wasDetectedForView:(UIView *)view
+{
+}
+
 - (void)outsideTapped
 {
 }
@@ -65,6 +69,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 //			   [view frame].origin.y + [view frame].size.width);
 		if (CGRectContainsPoint([view frame], tapLocation)) {
 			[self viewWasTapped:view];
+			[self tap:tapLocation wasDetectedForView:view];
 			tappedInView = YES;
 //			NSLog (@"hit");
 		}else {

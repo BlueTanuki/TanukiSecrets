@@ -22,6 +22,10 @@
 //callback for subclasses, one of the views was tapped
 - (void)viewWasTapped:(UIView *)view;
 
+//replacement for viewWasTapped callback, this callback also tells the location of the tap
+//subclasses should implement only one of the two, both will be called for taps inside views
+- (void)tap:(CGPoint)tapLocation wasDetectedForView:(UIView *)view;
+
 //callback for subclasses, a tap that did not fall inside any of the returned views
 - (void)outsideTapped;
 

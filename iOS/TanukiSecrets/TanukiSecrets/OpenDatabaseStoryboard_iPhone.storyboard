@@ -618,34 +618,8 @@
                                     <constraint firstItem="1ab-iF-dT6" firstAttribute="centerY" secondItem="1BT-Zu-xV2" secondAttribute="centerY" type="default" id="k67-8l-tTD"/>
                                 </constraints>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ValueCell" id="hw6-bO-Ota">
-                                <rect key="frame" x="0.0" y="179" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Value" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="KAO-FW-gEb">
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="260" id="Wy6-Ji-3Mv"/>
-                                                <constraint firstAttribute="height" constant="30" id="jaM-cz-S3p"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <textInputTraits key="textInputTraits" autocorrectionType="no"/>
-                                            <connections>
-                                                <action selector="texteditingEnded:" destination="D9N-6O-jLn" eventType="editingDidEndOnExit" id="4p7-1f-d5c"/>
-                                            </connections>
-                                        </textField>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                                <constraints>
-                                    <constraint firstItem="KAO-FW-gEb" firstAttribute="centerY" secondItem="hw6-bO-Ota" secondAttribute="centerY" type="default" id="Xap-g6-WIX"/>
-                                    <constraint firstItem="KAO-FW-gEb" firstAttribute="centerX" secondItem="hw6-bO-Ota" secondAttribute="centerX" type="default" id="zVd-VS-ebv"/>
-                                </constraints>
-                            </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="LongValueCell" rowHeight="139" id="iYp-mp-mLg">
-                                <rect key="frame" x="0.0" y="223" width="320" height="139"/>
+                                <rect key="frame" x="0.0" y="179" width="320" height="139"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="10" y="0.0" width="300" height="138"/>
@@ -670,15 +644,16 @@
                                 </constraints>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SecretValueCell" rowHeight="43" id="xTH-yj-H3H">
-                                <rect key="frame" x="0.0" y="362" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="318" width="320" height="43"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="10" y="0.0" width="300" height="42"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ayj-Fl-CD4">
+                                        <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ayj-Fl-CD4">
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="44" id="Ed6-ud-sSH"/>
+                                                <constraint firstAttribute="height" constant="44" id="Xkg-YB-Wbx"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                             <state key="normal" image="d20.png">
@@ -698,7 +673,7 @@
                                                 <constraint firstAttribute="width" constant="228" id="yMk-LW-8cD"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <textInputTraits key="textInputTraits"/>
+                                            <textInputTraits key="textInputTraits" autocorrectionType="no"/>
                                         </textField>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -706,9 +681,86 @@
                                 <constraints>
                                     <constraint firstItem="Ayj-Fl-CD4" firstAttribute="top" secondItem="xTH-yj-H3H" secondAttribute="top" type="default" id="8ph-LL-4CK"/>
                                     <constraint firstItem="Ial-eb-vvd" firstAttribute="leading" secondItem="Ayj-Fl-CD4" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="fmk-KB-fAO"/>
-                                    <constraint firstItem="Ayj-Fl-CD4" firstAttribute="bottom" secondItem="xTH-yj-H3H" secondAttribute="bottom" type="default" id="svi-Gj-XwU"/>
                                     <constraint firstItem="Ayj-Fl-CD4" firstAttribute="leading" secondItem="xTH-yj-H3H" secondAttribute="leading" constant="10" id="tdt-6S-CkP"/>
                                     <constraint firstItem="Ial-eb-vvd" firstAttribute="top" secondItem="xTH-yj-H3H" secondAttribute="top" constant="6" id="x4i-8d-R2I"/>
+                                </constraints>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TextValueCell" id="hw6-bO-Ota">
+                                <rect key="frame" x="0.0" y="361" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Value" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="KAO-FW-gEb">
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="260" id="Wy6-Ji-3Mv"/>
+                                                <constraint firstAttribute="height" constant="30" id="jaM-cz-S3p"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits" autocorrectionType="no"/>
+                                            <connections>
+                                                <action selector="texteditingEnded:" destination="D9N-6O-jLn" eventType="editingDidEndOnExit" id="4p7-1f-d5c"/>
+                                            </connections>
+                                        </textField>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <constraints>
+                                    <constraint firstItem="KAO-FW-gEb" firstAttribute="centerY" secondItem="hw6-bO-Ota" secondAttribute="centerY" type="default" id="Xap-g6-WIX"/>
+                                    <constraint firstItem="KAO-FW-gEb" firstAttribute="centerX" secondItem="hw6-bO-Ota" secondAttribute="centerX" type="default" id="zVd-VS-ebv"/>
+                                </constraints>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="UrlValueCell" id="gat-KT-h2X">
+                                <rect key="frame" x="0.0" y="405" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Value" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="tAD-Wg-aLW">
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="260" id="c2B-A4-QIv"/>
+                                                <constraint firstAttribute="height" constant="30" id="chU-xP-nBw"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="URL"/>
+                                            <connections>
+                                                <action selector="texteditingEnded:" destination="D9N-6O-jLn" eventType="editingDidEndOnExit" id="aRF-wO-f1u"/>
+                                            </connections>
+                                        </textField>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <constraints>
+                                    <constraint firstItem="tAD-Wg-aLW" firstAttribute="centerX" secondItem="gat-KT-h2X" secondAttribute="centerX" type="default" id="Q7n-TM-w7r"/>
+                                    <constraint firstItem="tAD-Wg-aLW" firstAttribute="centerY" secondItem="gat-KT-h2X" secondAttribute="centerY" type="default" id="hZz-k1-wrD"/>
+                                </constraints>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="NumericValueCell" id="nW5-3u-ZIi">
+                                <rect key="frame" x="0.0" y="449" width="320" height="45"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Value" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="smX-LH-HyT">
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="260" id="AkX-9J-VW6"/>
+                                                <constraint firstAttribute="height" constant="30" id="X6m-jE-bHb"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numberPad"/>
+                                            <connections>
+                                                <action selector="texteditingEnded:" destination="D9N-6O-jLn" eventType="editingDidEndOnExit" id="w4t-dr-hrN"/>
+                                            </connections>
+                                        </textField>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <constraints>
+                                    <constraint firstItem="smX-LH-HyT" firstAttribute="centerX" secondItem="nW5-3u-ZIi" secondAttribute="centerX" type="default" id="4US-hA-W6O"/>
+                                    <constraint firstItem="smX-LH-HyT" firstAttribute="centerY" secondItem="nW5-3u-ZIi" secondAttribute="centerY" type="default" id="CGJ-OZ-r4u"/>
                                 </constraints>
                             </tableViewCell>
                         </prototypes>
@@ -1150,21 +1202,13 @@
         </class>
         <class className="TSEditItemTVC" superclassName="TSSelectiveTapCallbackTableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSEditItemTVC.h"/>
-            <relationships>
-                <relationship kind="action" name="longTap:" candidateClass="UILongPressGestureRecognizer"/>
-                <relationship kind="action" name="texteditingEnded:"/>
-            </relationships>
         </class>
         <class className="TSModalDialogDismissingTableViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSModalDialogDismissingTableViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="cancel:"/>
-            </relationships>
         </class>
         <class className="TSNewGroupViewController" superclassName="TSSelectiveTapCallbackTableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNewGroupViewController.h"/>
             <relationships>
-                <relationship kind="action" name="nameEditingEnded:"/>
                 <relationship kind="outlet" name="createGroupCell" candidateClass="UITableViewCell"/>
                 <relationship kind="outlet" name="createGroupCellLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="nameCell" candidateClass="UITableViewCell"/>

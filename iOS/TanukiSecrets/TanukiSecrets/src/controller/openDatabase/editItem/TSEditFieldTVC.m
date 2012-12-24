@@ -22,6 +22,7 @@
 @property (nonatomic, weak) UITableViewCell *valueCell;
 @property (nonatomic, weak) UITextField *valueTextField;
 @property (nonatomic, weak) UITextView *valueTextView;
+@property (nonatomic, weak) UIButton *randomizePasswordButton;
 
 @end
 
@@ -31,34 +32,6 @@
 @synthesize nameCell, nameTextField, typeCell, encryptedSwitch, valueCell, valueTextField, valueTextView;
 
 #pragma mark - worker methods
-
-- (void)setCorrectKeyboardTypeForValueTextField
-{
-	switch (self.editingField.type) {
-		case TSDBFieldType_URL:
-			self.valueTextField.keyboardType = UIKeyboardTypeURL;
-			break;
-			
-		case TSDBFieldType_NUMERIC:
-			self.valueTextField.keyboardType = UIKeyboardTypeNumberPad;
-			break;
-			
-		default:
-			self.valueTextField.keyboardType = UIKeyboardTypeDefault;
-			break;
-	}
-	self.valueTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-	self.valueTextField.autocorrectionType = UITextAutocorrectionTypeNo;
-	//this interacts with the footer (????) to create the scrolling problem.
-	[self.valueTextField becomeFirstResponder];
-	[self.valueTextField resignFirstResponder];
-	//comment out and watch the keyboard type fall behind
-	//leave in and watch the magical scroll happen
-	//??? ?????????????????????
-	if (TS_DEV_DEBUG_ALL) {
-		NSLog (@"keyboard set to type %d", self.valueTextField.keyboardType);
-	}
-}
 
 - (void)transferValuesToEditingField
 {
@@ -103,9 +76,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
-	if (self.editingField.type != TSDBFieldType_TEXT) {
-		[self setCorrectKeyboardTypeForValueTextField];
-	}
 	if ([TSStringUtils isBlank:self.editingField.name]) {
 		[self.nameTextField becomeFirstResponder];
 	}
@@ -194,14 +164,29 @@
 				self.valueTextView = (UITextView *)[cell viewWithTag:1];
 				self.valueTextView.text = self.editingField.value;
 			}else {
-				if (self.editingField.type == TSDBFieldType_SECRET) {
-					cell = [tableView dequeueReusableCellWithIdentifier:@"SecretValueCell" forIndexPath:indexPath];
-				}else {
-					cell = [tableView dequeueReusableCellWithIdentifier:@"ValueCell" forIndexPath:indexPath];
+				switch (self.editingField.type) {
+					case TSDBFieldType_SECRET:
+						cell = [tableView dequeueReusableCellWithIdentifier:@"SecretValueCell" forIndexPath:indexPath];
+						break;
+						
+					case TSDBFieldType_URL:
+						cell = [tableView dequeueReusableCellWithIdentifier:@"UrlValueCell" forIndexPath:indexPath];
+						break;
+						
+					case TSDBFieldType_NUMERIC:
+						cell = [tableView dequeueReusableCellWithIdentifier:@"NumericValueCell" forIndexPath:indexPath];
+						break;
+						
+					default:
+						cell = [tableView dequeueReusableCellWithIdentifier:@"TextValueCell" forIndexPath:indexPath];
+						break;
 				}
 				self.valueCell = cell;
 				self.valueTextField = (UITextField *)[cell viewWithTag:1];
 				self.valueTextField.text = self.editingField.value;
+				if (self.editingField.type == TSDBFieldType_SECRET) {
+					self.randomizePasswordButton = (UIButton *)[cell viewWithTag:2];
+				}
 			}
 		}
 			break;
@@ -236,7 +221,7 @@
 
 - (IBAction)randomizeFieldValue:(id)sender {
 	self.valueTextField.text = [TSCryptoUtils randomPassword];
-	[self.valueTextField resignFirstResponder];
+//	[self.valueTextField resignFirstResponder];
 }
 
 #pragma mark - SimplePickerInputTableViewCellDelegate
@@ -252,7 +237,6 @@
 	}
 	if (changed) {
 		self.editingField.value = nil;
-		[self setCorrectKeyboardTypeForValueTextField];
 		[self.tableView reloadData];
 	}
 	if (TS_DEV_DEBUG_ALL) {
@@ -267,7 +251,7 @@
 	return [NSArray arrayWithObjects:self.nameCell, self.valueCell, nil];
 }
 
-- (void)viewWasTapped:(UIView *)view
+- (void)tap:(CGPoint)tapLocation wasDetectedForView:(UIView *)view
 {
 	if ((view == self.nameCell) && ([self.nameTextField isFirstResponder] == NO)) {
 		[self.nameTextField becomeFirstResponder];
@@ -278,8 +262,24 @@
 	if (view == self.valueCell) {
 		if (self.editingField.type == TSDBFieldType_TEXT) {
 			[self.valueTextView becomeFirstResponder];
+		}else if (self.editingField.type == TSDBFieldType_SECRET) {
+//			NSLog (@"Tap %f %f", tapLocation.x, tapLocation.y);
+			CGRect rect = [self.randomizePasswordButton frame];
+			//rect is in view's coordinate system, tapLocation in self.view's coordinate system
+//			NSLog (@"Test for frame %f %f - %f %f",
+//				   rect.origin.x, rect.origin.y,
+//				   rect.origin.x + rect.size.height,
+//				   rect.origin.y + rect.size.width);
+			rect = [view convertRect:rect toView:self.view];
+			//both rect and tapLocation now in self.view's coordinate system
+//			NSLog (@"Test for frame %f %f - %f %f",
+//				   rect.origin.x, rect.origin.y,
+//				   rect.origin.x + rect.size.height,
+//				   rect.origin.y + rect.size.width);
+			if (CGRectContainsPoint(rect, tapLocation) == NO) {
+				[self.valueTextField becomeFirstResponder];
+			}
 		}else {
-			[self setCorrectKeyboardTypeForValueTextField];
 			[self.valueTextField becomeFirstResponder];
 		}
 	}else {
