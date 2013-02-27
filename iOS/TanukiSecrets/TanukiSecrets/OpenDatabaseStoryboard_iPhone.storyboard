@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2844" systemVersion="12C60" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="J9Q-0l-1XU">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12C60" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="J9Q-0l-1XU">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1930"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
     </dependencies>
     <scenes>
         <!--Group View Controller-->
@@ -504,6 +504,11 @@
                             <outletCollection property="gestureRecognizers" destination="qf0-C1-lD3" appends="YES" id="izQ-eq-EXw"/>
                         </connections>
                     </tableView>
+                    <toolbarItems>
+                        <barButtonItem title="Save as template" id="5jA-Jp-ef6"/>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="i3u-jE-RR1"/>
+                        <barButtonItem image="info_small.png" style="plain" id="rL9-Eo-PCo"/>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" id="zg2-or-SwV">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="5jG-6T-dcB">
                             <connections>
@@ -770,6 +775,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Title" id="Rrb-eh-qye"/>
+                    <nil key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8SI-zx-RWn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -867,7 +873,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
-                            <tableViewSection headerTitle="Name" footerTitle="Give a name to your new item. You are not allowed to have two groups with the same name at the same level." id="iHb-wG-ft4">
+                            <tableViewSection headerTitle="Name" footerTitle="Give a name to your new item. You are not allowed to have two items with the same name inside the same group." id="iHb-wG-ft4">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="NXp-Y2-Wsp">
                                         <rect key="frame" x="0.0" y="46" width="320" height="46"/>
@@ -1141,13 +1147,18 @@
         <!--Navigation Controller-->
         <scene sceneID="Xec-MH-uRs">
             <objects>
-                <navigationController id="qQR-qR-yFD" sceneMemberID="viewController">
+                <navigationController toolbarHidden="NO" id="qQR-qR-yFD" sceneMemberID="viewController">
                     <toolbarItems/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics" barStyle="blackTranslucent"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="fbT-Uj-rrM">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="blackTranslucent" id="wvZ-xx-Tsr">
+                        <rect key="frame" x="0.0" y="436" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="0SO-gH-xig" kind="relationship" relationship="rootViewController" id="dXo-Yr-Uo2"/>
                     </connections>
@@ -1164,78 +1175,9 @@
         <image name="fileClipboard.png" width="32" height="32"/>
         <image name="folder.png" width="32" height="32"/>
         <image name="globe.png" width="32" height="32"/>
+        <image name="info_small.png" width="20" height="20"/>
         <image name="lock.png" width="30" height="30"/>
     </resources>
-    <classes>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="PickerInputTableViewCell" superclassName="UITableViewCell">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PickerInputTableViewCell.h"/>
-        </class>
-        <class className="SimplePickerInputTableViewCell" superclassName="PickerInputTableViewCell">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/SimplePickerInputTableViewCell.h"/>
-            <relationships>
-                <relationship kind="outlet" name="delegate"/>
-            </relationships>
-        </class>
-        <class className="TSDBGroupViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSDBGroupViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="openURL:"/>
-                <relationship kind="action" name="quickCopy:"/>
-            </relationships>
-        </class>
-        <class className="TSDBItemViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSDBItemViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="openURL:"/>
-                <relationship kind="action" name="quickCopy:"/>
-            </relationships>
-        </class>
-        <class className="TSEditFieldTVC" superclassName="TSSelectiveTapCallbackTableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSEditFieldTVC.h"/>
-            <relationships>
-                <relationship kind="action" name="randomizeFieldValue:"/>
-                <relationship kind="action" name="texteditingEnded:"/>
-            </relationships>
-        </class>
-        <class className="TSEditItemTVC" superclassName="TSSelectiveTapCallbackTableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSEditItemTVC.h"/>
-        </class>
-        <class className="TSModalDialogDismissingTableViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSModalDialogDismissingTableViewController.h"/>
-        </class>
-        <class className="TSNewGroupViewController" superclassName="TSSelectiveTapCallbackTableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNewGroupViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="createGroupCell" candidateClass="UITableViewCell"/>
-                <relationship kind="outlet" name="createGroupCellLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="nameCell" candidateClass="UITableViewCell"/>
-                <relationship kind="outlet" name="nameTextField" candidateClass="UITextField"/>
-            </relationships>
-        </class>
-        <class className="TSNewItemChooseNameTVC" superclassName="TSSelectiveTapCallbackTableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNewItemChooseNameTVC.h"/>
-            <relationships>
-                <relationship kind="action" name="nameEditingEnded:"/>
-                <relationship kind="action" name="next:"/>
-                <relationship kind="outlet" name="nameCell" candidateClass="UITableViewCell"/>
-                <relationship kind="outlet" name="nameTextField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="nextCell" candidateClass="UITableViewCell"/>
-                <relationship kind="outlet" name="nextCellLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-        <class className="TSNewItemChooseTypeTVC" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSNewItemChooseTypeTVC.h"/>
-        </class>
-        <class className="TSSelectiveTapCallbackTableViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSSelectiveTapCallbackTableViewController.h"/>
-        </class>
-        <class className="TSTabBarController" superclassName="UITabBarController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TSTabBarController.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

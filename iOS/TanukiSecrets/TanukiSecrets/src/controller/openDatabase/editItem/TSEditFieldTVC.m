@@ -71,6 +71,7 @@
 	}else {
 		self.title = self.editingField.name;
 	}
+	[self.navigationController setToolbarHidden:YES animated:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated

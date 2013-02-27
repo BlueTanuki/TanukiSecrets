@@ -108,11 +108,14 @@ encryptedRowsShownPlaintext, performEditSegueOnLoad;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return self.numberOfSections;
+    return self.numberOfSections == 0 ? 1 : self.numberOfSections;//return 1 if there are no sections, so we can show the footer
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+	if (self.numberOfSections == 0) {
+		return 0;
+	}
 	NSNumber *number = [self.numberOfRowsForSection objectAtIndex:section];
     return [number integerValue];
 }
@@ -131,6 +134,14 @@ encryptedRowsShownPlaintext, performEditSegueOnLoad;
 		default:
 			return nil;
 	}
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+{
+	if ((self.indexPathToFieldItem == nil) || ([self.indexPathToFieldItem count] <= 0)) {
+		return @"This item does not have any fields. Tap the edit button to enter editing mode and add fields to this item.";
+	}
+	return nil;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

@@ -152,6 +152,7 @@
 	if ([existingFieldNames containsObject:self.editingItem.subtitleFieldName] == NO) {
 		self.editingItem.subtitleFieldName = nil;
 	}
+	[self.navigationController setToolbarHidden:NO animated:YES];
 //	NSLog (@"viewWillAppear");
 }
 

@@ -76,7 +76,7 @@
 	if ((self.group.items != nil) && ([self.group.items count] > 0)) {
 		ret++;
 	}
-    return ret;
+    return ret == 0 ? 1 : ret;//if there are no groups and no items, still return one so we can show the footer
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
