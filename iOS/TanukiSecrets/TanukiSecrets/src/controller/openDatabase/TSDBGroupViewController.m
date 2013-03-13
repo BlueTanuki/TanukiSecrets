@@ -236,11 +236,11 @@
 		NSString *title;
 		if ((indexPath.section == 0) && (self.group.subgroups != nil) && ([self.group.subgroups count] > 0)) {
 			TSDBGroup *subgroup = [self.group.subgroups objectAtIndex:indexPath.row];
-			title = @"Please confirm recursive deletion of subgroup";
+			title = [NSString stringWithFormat:@"Please confirm recursive deletion of %@", subgroup.name];
 			message = [NSString stringWithFormat:@"You are about to recursively delete the subgroup named %@. That group and all its children will be deleted and cannot be recovered. Are you sure you want to delete this group?", subgroup.name];
 		}else {
 			TSDBItem *item = [self.group.items objectAtIndex:indexPath.row];
-			title = @"Please confirm deletion of item";
+			title = [NSString stringWithFormat:@"Please confirm deletion of %@", item.name];
 			message = [NSString stringWithFormat:@"You are about to delete the item named %@. The item will be lost and cannot be recovered. Are you sure you want to delete this item?", item.name];
 		}
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
@@ -274,8 +274,6 @@
 			sharedState.openDatabaseMetadata.lastModifiedBy = author;
 			
 			if ([TSIOUtils createBackupFor:sharedState.openDatabaseMetadata.uid]) {
-				
-				
 				NSData *encryptKey = [sharedState encryptKey];
 				NSData *encryptedContent = [TSCryptoUtils tanukiEncryptDatabase:sharedState.openDatabase
 																 havingMetadata:sharedState.openDatabaseMetadata
@@ -366,13 +364,15 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[TSUtils foreground:^{
 		[self.tableView reloadData];
+		int64_t delayInMilliseconds = 500;//WARNING: MAGIC CONSTANT, may result in :: Finishing up a navigation transition in an unexpected state. Navigation Bar subview tree might get corrupted
+		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInMilliseconds * NSEC_PER_MSEC);
 		if ([TSSharedState sharedState].currentItem != nil) {
-			[self performSegueWithIdentifier:@"editItem" sender:nil];
+			dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+				[self performSegueWithIdentifier:@"editItem" sender:nil];
+			});
 		}else if ([TSSharedState sharedState].currentGroup != self.group) {
 			TSDBGroupViewController *aux = [self.storyboard instantiateViewControllerWithIdentifier:@"TSDBGroupViewController"];
 			aux.group = [TSSharedState sharedState].currentGroup;
-			int64_t delayInMilliseconds = 300;
-			dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInMilliseconds * NSEC_PER_MSEC);
 			dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
 				[self.navigationController pushViewController:aux animated:YES];
 			});

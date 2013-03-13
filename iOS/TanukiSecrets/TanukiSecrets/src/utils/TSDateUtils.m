@@ -11,7 +11,6 @@
 @implementation TSDateUtils
 
 static NSDateFormatter *_dateTimeFormat = nil;
-
 + (NSDateFormatter *) dateTimeFormat
 {
 	if (_dateTimeFormat == nil) {
@@ -32,7 +31,6 @@ static NSDateFormatter *_dateTimeFormat = nil;
 }
 
 static NSDateFormatter *_interfaceDateFormat = nil;
-
 + (NSDateFormatter *) interfaceDateFormat
 {
 	if (_interfaceDateFormat == nil) {

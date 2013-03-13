@@ -75,12 +75,12 @@
 			"providing a good starting point for most cases.";
 			
 		case 2: {
-			NSArray *aux = [TSSharedState userTemplates];
+			NSArray *aux = [TSSharedState sharedState].templatesDatabase.root.items;
 			if ((aux == nil) || ([aux count] <= 0)) {
 				return @"You have not created any template yet. You can create "
-				"new templates at any time, just choose the appropriate command in the detailed view of any existing item.";
+				"new templates at any time, just choose the appropriate command in the edit view of any existing item.";
 			}
-			return @"These are templates you created from existing items.";
+			return @"These are templates you created from existing items. Templates can be deleted at any time, just swipe the row you want to delete.";
 		}
 			
 		default:
@@ -99,7 +99,7 @@
 			return [[TSDBItem systemTemplates] count];
 			
 		case 2:
-			return [[TSSharedState userTemplates] count];
+			return [[TSSharedState sharedState].templatesDatabase.root.items count];
 			
 		default:
 			return 0;
@@ -123,7 +123,7 @@
 			break;
 			
 		case 2: {
-			TSDBItem *item = [[TSSharedState userTemplates] objectAtIndex:indexPath.row];
+			TSDBItem *item = [[TSSharedState sharedState].templatesDatabase.root.items objectAtIndex:indexPath.row];
 			cell.textLabel.text = item.name;
 		}
 			break;
@@ -135,6 +135,25 @@
 	}
     
     return cell;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	return indexPath.section == 2;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ((editingStyle == UITableViewCellEditingStyleDelete) && (indexPath.section == 2)) {
+		TSDatabase *templatesDatabase = [TSSharedState sharedState].templatesDatabase;
+        [templatesDatabase.root.items removeObjectAtIndex:indexPath.row];
+		if ([TSIOUtils saveTemplatesDatabase:templatesDatabase]) {
+			[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+								  withRowAnimation:UITableViewRowAnimationAutomatic];
+		}else {
+			[TSNotifierUtils errorAtTopOfScreen:@"Failed to delete template."];
+		}
+    }
 }
 
 #pragma mark - Table view delegate
@@ -166,7 +185,7 @@
 			break;
 			
 		case 2: {
-			TSDBItem *item = [[TSSharedState userTemplates] objectAtIndex:indexPath.row];
+			TSDBItem *item = [[TSSharedState sharedState].templatesDatabase.root.items objectAtIndex:indexPath.row];
 			createdItem = [item createTemplate];
 			createdItem.name = itemName;
 		}

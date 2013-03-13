@@ -20,6 +20,9 @@
 #define TS_FILE_SUFFIX_DATABASE_LOCAL_METADATA @".tsml"
 #define TS_FILE_SUFFIX_DATABASE_BACKUPS_FOLDER @".bak"
 
+//NOTE: it is important that the suffix not be the same as other databases
+#define TS_FILE_TEMPLATES_DATABASE @"templatesDB.tt"
+
 #define TS_NUMBER_OF_LOCAL_BACKUPS 25
 #define TS_LOCAL_BACKUPS_AUTOCLEAN_THRESHOLD 41
 #define TS_NUMBER_OF_REMOTE_BACKUPS 3

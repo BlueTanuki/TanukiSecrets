@@ -41,6 +41,8 @@
 
 + (BOOL)testMetadataFile:(NSString *)metadataPath andDatabaseFile:(NSString *)databasePath usingSecret:(NSString *)secret;
 
++ (NSString *)templatesDatabaseFilePath;
+
 @end
 
 @implementation TSIOUtils
@@ -55,6 +57,11 @@
 		return nil;
 	}
 	return [[aux objectAtIndex:0] path];
+}
+
++ (NSString *)templatesDatabaseFilePath
+{
+	return [[self localBaseFolder] stringByAppendingPathComponent:TS_FILE_TEMPLATES_DATABASE];
 }
 
 + (NSString *)localCachesFolder
@@ -547,6 +554,31 @@
 	NSString *databasePath = [self databaseFilePath:databaseUid forBackup:backupId];
 	return [self isRegularFile:metadataPath] && [self isRegularFile:databasePath] &&
 	[self testMetadataFile:metadataPath andDatabaseFile:databasePath usingSecret:secret];
+}
+
++ (TSDatabase *)loadTemplatesDatabase
+{
+	NSString *templatesDatabaseFilePath = [self templatesDatabaseFilePath];
+	if ([self exists:templatesDatabaseFilePath]) {
+		NSData *data = [NSData dataWithContentsOfFile:templatesDatabaseFilePath];
+		if (data != nil) {
+			return (TSDatabase *)[TSDatabase fromData:data];
+		}
+		NSLog (@"Failed to read content templates database (%@)", templatesDatabaseFilePath);
+	}
+	return [TSDatabase emptyDatabase];
+}
+
++ (BOOL)saveTemplatesDatabase:(TSDatabase *)templatesDatabase
+{
+	NSString *templatesDatabaseFilePath = [self templatesDatabaseFilePath];
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	if ([fileManager createFileAtPath:templatesDatabaseFilePath contents:[templatesDatabase toData] attributes:nil] == YES) {
+		return YES;
+	}else {
+		NSLog(@"Failed to write local file for templates database");
+	}
+	return NO;
 }
 
 @end

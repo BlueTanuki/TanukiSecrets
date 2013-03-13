@@ -490,6 +490,50 @@
 	}
 }
 
+- (IBAction)saveAsTemplate:(id)sender {
+	NSString *error = nil;
+	NSString *name = [self itemName];
+	if ([TSStringUtils isBlank:name]) {
+		error = @"The item must have a name.";
+	}
+	TSSharedState *sharedState = [TSSharedState sharedState];
+	for (TSDBItem *item in sharedState.templatesDatabase.root.items) {
+		if ([name caseInsensitiveCompare:item.name] == NSOrderedSame) {
+			error = @"You already have a template with the same name. "
+			"You must choose another name for the item, then try to save it as a template again.";
+		}
+	}
+	NSMutableArray *fieldNames = [NSMutableArray arrayWithCapacity:[self.editingItem.fields count]];
+	for (TSDBItemField *field in self.editingItem.fields) {
+		if ([TSStringUtils isBlank:field.name]) {
+			error = @"You have at least one field without a name. Fields without names are not allowed.";
+		}
+		if ([fieldNames containsObject:[field.name lowercaseString]]) {
+			error =  [NSString stringWithFormat:@"You have two fields named %@. Having two fields with the same name is not allowed.", [field.name lowercaseString]];
+		}
+		[fieldNames addObject:[field.name lowercaseString]];
+	}
+	
+	if ([TSStringUtils isNotBlank:error]) {
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Validation error, cannot save template."
+														message:error
+													   delegate:nil
+											  cancelButtonTitle:@"OK"
+											  otherButtonTitles:nil];
+		[alert show];
+	}else  {
+		TSDBItem *editingItemTemplate = [self.editingItem createTemplate];
+		[sharedState.templatesDatabase.root addItem:editingItemTemplate];
+		if ([TSIOUtils saveTemplatesDatabase:sharedState.templatesDatabase]) {
+			[self.presentingViewController dismissViewControllerAnimated:YES completion:^{
+				[TSNotifierUtils infoAtTopOfScreen:[NSString stringWithFormat:@"Template %@ saved.", editingItemTemplate.name]];
+			}];
+		}else {
+			[TSNotifierUtils errorAtTopOfScreen:@"Failed to save template."];
+		}
+	}
+}
+
 #pragma mark - SimplePickerInputTableViewCellDelegate
 
 - (void)tableViewCell:(SimplePickerInputTableViewCell *)cell didEndEditingWithValue:(NSString *)value

@@ -17,6 +17,7 @@
 #import "TSUtils.h"
 #import "TSDBGroup.h"
 #import "TSDBItem.h"
+#import "TSIOUtils.h"
 
 @interface TSSharedState()
 
@@ -43,6 +44,8 @@
 
 @synthesize nextEncryptKey, nextEncryptKeyGenerationInProgress, nextEncryptKeyReady;
 
+@synthesize templatesDatabase = _templatesDatabase;
+
 #pragma mark - override getters/setters
 
 - (void)setCurrentGroup:(TSDBGroup *)currentGroup
@@ -59,6 +62,14 @@
 	if (TS_DEV_DEBUG_ALL) {
 		NSLog (@"Current item set to %@", [_currentItem uniqueGlobalId]);
 	}
+}
+
+- (TSDatabase *)templatesDatabase
+{
+	if (_templatesDatabase == nil) {
+		_templatesDatabase = [TSIOUtils loadTemplatesDatabase];
+	}
+	return _templatesDatabase;
 }
 
 #pragma mark - singleton creation and initialization

@@ -69,4 +69,7 @@
 + (BOOL)testDatabase:(NSString *)databaseUid usingSecret:(NSString *)secret;
 + (BOOL)testBackup:(NSString *)backupId ofDatabase:(NSString *)databaseUid usingSecret:(NSString *)secret;
 
++ (TSDatabase *)loadTemplatesDatabase;
++ (BOOL)saveTemplatesDatabase:(TSDatabase *)templatesDatabase;
+
 @end
