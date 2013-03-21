@@ -18,7 +18,7 @@
 #import "TSDBItem.h"
 #import "TSDBItemField.h"
 
-#define DEMO_DATABASE_CONTENT 1
+#define DEMO_DATABASE_CONTENT 0
 
 @interface TSNewDatabaseSecuritySettingsTVC ()
 
@@ -82,19 +82,19 @@
 	}
 	NSRange aux;
 	aux = [pass rangeOfCharacterFromSet:[NSCharacterSet lowercaseLetterCharacterSet]];
-	if (!aux.length) {
+	if (aux.location == NSNotFound) {
 		return YES;
 	}
 	aux = [pass rangeOfCharacterFromSet:[NSCharacterSet uppercaseLetterCharacterSet]];
-	if (!aux.length) {
+	if (aux.location == NSNotFound) {
 		return YES;
 	}
 	aux = [pass rangeOfCharacterFromSet:[NSCharacterSet decimalDigitCharacterSet]];
-	if (!aux.length) {
+	if (aux.location == NSNotFound) {
 		return YES;
 	}
-	aux = [pass rangeOfCharacterFromSet:[NSCharacterSet symbolCharacterSet]];
-	if (!aux.length) {
+	aux = [pass rangeOfCharacterFromSet:[NSCharacterSet punctuationCharacterSet]];
+	if (aux.location == NSNotFound) {
 		return YES;
 	}
 	return NO;

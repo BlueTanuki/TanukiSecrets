@@ -172,14 +172,20 @@ static NSArray *_userTemplates = nil;
 	int64_t delayInSeconds = 2;
 	dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
 	dispatch_after(popTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void){
-		if (TS_DEV_DEBUG_ALL) {
-			NSLog (@"next encryption key generation starting");
-		}
-		self.nextEncryptKey = [TSCryptoUtils tanukiEncryptKey:self.openDatabaseMetadata usingSecret:self.openDatabasePassword];
-		self.nextEncryptKeyGenerationInProgress = NO;
-		self.nextEncryptKeyReady = YES;
-		if (TS_DEV_DEBUG_ALL) {
-			NSLog (@"next encryption key generation finished");
+		if ((self.openDatabase != nil) && (self.openDatabaseMetadata != nil) && (self.openDatabasePassword != nil)) {
+			if (TS_DEV_DEBUG_ALL) {
+				NSLog (@"next encryption key generation starting");
+			}
+			self.nextEncryptKey = [TSCryptoUtils tanukiEncryptKey:self.openDatabaseMetadata usingSecret:self.openDatabasePassword];
+			self.nextEncryptKeyGenerationInProgress = NO;
+			self.nextEncryptKeyReady = YES;
+			if (TS_DEV_DEBUG_ALL) {
+				NSLog (@"next encryption key generation finished");
+			}
+		}else {
+			if (TS_DEV_DEBUG_ALL) {
+				NSLog(@"Next encryption key computation aborted, database was probbaly closed.");
+			}
 		}
 	});
 	if (TS_DEV_DEBUG_ALL) {
