@@ -10,8 +10,9 @@
 
 #import "SimplePickerInputTableViewCell.h"
 #import "TSDBItemField.h"
+#import "TSPickerButton.h"
 
-@interface TSEditFieldTVC : TSSelectiveTapCallbackTableViewController<SimplePickerInputTableViewCellDelegate>
+@interface TSEditFieldTVC : TSSelectiveTapCallbackTableViewController<SimplePickerInputTableViewCellDelegate, TSPickerButtonDelegate>
 
 @property (nonatomic, strong) TSDBItemField *editingField;
 

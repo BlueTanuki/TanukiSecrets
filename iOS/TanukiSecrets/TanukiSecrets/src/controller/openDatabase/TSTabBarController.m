@@ -21,7 +21,6 @@
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
 	if (item.tag == 0) {
-		
 		[[TSSharedState sharedState] reset];
 		[self.presentingViewController dismissViewControllerAnimated:YES completion:^{
 			NSNotification *notificaton = [NSNotification notificationWithName:TS_NOTIFICATION_DATABASE_WAS_LOCKED_SUCCESSFULLY object:nil];

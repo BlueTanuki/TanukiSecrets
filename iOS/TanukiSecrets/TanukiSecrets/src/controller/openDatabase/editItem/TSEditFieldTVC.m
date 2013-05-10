@@ -12,6 +12,8 @@
 #import "TSSharedState.h"
 #import "TSStringUtils.h"
 #import "TSDBItemField.h"
+#import "TSUtils.h"
+#import "TSPickerButton.h"
 
 @interface TSEditFieldTVC ()
 
@@ -23,6 +25,7 @@
 @property (nonatomic, weak) UITextField *valueTextField;
 @property (nonatomic, weak) UITextView *valueTextView;
 @property (nonatomic, weak) UIButton *randomizePasswordButton;
+@property (nonatomic, weak) TSPickerButton *autofillButton;
 
 @end
 
@@ -30,6 +33,7 @@
 
 @synthesize editingField;
 @synthesize nameCell, nameTextField, typeCell, encryptedSwitch, valueCell, valueTextField, valueTextView;
+@synthesize autofillButton;
 
 #pragma mark - worker methods
 
@@ -159,6 +163,7 @@
 			break;
 			
 		case 3: {
+			BOOL hasAutofill = NO;
 			if (self.editingField.type == TSDBFieldType_TEXT) {
 				cell = [tableView dequeueReusableCellWithIdentifier:@"LongValueCell" forIndexPath:indexPath];
 				self.valueCell = cell;
@@ -178,8 +183,11 @@
 						cell = [tableView dequeueReusableCellWithIdentifier:@"NumericValueCell" forIndexPath:indexPath];
 						break;
 						
-					default:
-						cell = [tableView dequeueReusableCellWithIdentifier:@"TextValueCell" forIndexPath:indexPath];
+					default: {
+//						cell = [tableView dequeueReusableCellWithIdentifier:@"TextValueCell" forIndexPath:indexPath];
+						cell = [tableView dequeueReusableCellWithIdentifier:@"TextWithAutofillCell" forIndexPath:indexPath];
+						hasAutofill = YES;
+					}
 						break;
 				}
 				self.valueCell = cell;
@@ -187,6 +195,15 @@
 				self.valueTextField.text = self.editingField.value;
 				if (self.editingField.type == TSDBFieldType_SECRET) {
 					self.randomizePasswordButton = (UIButton *)[cell viewWithTag:2];
+				}else if (hasAutofill) {
+					self.autofillButton = (TSPickerButton *)[cell viewWithTag:2];
+					self.autofillButton.possibleValues = [NSArray arrayWithObjects:
+															  @"bla",
+															  @"blu",
+															  @"bli",
+															  nil];
+					self.autofillButton.delegate = self;
+					self.autofillButton.doNotShowInputAccessoryView = YES;
 				}
 			}
 		}
@@ -225,25 +242,42 @@
 //	[self.valueTextField resignFirstResponder];
 }
 
+- (IBAction)autofillFieldValue:(id)sender {
+}
+
 #pragma mark - SimplePickerInputTableViewCellDelegate
 
 - (void)tableViewCell:(SimplePickerInputTableViewCell *)cell didEndEditingWithValue:(NSString *)value
 {
-	[self.typeCell resignFirstResponder];
-	BOOL changed = NO;
-	TSDBFieldType newFieldType = [TSDBItemField typeForString:value];
-	if (newFieldType != self.editingField.type) {
-		self.editingField.type = newFieldType;
-		changed = YES;
-	}
-	if (changed) {
-		self.editingField.value = nil;
-		[self.tableView reloadData];
-	}
-	if (TS_DEV_DEBUG_ALL) {
-		NSLog (@"picker callback ended, things changed: %d", changed);
+	if (cell == self.typeCell) {
+		[self.typeCell resignFirstResponder];
+		BOOL changed = NO;
+		TSDBFieldType newFieldType = [TSDBItemField typeForString:value];
+		if (newFieldType != self.editingField.type) {
+			self.editingField.type = newFieldType;
+			changed = YES;
+		}
+		if (changed) {
+			self.editingField.value = nil;
+			[self.tableView reloadData];
+		}
+		if (TS_DEV_DEBUG_ALL) {
+			NSLog (@"picker callback ended, things changed: %d", changed);
+		}
 	}
 }
+
+#pragma mark - TSPickerButtonDelegate
+
+- (void)pickerButton:(TSPickerButton *)button choseValue:(NSString *)value
+{
+	if (button == self.autofillButton) {
+		[self.autofillButton resignFirstResponder];
+		self.editingField.value = value;
+		[self.tableView reloadData];
+	}
+}
+
 
 #pragma mark - TSSelectiveTapCallbackTableViewController callbacks
 
@@ -254,6 +288,7 @@
 
 - (void)tap:(CGPoint)tapLocation wasDetectedForView:(UIView *)view
 {
+//	NSLog (@"Tap %f %f", tapLocation.x, tapLocation.y);
 	if ((view == self.nameCell) && ([self.nameTextField isFirstResponder] == NO)) {
 		[self.nameTextField becomeFirstResponder];
 	}
@@ -281,11 +316,34 @@
 				[self.valueTextField becomeFirstResponder];
 			}
 		}else {
-			[self.valueTextField becomeFirstResponder];
+//			NSLog (@"first responder status : [value text field : %d] [autofill cell : %d]",
+//				   [self.valueTextField isFirstResponder], [self.autofillCell isFirstResponder]);
+//			NSLog (@"Tap %f %f", tapLocation.x, tapLocation.y);
+//			NSLog (@"Autofill button is %@", self.autofillValueButton);
+			CGRect rect = [self.autofillButton frame];
+//			NSLog (@"Test for frame %f %f - %f %f",
+//				   rect.origin.x, rect.origin.y,
+//				   rect.origin.x + rect.size.height,
+//				   rect.origin.y + rect.size.width);
+			rect = [view convertRect:rect toView:self.view];
+//			NSLog (@"Test for frame %f %f - %f %f",
+//				   rect.origin.x, rect.origin.y,
+//				   rect.origin.x + rect.size.height,
+//				   rect.origin.y + rect.size.width);
+			if (CGRectContainsPoint(rect, tapLocation) == NO) {
+				[self.valueTextField becomeFirstResponder];
+//				[self.autofillCell resignFirstResponder];
+			}else {
+				[self.autofillButton becomeFirstResponder];
+//				[self.valueTextField resignFirstResponder];
+			}
+//			NSLog (@"first responder status : [value text field : %d] [autofill cell : %d]",
+//				   [self.valueTextField isFirstResponder], [self.autofillCell isFirstResponder]);
 		}
 	}else {
 		[self.valueTextField resignFirstResponder];
 		[self.valueTextView resignFirstResponder];
+		[self.autofillButton resignFirstResponder];
 	}
 	if (view != self.typeCell) {
 		[self.typeCell resignFirstResponder];
@@ -297,6 +355,7 @@
 {
 	[self.nameTextField resignFirstResponder];
 	[self.typeCell resignFirstResponder];
+	[self.autofillButton resignFirstResponder];
 	[self.valueTextField resignFirstResponder];
 	[self.valueTextView resignFirstResponder];
 	[self transferValuesToEditingField];

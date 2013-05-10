@@ -13,6 +13,7 @@
 #import "TSUtils.h"
 #import "TSStringUtils.h"
 #import "TSNotifierUtils.h"
+#import "TSLocalMetadata.h"
 
 @interface TSUnlockDatabaseViewController ()
 
@@ -70,6 +71,7 @@
 		TSSharedState *sharedState = [TSSharedState sharedState];
 		TSDatabaseMetadata *metadata = sharedState.openDatabaseMetadata;
 		TSDatabase *database = [TSIOUtils loadDatabase:metadata.uid havingMetadata:metadata usingSecret:secret];
+//		TSLocalMetadata *localMetadata = [TSIOUtils loadLocalMetadata:];
 		[TSUtils foreground:^{
 			if (database != nil) {
 				sharedState.openDatabase = database;

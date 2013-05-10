@@ -291,6 +291,13 @@
 			stringByAppendingString:TS_FILE_SUFFIX_DATABASE_METADATA];
 }
 
++ (NSString *)localMetadataFilePath:(NSString *)databaseUid
+{
+	return [[[self localBaseFolder] stringByAppendingPathComponent:databaseUid]
+			stringByAppendingString:TS_FILE_SUFFIX_DATABASE_LOCAL_METADATA];
+}
+
+
 + (BOOL)deleteDatabase:(NSString *)databaseUid
 {
 	NSString *databaseFilePath = [self databaseFilePath:databaseUid];
@@ -502,6 +509,21 @@
 + (TSDatabaseMetadata *)loadDatabaseMetadata:(NSString *)databaseUid
 {
 	return [self loadDatabaseMetadataFromFile:[self metadataFilePath:databaseUid]];
+}
+
++ (TSLocalMetadata *)loadLocalMetadataFromFile:(NSString *)filePath
+{
+	NSData *data = [NSData dataWithContentsOfFile:filePath];
+	if (data != nil) {
+//		return (TSLocalMetadata *)[TSLocalMetadata fromData:data];
+	}
+	NSLog (@"Failed to read content of file %@", filePath);
+	return nil;
+}
+
++ (TSLocalMetadata *)loadLocalMetadata:(NSString *)databaseUid
+{
+	return [self loadLocalMetadataFromFile:[self localMetadataFilePath:databaseUid]];
 }
 
 + (TSDatabase *)loadDatabaseFromFile:(NSString *)encryptedFilePath havingMetadata:(TSDatabaseMetadata *)metadata usingKey:(NSData *)decryptKey

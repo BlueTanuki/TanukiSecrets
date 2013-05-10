@@ -10,6 +10,7 @@
 
 #import "TSDatabase.h"
 #import "TSDatabaseMetadata.h"
+#import "TSLocalMetadata.h"
 #import "TSDatabaseLock.h"
 
 @interface TSIOUtils : NSObject
@@ -24,6 +25,7 @@
 
 + (NSString *)databaseFilePath:(NSString *)databaseUid;
 + (NSString *)metadataFilePath:(NSString *)databaseUid;
++ (NSString *)localMetadataFilePath:(NSString *)databaseUid;
 
 + (NSArray *)listLocalFiles;//of NSString, full paths
 + (BOOL)deleteLocalFile:(NSString *)filePath;
@@ -57,6 +59,8 @@
 
 + (TSDatabaseMetadata *)loadDatabaseMetadata:(NSString *)databaseUid;
 + (TSDatabaseMetadata *)loadDatabaseMetadataFromFile:(NSString *)filePath;
+//+ (TSLocalMetadata *)loadLocalMetadata:(NSString *)databaseUid;
+//+ (TSLocalMetadata *)loadLocalMetadataFromFile:(NSString *)filePath;
 + (TSDatabase *)loadDatabase:(NSString *)databaseUid havingMetadata:(TSDatabaseMetadata *)metadata usingSecret:(NSString *)secret;
 //the preferred way of loading the database, the decrypt key MUST correspond to the current metadata.salt(!!!)
 + (TSDatabase *)loadDatabase:(NSString *)databaseUid havingMetadata:(TSDatabaseMetadata *)metadata usingKey:(NSData *)decryptKey;

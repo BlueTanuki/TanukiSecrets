@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9F026A1C160B76180097BED4 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F026A1B160B76180097BED4 /* DropboxSDK.framework */; };
+		9F0361C4173D6E6900C4F5DC /* TSPickerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0361C3173D6E6900C4F5DC /* TSPickerButton.m */; };
 		9F10A8A6164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F10A8A5164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.m */; };
 		9F1463BA15FE342000EA03D6 /* TSSharedState.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463B915FE342000EA03D6 /* TSSharedState.m */; };
 		9F1463BE15FE41B600EA03D6 /* TSUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1463BD15FE41B600EA03D6 /* TSUserDefaults.m */; };
@@ -97,6 +98,9 @@
 		9FCE97EE1639602B003FE67F /* TSNewDatabaseChooseNameVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCE97ED1639602A003FE67F /* TSNewDatabaseChooseNameVC.m */; };
 		9FCE97FD163A721A003FE67F /* TSNewDatabaseSecuritySettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCE97FC163A7219003FE67F /* TSNewDatabaseSecuritySettingsVC.m */; };
 		9FCE9800163A734B003FE67F /* TSKeyboardDismissingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCE97FF163A7346003FE67F /* TSKeyboardDismissingViewController.m */; };
+		9FD192BA1731413C006C97A5 /* TSToolbarHidingTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD192B91731413C006C97A5 /* TSToolbarHidingTableViewController.m */; };
+		9FE192E517058BC300400127 /* fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE192E317058BC300400127 /* fill.png */; };
+		9FE192E617058BC300400127 /* fill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE192E417058BC300400127 /* fill@2x.png */; };
 		9FEC4DCF15C29894008B18D5 /* JSNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC4DCE15C29894008B18D5 /* JSNotifier.m */; };
 		9FEC4DD415C298E7008B18D5 /* NotifyCheck.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FEC4DD015C298E7008B18D5 /* NotifyCheck.png */; };
 		9FEC4DD515C298E7008B18D5 /* NotifyCheck@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FEC4DD115C298E7008B18D5 /* NotifyCheck@2x.png */; };
@@ -130,6 +134,8 @@
 
 /* Begin PBXFileReference section */
 		9F026A1B160B76180097BED4 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DropboxSDK.framework; sourceTree = "<group>"; };
+		9F0361C2173D6E6900C4F5DC /* TSPickerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPickerButton.h; sourceTree = "<group>"; };
+		9F0361C3173D6E6900C4F5DC /* TSPickerButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPickerButton.m; sourceTree = "<group>"; };
 		9F10A8A4164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNewDatabaseSecuritySettingsTVC.h; sourceTree = "<group>"; };
 		9F10A8A5164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSNewDatabaseSecuritySettingsTVC.m; sourceTree = "<group>"; };
 		9F1463B815FE342000EA03D6 /* TSSharedState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSSharedState.h; sourceTree = "<group>"; };
@@ -273,6 +279,10 @@
 		9FCE97FC163A7219003FE67F /* TSNewDatabaseSecuritySettingsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSNewDatabaseSecuritySettingsVC.m; sourceTree = "<group>"; };
 		9FCE97FE163A7342003FE67F /* TSKeyboardDismissingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSKeyboardDismissingViewController.h; sourceTree = "<group>"; };
 		9FCE97FF163A7346003FE67F /* TSKeyboardDismissingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSKeyboardDismissingViewController.m; sourceTree = "<group>"; };
+		9FD192B81731413C006C97A5 /* TSToolbarHidingTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSToolbarHidingTableViewController.h; sourceTree = "<group>"; };
+		9FD192B91731413C006C97A5 /* TSToolbarHidingTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSToolbarHidingTableViewController.m; sourceTree = "<group>"; };
+		9FE192E317058BC300400127 /* fill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fill.png; sourceTree = "<group>"; };
+		9FE192E417058BC300400127 /* fill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fill@2x.png"; sourceTree = "<group>"; };
 		9FEC4DC515C18107008B18D5 /* TanukiSecrets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TanukiSecrets.entitlements; sourceTree = "<group>"; };
 		9FEC4DCD15C29894008B18D5 /* JSNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotifier.h; sourceTree = "<group>"; };
 		9FEC4DCE15C29894008B18D5 /* JSNotifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSNotifier.m; sourceTree = "<group>"; };
@@ -394,6 +404,7 @@
 		9F1463E61600EB0800EA03D6 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				9FE192E71710553000400127 /* ui */,
 				9F9D868F15CC10530066BC04 /* controller */,
 				9FEC4E3B15CAA349008B18D5 /* model */,
 				9F1463BF15FE441F00EA03D6 /* TSConstants.h */,
@@ -416,6 +427,8 @@
 		9F32126D163F011700123E72 /* img */ = {
 			isa = PBXGroup;
 			children = (
+				9FE192E317058BC300400127 /* fill.png */,
+				9FE192E417058BC300400127 /* fill@2x.png */,
 				9FC25B1C1665456E000850BE /* d20.png */,
 				9FC25B1D1665456E000850BE /* d20@2x.png */,
 				9F492035165184BB00B80E0A /* file.png */,
@@ -630,6 +643,8 @@
 				9F5459E71649634B0011F6FC /* TSSelectiveTapCallbackTableViewController.m */,
 				9F4920461652D05A00B80E0A /* TSModalDialogDismissingTableViewController.h */,
 				9F4920471652D05A00B80E0A /* TSModalDialogDismissingTableViewController.m */,
+				9FD192B81731413C006C97A5 /* TSToolbarHidingTableViewController.h */,
+				9FD192B91731413C006C97A5 /* TSToolbarHidingTableViewController.m */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -667,6 +682,15 @@
 				9FCE97FC163A7219003FE67F /* TSNewDatabaseSecuritySettingsVC.m */,
 			);
 			path = createDatabase;
+			sourceTree = "<group>";
+		};
+		9FE192E71710553000400127 /* ui */ = {
+			isa = PBXGroup;
+			children = (
+				9F0361C2173D6E6900C4F5DC /* TSPickerButton.h */,
+				9F0361C3173D6E6900C4F5DC /* TSPickerButton.m */,
+			);
+			path = ui;
 			sourceTree = "<group>";
 		};
 		9FEC4DCB15C29847008B18D5 /* lib */ = {
@@ -824,6 +848,8 @@
 				9F49205F1656B8B500B80E0A /* globe@2x.png in Resources */,
 				9FC25B1E1665456E000850BE /* d20.png in Resources */,
 				9FC25B1F1665456E000850BE /* d20@2x.png in Resources */,
+				9FE192E517058BC300400127 /* fill.png in Resources */,
+				9FE192E617058BC300400127 /* fill@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -920,6 +946,8 @@
 				9F4920A1166110FC00B80E0A /* SimplePickerInputTableViewCell.m in Sources */,
 				9F9C94191661547C00F85CEB /* TSEditItemTVC.m in Sources */,
 				9FC25B1A16652263000850BE /* TSEditFieldTVC.m in Sources */,
+				9FD192BA1731413C006C97A5 /* TSToolbarHidingTableViewController.m in Sources */,
+				9F0361C4173D6E6900C4F5DC /* TSPickerButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
