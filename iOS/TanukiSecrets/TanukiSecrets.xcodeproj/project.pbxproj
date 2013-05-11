@@ -136,6 +136,7 @@
 		9F026A1B160B76180097BED4 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DropboxSDK.framework; sourceTree = "<group>"; };
 		9F0361C2173D6E6900C4F5DC /* TSPickerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPickerButton.h; sourceTree = "<group>"; };
 		9F0361C3173D6E6900C4F5DC /* TSPickerButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPickerButton.m; sourceTree = "<group>"; };
+		9F0361C5173E8FF600C4F5DC /* TSDBCommonTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TSDBCommonTypes.h; sourceTree = "<group>"; };
 		9F10A8A4164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSNewDatabaseSecuritySettingsTVC.h; sourceTree = "<group>"; };
 		9F10A8A5164C1EAE0008ECD0 /* TSNewDatabaseSecuritySettingsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSNewDatabaseSecuritySettingsTVC.m; sourceTree = "<group>"; };
 		9F1463B815FE342000EA03D6 /* TSSharedState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSSharedState.h; sourceTree = "<group>"; };
@@ -370,6 +371,7 @@
 				9F1463D61600D3AA00EA03D6 /* TSVersion.h */,
 				9F1463D71600D3AA00EA03D6 /* TSVersion.m */,
 				9FEC4E6315CABC77008B18D5 /* TSXMLSerializable.h */,
+				9F0361C5173E8FF600C4F5DC /* TSDBCommonTypes.h */,
 			);
 			path = xml;
 			sourceTree = "<group>";

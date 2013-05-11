@@ -10,11 +10,21 @@
 
 #import "TSXMLUtils.h"
 #import "TSDBItem.h"
+#import "TSDBItemField.h"
+#import "TSStringUtils.h"
 
 #define TS_XML_DB_GROUP_TAG_NAME @"group"
 #define TS_XML_DB_GROUP_NAME_TAG_NAME @"name"
 #define TS_XML_DB_GROUP_SUBGROUPS_TAG_NAME @"subgroups"
 #define TS_XML_DB_GROUP_ITEMS_TAG_NAME @"items"
+
+@interface TSDBGroup ()
+
+//field name -> occurrence count
+- (NSMutableDictionary *)uniqueValuesAndCountForFieldNamed:(NSString *)name ofType:(TSDBFieldType)type;
+
+@end
+
 
 @implementation TSDBGroup
 
@@ -115,6 +125,56 @@
 {
 	TSDBGroup *ret = [[TSDBGroup alloc] init];
 	ret.name = name;
+	return ret;
+}
+
+#pragma mark - misc
+
+- (NSMutableDictionary *)uniqueValuesAndCountForFieldNamed:(NSString *)name ofType:(TSDBFieldType)type
+{
+	NSMutableDictionary *ret = [NSMutableDictionary dictionary];
+	for (TSDBGroup *subgroup in self.subgroups) {
+		NSMutableDictionary *aux = [subgroup uniqueValuesAndCountForFieldNamed:name ofType:type];
+		for (NSString *fieldValue in [aux keyEnumerator]) {
+			int sum = 0;
+			NSNumber *number = (NSNumber *)[ret objectForKey:fieldValue];
+			if (number != nil) {
+				sum += [number intValue];
+			}
+			number = (NSNumber *)[aux objectForKey:fieldValue];
+			if (number != nil) {
+				sum += [number intValue];
+			}
+			[ret setValue:[NSNumber numberWithInt:sum] forKey:fieldValue];
+		}
+	}
+	for (TSDBItem *item in self.items) {
+		for (TSDBItemField *itemField in item.fields) {
+			if (([itemField.name isEqualToString:name]) && (itemField.type == type) &&
+				([TSStringUtils isNotBlank:itemField.value])) {
+				int sum = 1;
+				NSNumber *number = (NSNumber *)[ret objectForKey:itemField.value];
+				if (number != nil) {
+					sum += [number intValue];
+				}
+				[ret setValue:[NSNumber numberWithInt:sum] forKey:itemField.value];
+			}
+		}
+	}
+	return ret;
+}
+
+- (NSArray *)mostUsedValuesForFieldNamed:(NSString *)name ofType:(TSDBFieldType)type
+{
+	NSLog (@"field name %@ of type %@", name, [TSDBItemField interfaceStringForType:type]);
+	NSMutableDictionary *valuesAndCounts = [self uniqueValuesAndCountForFieldNamed:name ofType:type];
+	NSLog (@"%@", valuesAndCounts);
+	NSArray *ret = [valuesAndCounts keysSortedByValueUsingComparator:^(id obj1, id obj2) {
+		NSNumber *num1 = (NSNumber *)obj1;
+		NSNumber *num2 = (NSNumber *)obj2;
+		return [num2 compare:num1];
+	}];
+	NSLog (@"%@", ret);
 	return ret;
 }
 

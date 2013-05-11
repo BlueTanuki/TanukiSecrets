@@ -16,7 +16,7 @@
 
 @implementation TSPickerButton
 
-@synthesize picker, doNotShowInputAccessoryView;
+@synthesize picker, doNotShowInputAccessoryView, reactImmediatelyOnValueChange;
 
 @synthesize possibleValues, possibleValueLabels, delegate;
 @synthesize selectedValue;
@@ -68,10 +68,11 @@
 		frame.size.height = 44.0f;
 		inputAccessoryView.frame = frame;
 		
+		UIBarButtonItem *cancelBtn =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
+		UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 		UIBarButtonItem *doneBtn =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)];
-		UIBarButtonItem *flexibleSpaceLeft = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 		
-		NSArray *array = [NSArray arrayWithObjects:flexibleSpaceLeft, doneBtn, nil];
+		NSArray *array = [NSArray arrayWithObjects:cancelBtn, flexibleSpace, doneBtn, nil];
 		[inputAccessoryView setItems:array];
 	}
 	return inputAccessoryView;
@@ -79,6 +80,18 @@
 
 - (void)done:(id)sender {
 	[self resignFirstResponder];
+	if (self.reactImmediatelyOnValueChange == NO) {
+		if (delegate && [delegate respondsToSelector:@selector(pickerButton:choseValue:)]) {
+			[delegate pickerButton:self choseValue:self.selectedValue];
+		}
+	}
+}
+
+- (void)cancel:(id)sender {
+	[self resignFirstResponder];
+	if (delegate && [delegate respondsToSelector:@selector(choiceWasCancelledForPickerButton:)]) {
+		[delegate choiceWasCancelledForPickerButton:self];
+	}
 }
 
 - (BOOL)becomeFirstResponder {
@@ -182,8 +195,10 @@
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
 	//	NSLog (@"picker value changed to %@", [self.possibleValues objectAtIndex:row]);
 	self.selectedValue = [self.possibleValues objectAtIndex:row];
-	if (delegate && [delegate respondsToSelector:@selector(pickerButton:choseValue:)]) {
-		[delegate pickerButton:self choseValue:self.selectedValue];
+	if (self.reactImmediatelyOnValueChange == YES) {
+		if (delegate && [delegate respondsToSelector:@selector(pickerButton:choseValue:)]) {
+			[delegate pickerButton:self choseValue:self.selectedValue];
+		}
 	}
 }
 

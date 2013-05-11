@@ -13,6 +13,7 @@
 @protocol TSPickerButtonDelegate <NSObject>
 @optional
 - (void)pickerButton:(TSPickerButton *)button choseValue:(NSString *)value;
+- (void)choiceWasCancelledForPickerButton:(TSPickerButton *)button;
 @end
 
 @interface TSPickerButton : UIButton <UIKeyInput, UIPopoverControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate> {
@@ -23,6 +24,7 @@
 
 @property (nonatomic, strong) UIPickerView *picker;
 @property (nonatomic, assign) BOOL doNotShowInputAccessoryView;
+@property (nonatomic, assign) BOOL reactImmediatelyOnValueChange;
 
 //values
 @property (nonatomic, strong) NSArray *possibleValues;

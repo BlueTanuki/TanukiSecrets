@@ -20,6 +20,7 @@
 @property (nonatomic, weak) UITableViewCell *nameCell;
 @property (nonatomic, weak) UITextField *nameTextField;
 @property (nonatomic, weak) UITableViewCell *typeCell;
+@property (nonatomic, weak) UITableViewCell *encryptedCell;
 @property (nonatomic, weak) UISwitch *encryptedSwitch;
 @property (nonatomic, weak) UITableViewCell *valueCell;
 @property (nonatomic, weak) UITextField *valueTextField;
@@ -27,13 +28,16 @@
 @property (nonatomic, weak) UIButton *randomizePasswordButton;
 @property (nonatomic, weak) TSPickerButton *autofillButton;
 
+@property (nonatomic, assign) BOOL hasAutofill;
+@property (nonatomic, strong) NSArray *autofillOptions;
+
 @end
 
 @implementation TSEditFieldTVC
 
 @synthesize editingField;
-@synthesize nameCell, nameTextField, typeCell, encryptedSwitch, valueCell, valueTextField, valueTextView;
-@synthesize autofillButton;
+@synthesize nameCell, nameTextField, typeCell, encryptedCell, encryptedSwitch, valueCell, valueTextField, valueTextView;
+@synthesize randomizePasswordButton, autofillButton, hasAutofill, autofillOptions;
 
 #pragma mark - worker methods
 
@@ -45,6 +49,22 @@
 	}else {
 		self.editingField.value = self.valueTextField.text;
 	}
+}
+
+- (void)prepareAutofillInfo
+{
+	self.hasAutofill = NO;
+	TSSharedState *sharedState = [TSSharedState sharedState];
+	NSString *name = self.editingField.name;
+	if (self.nameTextField.text != nil) {
+		name = self.nameTextField.text;
+	}
+	NSArray *aux = [[sharedState.openDatabase root] mostUsedValuesForFieldNamed:name ofType:self.editingField.type];
+	if ([aux count] > 0) {
+		self.hasAutofill = YES;
+		self.autofillOptions = aux;
+	}
+	[self.tableView reloadData];
 }
 
 #pragma mark - view lifecycle
@@ -76,6 +96,7 @@
 		self.title = self.editingField.name;
 	}
 	[self.navigationController setToolbarHidden:YES animated:YES];
+	[self prepareAutofillInfo];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -101,10 +122,16 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
+	NSLog (@"footer called");
 //	return @"This is a footer. This is present just so you can see how nicely the table scrolls itself for no reason whatsoever.";
 	if (self.editingField.type == TSDBFieldType_SECRET) {
+		NSLog (@"randomhint");
 		return @"Tap the die to generate a random password.";
+	}else if (self.hasAutofill) {
+		NSLog (@"autofill hint");
+		return @"Tap the autofill icon to choose from a list of values previously used for similar fields.";
 	}
+	NSLog (@"empty");
 	return nil;
 }
 
@@ -157,24 +184,26 @@
 			
 		case 2: {
 			cell = [tableView dequeueReusableCellWithIdentifier:@"EncryptedCell" forIndexPath:indexPath];
+			self.encryptedCell = cell;
 			self.encryptedSwitch = (UISwitch *)[cell viewWithTag:1];
 			self.encryptedSwitch.on = self.editingField.encrypted;
 		}
 			break;
 			
 		case 3: {
-			BOOL hasAutofill = NO;
 			if (self.editingField.type == TSDBFieldType_TEXT) {
 				cell = [tableView dequeueReusableCellWithIdentifier:@"LongValueCell" forIndexPath:indexPath];
 				self.valueCell = cell;
 				self.valueTextView = (UITextView *)[cell viewWithTag:1];
 				self.valueTextView.text = self.editingField.value;
+			}else if (self.editingField.type == TSDBFieldType_SECRET) {
+				cell = [tableView dequeueReusableCellWithIdentifier:@"SecretValueCell" forIndexPath:indexPath];
+				self.valueCell = cell;
+				self.valueTextField = (UITextField *)[cell viewWithTag:1];
+				self.valueTextField.text = self.editingField.value;
+				self.randomizePasswordButton = (UIButton *)[cell viewWithTag:2];
 			}else {
 				switch (self.editingField.type) {
-					case TSDBFieldType_SECRET:
-						cell = [tableView dequeueReusableCellWithIdentifier:@"SecretValueCell" forIndexPath:indexPath];
-						break;
-						
 					case TSDBFieldType_URL:
 						cell = [tableView dequeueReusableCellWithIdentifier:@"UrlValueCell" forIndexPath:indexPath];
 						break;
@@ -184,26 +213,27 @@
 						break;
 						
 					default: {
-//						cell = [tableView dequeueReusableCellWithIdentifier:@"TextValueCell" forIndexPath:indexPath];
-						cell = [tableView dequeueReusableCellWithIdentifier:@"TextWithAutofillCell" forIndexPath:indexPath];
-						hasAutofill = YES;
+						if (self.hasAutofill) {
+							cell = [tableView dequeueReusableCellWithIdentifier:@"TextWithAutofillCell" forIndexPath:indexPath];
+						}else {
+							cell = [tableView dequeueReusableCellWithIdentifier:@"TextValueCell" forIndexPath:indexPath];
+						}
 					}
 						break;
 				}
 				self.valueCell = cell;
 				self.valueTextField = (UITextField *)[cell viewWithTag:1];
 				self.valueTextField.text = self.editingField.value;
-				if (self.editingField.type == TSDBFieldType_SECRET) {
-					self.randomizePasswordButton = (UIButton *)[cell viewWithTag:2];
-				}else if (hasAutofill) {
+				if (self.hasAutofill) {
 					self.autofillButton = (TSPickerButton *)[cell viewWithTag:2];
-					self.autofillButton.possibleValues = [NSArray arrayWithObjects:
-															  @"bla",
-															  @"blu",
-															  @"bli",
-															  nil];
+					NSMutableArray *values = [NSMutableArray arrayWithObject:@""];
+					[values addObjectsFromArray:self.autofillOptions];
+					self.autofillButton.possibleValues = [values copy];
+					NSMutableArray *labels = [NSMutableArray arrayWithObject:@"[Keep current value]"];
+					[labels addObjectsFromArray:self.autofillOptions];
+					self.autofillButton.possibleValueLabels = [labels copy];
+					[self.autofillButton setValue:@""];
 					self.autofillButton.delegate = self;
-					self.autofillButton.doNotShowInputAccessoryView = YES;
 				}
 			}
 		}
@@ -265,6 +295,7 @@
 			NSLog (@"picker callback ended, things changed: %d", changed);
 		}
 	}
+	[self prepareAutofillInfo];
 }
 
 #pragma mark - TSPickerButtonDelegate
@@ -273,8 +304,17 @@
 {
 	if (button == self.autofillButton) {
 		[self.autofillButton resignFirstResponder];
-		self.editingField.value = value;
-		[self.tableView reloadData];
+		if ([TSStringUtils isNotBlank:value]) {
+			self.editingField.value = value;
+			[self.tableView reloadData];
+		}
+	}
+}
+
+- (void)choiceWasCancelledForPickerButton:(TSPickerButton *)button
+{
+	if (button == self.autofillButton) {
+		[self.autofillButton resignFirstResponder];
 	}
 }
 
@@ -283,7 +323,7 @@
 
 - (NSArray *)viewsThatNeedTapCallback
 {
-	return [NSArray arrayWithObjects:self.nameCell, self.valueCell, nil];
+	return [NSArray arrayWithObjects:self.nameCell, self.typeCell, self.encryptedCell, self.valueCell, nil];
 }
 
 - (void)tap:(CGPoint)tapLocation wasDetectedForView:(UIView *)view
@@ -316,29 +356,13 @@
 				[self.valueTextField becomeFirstResponder];
 			}
 		}else {
-//			NSLog (@"first responder status : [value text field : %d] [autofill cell : %d]",
-//				   [self.valueTextField isFirstResponder], [self.autofillCell isFirstResponder]);
-//			NSLog (@"Tap %f %f", tapLocation.x, tapLocation.y);
-//			NSLog (@"Autofill button is %@", self.autofillValueButton);
 			CGRect rect = [self.autofillButton frame];
-//			NSLog (@"Test for frame %f %f - %f %f",
-//				   rect.origin.x, rect.origin.y,
-//				   rect.origin.x + rect.size.height,
-//				   rect.origin.y + rect.size.width);
 			rect = [view convertRect:rect toView:self.view];
-//			NSLog (@"Test for frame %f %f - %f %f",
-//				   rect.origin.x, rect.origin.y,
-//				   rect.origin.x + rect.size.height,
-//				   rect.origin.y + rect.size.width);
 			if (CGRectContainsPoint(rect, tapLocation) == NO) {
 				[self.valueTextField becomeFirstResponder];
-//				[self.autofillCell resignFirstResponder];
 			}else {
 				[self.autofillButton becomeFirstResponder];
-//				[self.valueTextField resignFirstResponder];
 			}
-//			NSLog (@"first responder status : [value text field : %d] [autofill cell : %d]",
-//				   [self.valueTextField isFirstResponder], [self.autofillCell isFirstResponder]);
 		}
 	}else {
 		[self.valueTextField resignFirstResponder];
@@ -359,6 +383,7 @@
 	[self.valueTextField resignFirstResponder];
 	[self.valueTextView resignFirstResponder];
 	[self transferValuesToEditingField];
+	[self prepareAutofillInfo];
 }
 
 - (BOOL)tapGestureRecognizerConsumesEvent

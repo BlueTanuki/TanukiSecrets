@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "TSXMLSerializable.h"
+#import "TSDBCommonTypes.h"
 
 @class TSDBItem;
 
@@ -28,5 +29,8 @@
 - (void)addItem:(TSDBItem *)item;
 
 + (TSDBGroup *)groupNamed:(NSString *)name;
+
+//return a list of the most used values for fields with the given name and type
+- (NSArray *)mostUsedValuesForFieldNamed:(NSString *)name ofType:(TSDBFieldType)type;
 
 @end
